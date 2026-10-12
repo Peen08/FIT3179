@@ -1,0 +1,1501 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "data/bitre_city_year.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "train": "number",
+        "light_rail": "number",
+        "bus": "number",
+        "ferry": "number",
+        "year": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.train + datum.light_rail + datum.bus + datum.ferry",
+      "as": "total"
+    },
+    {
+      "calculate": "datum.year == 2019 ? datum.total : null",
+      "as": "b"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "b",
+          "as": "base"
+        }
+      ],
+      "groupby": [
+        "city"
+      ]
+    },
+    {
+      "calculate": "datum.total / datum.base * 100",
+      "as": "index"
+    },
+    {
+      "calculate": "datum.year == 2025 ? datum.index : null",
+      "as": "l"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "l",
+          "as": "latest"
+        }
+      ],
+      "groupby": [
+        "city"
+      ]
+    },
+    {
+      "calculate": "datum.latest >= 95 ? 'Back to 2018–2019 level (95% or more)' : 'Still short (under 95%)'",
+      "as": "status"
+    },
+    {
+      "calculate": "datum.city",
+      "as": "label"
+    },
+    {
+      "calculate": "datum.city == 'Perth' ? 'Highest recovery' : (datum.city == 'Brisbane' || datum.city == 'Canberra') ? 'Back to normal' : datum.city == 'Melbourne' ? 'Furthest behind' : ''",
+      "as": "note"
+    },
+    {
+      "lookup": "city",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "city": "Perth",
+              "fyr": 2025,
+              "ftext": "Record high: 105%",
+              "fpos": "above"
+            },
+            {
+              "city": "Brisbane",
+              "fyr": 2025,
+              "ftext": "Back to 100%",
+              "fpos": "above"
+            },
+            {
+              "city": "Canberra",
+              "fyr": 2025,
+              "ftext": "Back to 100%",
+              "fpos": "above"
+            },
+            {
+              "city": "Adelaide",
+              "fyr": 2025,
+              "ftext": "Still short: 91%",
+              "fpos": "above"
+            },
+            {
+              "city": "Sydney",
+              "fyr": 2022,
+              "ftext": "Low: 43%",
+              "fpos": "below"
+            },
+            {
+              "city": "Darwin",
+              "fyr": 2021,
+              "ftext": "Smallest fall: 79%",
+              "fpos": "below"
+            },
+            {
+              "city": "Hobart",
+              "fyr": 2024,
+              "ftext": "Lowest in 2023–2024: 81%",
+              "fpos": "below-left"
+            },
+            {
+              "city": "Melbourne",
+              "fyr": 2021,
+              "ftext": "Deepest fall: 35%",
+              "fpos": "below"
+            }
+          ]
+        },
+        "key": "city",
+        "fields": [
+          "fyr",
+          "ftext",
+          "fpos"
+        ]
+      }
+    }
+  ],
+  "facet": {
+    "field": "city",
+    "type": "nominal",
+    "header": {
+      "title": null,
+      "labelExpr": "''",
+      "labelFontSize": 0,
+      "labelPadding": 0
+    },
+    "sort": {
+      "field": "latest",
+      "op": "max",
+      "order": "descending"
+    }
+  },
+  "columns": 4,
+  "spacing": {
+    "row": 14,
+    "column": 16
+  },
+  "spec": {
+    "width": 207,
+    "height": 130,
+    "layer": [
+      {
+        "transform": [
+          {
+            "filter": "datum.year == 2016"
+          },
+          {
+            "calculate": "2019.5",
+            "as": "s"
+          },
+          {
+            "calculate": "2022.5",
+            "as": "e"
+          }
+        ],
+        "mark": {
+          "type": "rect",
+          "color": "#EEEEEA"
+        },
+        "encoding": {
+          "x": {
+            "field": "s",
+            "type": "quantitative",
+            "axis": {
+              "title": "Financial Year Ending June",
+              "values": [
+                2016,
+                2019,
+                2022,
+                2025
+              ],
+              "format": "d",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 12,
+              "tickSize": 4
+            },
+            "scale": {
+              "domain": [
+                2016,
+                2025
+              ],
+              "zero": false
+            }
+          },
+          "x2": {
+            "field": "e"
+          },
+          "y": {
+            "value": 0
+          },
+          "y2": {
+            "value": 130
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == 2016 && datum.city == 'Perth'"
+          },
+          {
+            "calculate": "2021",
+            "as": "m"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "text": "Pandemic",
+          "baseline": "bottom",
+          "dy": -3,
+          "fontSize": 10,
+          "color": "#777"
+        },
+        "encoding": {
+          "x": {
+            "field": "m",
+            "type": "quantitative",
+            "axis": {
+              "title": "Financial Year Ending June",
+              "values": [
+                2016,
+                2019,
+                2022,
+                2025
+              ],
+              "format": "d",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 12,
+              "tickSize": 4
+            },
+            "scale": {
+              "domain": [
+                2016,
+                2025
+              ],
+              "zero": false
+            }
+          },
+          "y": {
+            "value": 130
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "line",
+          "strokeWidth": 2
+        },
+        "encoding": {
+          "x": {
+            "field": "year",
+            "type": "quantitative",
+            "axis": {
+              "title": "Financial Year Ending June",
+              "values": [
+                2016,
+                2019,
+                2022,
+                2025
+              ],
+              "format": "d",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 12,
+              "tickSize": 4
+            },
+            "scale": {
+              "domain": [
+                2016,
+                2025
+              ],
+              "zero": false
+            }
+          },
+          "y": {
+            "field": "index",
+            "type": "quantitative",
+            "axis": {
+              "title": [
+                "Percentage of Public",
+                "Transport Trips"
+              ],
+              "values": [
+                0,
+                50,
+                100
+              ],
+              "labelExpr": "datum.value + '%'",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 11,
+              "tickSize": 4,
+              "titleLineHeight": 13
+            },
+            "scale": {
+              "domain": [
+                0,
+                145
+              ]
+            }
+          },
+          "color": {
+            "field": "status",
+            "type": "nominal",
+            "title": null,
+            "scale": {
+              "domain": [
+                "Back to 2018–2019 level (95% or more)",
+                "Still short (under 95%)"
+              ],
+              "range": [
+                "#2166AC",
+                "#C2571A"
+              ]
+            },
+            "legend": null
+          },
+          "tooltip": [
+            {
+              "field": "city",
+              "title": "City"
+            },
+            {
+              "field": "fy",
+              "title": "Financial year"
+            },
+            {
+              "field": "total",
+              "format": ",.1f",
+              "title": "Trips (millions)"
+            },
+            {
+              "field": "index",
+              "format": ".0f",
+              "title": "Percentage of 2018–2019"
+            }
+          ],
+          "opacity": {
+            "condition": {
+              "value": 1,
+              "test": "grp == 'All' || datum.status == grp"
+            },
+            "value": 0.15
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "color": "#999",
+          "strokeDash": [
+            3,
+            3
+          ]
+        },
+        "encoding": {
+          "y": {
+            "datum": 100,
+            "scale": {
+              "domain": [
+                0,
+                145
+              ]
+            },
+            "axis": {
+              "title": [
+                "Percentage of Public",
+                "Transport Trips"
+              ],
+              "values": [
+                0,
+                50,
+                100
+              ],
+              "labelExpr": "datum.value + '%'",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 11,
+              "tickSize": 4,
+              "titleLineHeight": 13
+            }
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == 2025"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "baseline": "top",
+          "x": 103.5,
+          "y": 2,
+          "fontSize": 12,
+          "fontWeight": "bold"
+        },
+        "encoding": {
+          "text": {
+            "field": "label"
+          },
+          "color": {
+            "field": "status",
+            "type": "nominal",
+            "title": null,
+            "scale": {
+              "domain": [
+                "Back to 2018–2019 level (95% or more)",
+                "Still short (under 95%)"
+              ],
+              "range": [
+                "#2166AC",
+                "#C2571A"
+              ]
+            },
+            "legend": null
+          },
+          "opacity": {
+            "condition": {
+              "value": 1,
+              "test": "grp == 'All' || datum.status == grp"
+            },
+            "value": 0.3
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == datum.fyr && datum.fpos == 'above'"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 40
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "align": "right",
+              "baseline": "bottom",
+              "dx": -2,
+              "dy": -7
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "ftext"
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == 2025 && datum.fyr != 2025"
+          },
+          {
+            "calculate": "format(datum.index, '.0f') + '%'",
+            "as": "endlab"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 40
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "align": "right",
+              "baseline": "bottom",
+              "dx": -2,
+              "dy": -7
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "endlab"
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == datum.fyr && datum.fpos == 'below'"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 40
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "align": "center",
+              "baseline": "top",
+              "dy": 8
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "ftext"
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == datum.fyr && datum.fpos == 'below-left'"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 40
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "align": "right",
+              "baseline": "top",
+              "dx": 4,
+              "dy": 8
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "ftext"
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "mark": {
+          "type": "point",
+          "opacity": 0,
+          "size": 400
+        },
+        "params": [
+          {
+            "name": "yr",
+            "select": {
+              "type": "point",
+              "fields": [
+                "year"
+              ],
+              "nearest": true,
+              "on": "mouseover",
+              "clear": "mouseout"
+            }
+          }
+        ],
+        "encoding": {
+          "x": {
+            "field": "year",
+            "type": "quantitative",
+            "axis": {
+              "title": "Financial Year Ending June",
+              "values": [
+                2016,
+                2019,
+                2022,
+                2025
+              ],
+              "format": "d",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 12,
+              "tickSize": 4
+            },
+            "scale": {
+              "domain": [
+                2016,
+                2025
+              ],
+              "zero": false
+            }
+          },
+          "y": {
+            "field": "index",
+            "type": "quantitative",
+            "axis": {
+              "title": [
+                "Percentage of Public",
+                "Transport Trips"
+              ],
+              "values": [
+                0,
+                50,
+                100
+              ],
+              "labelExpr": "datum.value + '%'",
+              "grid": false,
+              "labelFontSize": 11,
+              "titleFontSize": 11,
+              "tickSize": 4,
+              "titleLineHeight": 13
+            },
+            "scale": {
+              "domain": [
+                0,
+                145
+              ]
+            }
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "filter": {
+              "param": "yr",
+              "empty": false
+            }
+          },
+          {
+            "calculate": "format(datum.index, '.0f') + '%'",
+            "as": "ix"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "rule",
+              "color": "#555",
+              "strokeWidth": 1
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "value": 20
+              },
+              "y2": {
+                "value": 130
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 36
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Back to 2018–2019 level (95% or more)",
+                    "Still short (under 95%)"
+                  ],
+                  "range": [
+                    "#2166AC",
+                    "#C2571A"
+                  ]
+                },
+                "legend": null
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "align": "left",
+              "dx": 6,
+              "dy": -9,
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "color": "#222"
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "ix"
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "align": "left",
+              "baseline": "top",
+              "x": 3,
+              "y": 3,
+              "fontSize": 10,
+              "fontWeight": "bold",
+              "color": "#555"
+            },
+            "encoding": {
+              "text": {
+                "field": "fy"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "params": [
+    {
+      "name": "grp",
+      "value": "All",
+      "bind": {
+        "input": "radio",
+        "options": [
+          "All",
+          "Back to 2018–2019 level (95% or more)",
+          "Still short (under 95%)"
+        ],
+        "labels": [
+          "All cities",
+          "Recovered (95% or more)",
+          "Still short (under 95%)"
+        ],
+        "name": " ",
+        "element": "#legend_1_1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+/* ---------- Colours, fonts and spacing ---------- */
+:root {
+  --ink: #1F1F1F; --muted: #5F5F5F; --bg: #FAFAF7; --card: #FFFFFF; --line: #E5E5E0; --accent: #1F6FB2; --band: #EAF1F8;
+  --para: 18px; --para-lh: 1.6;   /* one size and line spacing for every paragraph */
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;   /* titles */
+  --sans: "Source Sans 3", Arial, sans-serif;                      /* subtitles, body, labels */
+  --gutter: 24px;           /* space between columns */
+  --page: 1100px;           /* widest the content gets */
+  --measure: 680px;         /* comfortable reading line length (~65 characters) */
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px; --s7: 96px;   /* 8px spacing scale */
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); font-size: var(--para); line-height: var(--para-lh);
+  -webkit-font-smoothing: antialiased; }
+p { margin: 0 0 var(--s2); }
+
+/* Titles: serif. Everything else: sans-serif */
+h1, h2 { font-family: var(--serif); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }   /* serif only for the main title and section titles */
+.big-number { font-family: var(--sans); font-weight: 700; text-wrap: balance; }
+h1 { font-size: 56px; line-height: 1.05; margin: 0 0 var(--s2); }
+h2 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--s3); max-width: var(--measure); }
+h4 { font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1.3; margin: 0 0 var(--s1); }
+.lead, .text, .transition, .subtitle, .hero-note, .hero-intro p { text-wrap: pretty; }
+.num { display: block; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 var(--s1); }
+.num::before { content: "Section "; }
+
+/* ---------- One centred column for everything (shared left/right edges) ---------- */
+.page { max-width: var(--page); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---------- Top navigation ---------- */
+.topnav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.94); border-bottom: 1px solid var(--line);
+  font-size: 14px; font-weight: 600; backdrop-filter: blur(6px); }
+.topnav-inner { max-width: var(--page); margin: 0 auto; padding: 12px var(--gutter); overflow-x: auto; white-space: nowrap; }
+.topnav a { color: var(--muted); text-decoration: none; margin-right: var(--s3); }
+.topnav a:last-child { margin-right: 0; }
+.topnav a:hover { color: var(--accent); }
+section[id], footer[id] { scroll-margin-top: 64px; }   /* sticky nav doesn't cover the heading after a jump */
+
+/* ---------- Grid: equal gutters so every box lines up with the text edge ---------- */
+.pure-g { margin: 0 calc(var(--gutter) / -2); }
+.pure-g > [class*="pure-u"] { padding: 0 calc(var(--gutter) / 2); }
+
+/* ---------- Hero ---------- */
+.hero { padding: var(--s6) 0 var(--s4); border-bottom: 1px solid var(--line); }
+.hero h1 { margin-bottom: var(--s2); }
+/* Title, subtitle and headline figure sit on the page centre line */
+.hero h1, .hero .subtitle, .hero-figure { text-align: center; }
+.hero .subtitle { margin-left: auto; margin-right: auto; }
+.hero .hero-figure .hero-note { max-width: none; }   /* note runs on one line under the headline */
+/* Headline figure, then one row of four KPI cards (each links to its section) */
+.hero-figure { margin-top: var(--s3); }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: var(--s4); }
+.kpi { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--accent);
+  border-radius: 0 0 6px 6px; padding: 14px 18px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
+.kpi:hover { border-color: var(--accent); }
+.kpi-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.kpi-value { font-family: var(--sans); font-size: 32px; font-weight: 700; line-height: 1.1; margin: var(--s1) 0; }
+.kpi-text { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.subtitle { font-family: var(--sans); font-size: 22px; line-height: 1.45; color: var(--muted); margin: 0; max-width: 560px; }
+.big-number { font-size: 40px; line-height: 1.15; color: var(--accent); margin: 0 0 var(--s1); }
+.hero-note { font-size: var(--para); line-height: var(--para-lh); color: var(--muted); margin: 0; max-width: 560px; }
+/* Story intro: second row on the same columns, so each paragraph lines up with the title or the map above it */
+.hero-intro { margin-top: var(--s3); }
+.hero-intro p { font-size: var(--para); line-height: var(--para-lh); margin: 0; }
+
+/* ---------- Sections and text blocks ---------- */
+section { margin: var(--s4) 0; }
+/* Section header band: label, title and key question on a tint that spans the content edges */
+.section-head { background: var(--band); border-radius: 6px; padding: 20px 20px 20px 0; margin: 0 0 var(--s4); }   /* no left padding: text lines up with the paragraphs */
+.section-head h2 { margin: 0; max-width: none; line-height: 1.15; text-wrap: pretty; }
+.section-head .num { margin-bottom: 6px; }
+.section-question { font-family: var(--sans); font-size: 19px; font-weight: 400; line-height: 1.45; letter-spacing: 0;
+  color: var(--muted); }   /* question follows the title after a dash */
+.hero + section { margin-top: 40px; }
+.text, .lead, .transition, .kl-box { max-width: var(--measure); }
+.text { margin: 0 0 var(--s3); }
+.lead { font-size: var(--para); line-height: var(--para-lh); margin: 0 0 var(--s5); }
+.transition { color: var(--muted); margin: 0; padding-left: var(--s2); border-left: 2px solid var(--line); }
+
+/* ---------- Boxes (same inner padding as chart cards) ---------- */
+.term-box, .note-box { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: 0 20px; margin: 0 0 var(--s2); font-size: var(--para); line-height: var(--para-lh); }   /* no top/bottom padding */
+/* Glossary strip under each lead: equal-width, equal-height cards */
+.glossary { margin-bottom: var(--s2); }
+/* Lead paragraph in the left half, its glossary stacked in the right half */
+.lead-row .lead-terms { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); margin-bottom: var(--gutter); }   /* two terms side by side */
+.lead-row .lead-terms .term-box { margin: 0; }
+.lead-row .lead-terms--single { grid-template-columns: 1fr; }   /* one term card beside the lead */
+.lead-row .lead { max-width: none; margin: 0 0 var(--gutter); }
+.lead-row .lead:has(+ .lead-list) { margin-bottom: var(--s1); }   /* a lead sentence followed by its points */
+.lead-list { margin: 0 0 var(--gutter); padding-left: 1.2em; font-size: var(--para); line-height: var(--para-lh); }
+.lead-list li { margin: 0 0 var(--s1); }
+.lead-row .lead:has(+ .term-box) { margin-bottom: 0; }   /* no gap between the right-hand paragraph and its term card */
+.lead-row .lead + .term-box { margin: 0 0 var(--gutter); }   /* term card under the right-hand paragraph */
+.glossary > [class*="pure-u"] { display: flex; }
+.glossary .term-box { flex: 1; }
+.glossary .glossary-stack { flex-direction: column; }
+.glossary .glossary-stack .term-box { flex: 1 1 auto; }
+.glossary .glossary-stack .term-box:first-child { margin-bottom: var(--s2); }
+.pure-g > [class*="pure-u"] > .note-box { height: calc(100% - var(--gutter)); margin-bottom: var(--gutter); }   /* note matches the chart beside it */
+.note-box { border-left-color: #999; }
+/* Two notes stacked beside one chart, together matching its height */
+.note-stack { display: flex; flex-direction: column; }
+.pure-g > .note-stack > .note-box { flex: 1; height: auto; }
+.pure-g > .note-stack > .note-box:first-child { flex: 0 0 auto; }   /* first note fits its text; the last fills the rest */
+.note-stack .note-box > p:last-child { margin-bottom: var(--s2); }
+.note-stack .note-box > p { font-size: var(--para); line-height: var(--para-lh); }   /* same size as the page's paragraphs */   /* room below the last line of a short note */
+/* Mode names in text, coloured to match the charts */
+.mode-train { color: #0A62C9; } .mode-bus { color: #F58A07; } .mode-ferry { color: #8A1FBF; } .mode-lightrail { color: #A6700A; }
+/* Point-form list inside a note card */
+.note-list { margin: var(--s1) 0; padding-left: 1.2em; color: #3A3A3A; font-size: 15px; line-height: 1.5; }
+.note-list li { margin: 0 0 4px; }
+/* List under a note card: bullets line up with the card's text (4px border + 20px padding) */
+.note-stack > .note-list { margin: 0 0 calc(var(--gutter) - var(--s1)); padding-left: calc(24px + 1.1em); font-size: var(--para); line-height: var(--para-lh); }
+.note-stack > .note-list li { margin: 0 0 var(--s1); padding-left: 2px; }
+/* Key for the circle and triangle in the before/after arrow chart */
+.shape-key { display: flex; flex-wrap: wrap; gap: 6px var(--s3); font-size: 12px; color: var(--ink); margin: 0 0 var(--s1); }
+.shape-key span { display: inline-flex; align-items: center; gap: 6px; }
+.shape-key svg { fill: #555; }
+.chart-head:has(.shape-key--stack) { flex-wrap: nowrap; align-items: flex-start; }
+.shape-key--stack { flex-direction: column; gap: 4px; margin: 4px 0 0; flex: 0 0 auto; }   /* key stacked to the right of a half-width title */
+.term-box p, .note-box p { margin: 0; color: #3A3A3A; font-size: 15px; line-height: 1.5; }   /* card text matches its 15px card title */
+.kl-box { background: #EEF4FA; border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  padding: var(--s2) 20px; font-size: var(--para); line-height: var(--para-lh); margin: var(--s3) 0 0; }
+
+/* ---------- Chart cards ---------- */
+.chart { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 20px;
+  margin: 0 0 var(--gutter); width: 100%; overflow-x: auto; }
+.chart-plain { background: transparent; border: none; padding: 0; margin: 0; }
+.chart > div { width: 100%; }                          /* inner box: "width": "container" charts fill this */
+.pure-g > [class*="pure-u"] > .chart { height: calc(100% - var(--gutter)); }   /* cards in one row share a height */
+.chart .vega-embed summary { display: none; }
+/* Card header written in HTML (used where the description is split into two columns) */
+.chart-title { font-family: var(--sans); font-size: 20px; font-weight: 700; line-height: 1.25; margin: 0 0 var(--s1); }
+/* Chart description under an HTML title: one paragraph that wraps to the card width */
+.chart-sub { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 0 0 var(--s2); }
+/* One short note under each panel of a two-panel chart */
+.panel-notes { margin-top: var(--s2); }
+.panel-notes p { font-size: 14px; line-height: 1.5; color: var(--ink); margin: 0 0 var(--s1); }
+.chart-desc { margin-bottom: var(--s2); }
+.chart-title-gap { margin-bottom: var(--s2); }
+/* Chart control (e.g. year slider) under the second panel: right half of the card */
+.chart-foot { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); margin-top: var(--s1); }
+.chart-control { font-size: 13px; color: var(--muted); }
+/* Slider centred under the line chart, just below its axis title (positions match the chart's fixed layout) */
+.chart-stack { position: relative; }
+.chart-control-center { display: flex; justify-content: center; margin-top: var(--s2); }   /* slider centred under a chart */
+/* Small key for cells with no data (e.g. no service), shown under a chart legend */
+#chart_1_4 { display: flex; justify-content: center; }   /* equal space left and right of the lollipop chart */
+.chart-key { display: flex; align-items: center; justify-content: flex-start; gap: 6px; margin: 2px 0 0 58px; font-size: 12px; color: var(--ink); }
+.swatch-none { width: 14px; height: 14px; background: #E2E2DC; border: 1px solid #CFCFC8; }
+.chart-control-overlay { position: absolute; top: 418px; left: 731px; transform: translateX(-50%); white-space: nowrap; }
+.chart-control .vega-bind { display: flex; align-items: center; gap: var(--s1); }
+.chart-control .vega-bind-name { font-weight: 600; color: var(--ink); }
+/* Slim slider sized to the 13px text */
+.chart-control input[type="range"] { -webkit-appearance: none; appearance: none; width: 160px; height: 4px; margin: 0;
+  background: var(--line); border-radius: 2px; }
+.chart-control input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; }
+.chart-control input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
+.chart-control .vega-bind label > span:last-child, .chart-control output { font-weight: 600; color: var(--ink); }
+.chart-desc p { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 0; }
+/* Legend written into the page (Vega-Lite radio input), styled as colour keys */
+.html-legend { margin-top: var(--s1); font-size: 13px; }
+.html-legend .vega-bind { display: block; width: 100%; }
+.html-legend .vega-bind-radio { display: flex; align-items: center; width: 100%; }
+.html-legend .vega-bind-radio label:not(:last-child) { margin-right: auto; }
+/* Variant: items sit together with the same gap between each option, centred under the chart */
+.html-legend--gap .vega-bind-radio { justify-content: center; gap: 28px; }
+.html-legend--gap .vega-bind-radio label:not(:last-child) { margin-right: 0; }
+.html-legend--wrap .vega-bind-radio { flex-wrap: wrap; row-gap: 6px; column-gap: 18px; }   /* long option lists wrap, same gap between every option */   /* first item on the paragraph's left edge, last on its right */
+.html-legend .vega-bind-name { display: none; }
+.html-legend label { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 4px; cursor: pointer; color: var(--ink); white-space: nowrap; }
+.html-legend input { accent-color: var(--accent); margin: 0; order: -2; }   /* radio, then colour line, then text */
+#legend_1_1 label:nth-of-type(2)::after, #legend_1_1 label:nth-of-type(3)::after,
+#legend_1_3 label:nth-of-type(2)::after, #legend_1_3 label:nth-of-type(3)::after { content: ""; order: -1; width: 16px; height: 3px; border-radius: 2px; }
+#legend_1_1 label:nth-of-type(2)::after, #legend_1_3 label:nth-of-type(2)::after { background: #2166AC; }
+#legend_1_1 label:nth-of-type(3)::after, #legend_1_3 label:nth-of-type(3)::after { background: #C2571A; }
+#legend_1_4 label:nth-of-type(n+2)::after { content: ""; order: -1; width: 16px; height: 3px; border-radius: 2px; }   /* line keys, like the other legends */
+#legend_1_4 label:nth-of-type(2)::after { background: #C2571A; }
+#legend_1_4 label:nth-of-type(3)::after { background: #2166AC; }          /* hides the empty actions button */
+/* Title and filter on one row: title left, filter right (wraps under the title on narrow screens) */
+.chart-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-bottom: var(--s2); }
+.nowrap { white-space: nowrap; }   /* keep a date range on one line */
+.chart-head .chart-title { margin: 0; flex: 1 1 260px; }   /* title wraps first so the filter keeps its place on the right */
+.chart-head .html-legend { flex: 0 0 auto; }
+/* Filter stacked as a short column beside a half-width card's title */
+.chart-head:has(.html-legend--stack) { flex-wrap: nowrap; align-items: flex-start; }
+.html-legend--stack .vega-bind-radio { flex-direction: column; align-items: flex-start; gap: 2px; }
+.html-legend--stack .vega-bind-radio label:not(:last-child) { margin-right: 0; }
+.chart-head .html-legend { width: auto; margin: 0; }
+.chart-head .html-legend label { margin: 0; }
+/* Small dropdown filters beside a chart title */
+.chart-filters { display: flex; gap: var(--s2); font-size: 12px; color: var(--muted); }
+.chart-filters .vega-bind label { display: flex; align-items: center; gap: 6px; }
+.chart-filters .vega-bind-name { font-weight: 600; color: var(--ink); }
+.chart-filters select { font: inherit; font-size: 12px; color: var(--ink); padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--card); }
+#legend_2_2 label:nth-of-type(n+2)::after { content: ""; order: -1; width: 12px; height: 12px; border-radius: 2px; }   /* square keys for the areas */
+#legend_2_2 label:nth-of-type(2)::after { background: #0A62C9; }
+#legend_2_2 label:nth-of-type(3)::after { background: #00A8A8; }
+#legend_2_2 label:nth-of-type(4)::after { background: #F58A07; }
+#legend_2_2 label:nth-of-type(5)::after { background: #A6700A; }
+#legend_2_2 label:nth-of-type(6)::after { background: #8A1FBF; }
+.chart svg { user-select: none; -webkit-user-select: none; }   /* dragging a brush won't select page text */
+
+/* ---------- Footer ---------- */
+footer { margin-top: var(--s6); border-top: 1px solid var(--line); padding: var(--s3) 0 var(--s6); font-size: 14px; line-height: 1.55; color: var(--muted); }
+footer p { max-width: 820px; }
+footer ul { padding-left: 1.25em; margin: 0 0 var(--s2); max-width: 820px; }
+footer li { margin: 0 0 var(--s1); }
+footer a { color: var(--accent); }
+
+/* ---------- Below 1024px wide: columns stack (set by pure-u-lg-*), headings shrink ---------- */
+@media (max-width: 1023px) {
+  :root { --gutter: 16px; --s7: 64px; }
+  h1 { font-size: 40px; } h2 { font-size: 24px; }
+  .section-question { font-size: 17px; }
+  .big-number { font-size: 30px; }
+  .subtitle { font-size: 19px; }
+  .lead { margin-bottom: var(--s4); }
+  .hero { padding: var(--s5) 0 var(--s4); }
+  .kpis { grid-template-columns: 1fr 1fr; gap: var(--s2); }
+  .chart-foot { grid-template-columns: 1fr; gap: 0; }
+  .chart-control-overlay { position: static; transform: none; margin-top: var(--s2); }
+  .hero-intro [class*="pure-u"] + [class*="pure-u"] p { margin-top: var(--s2); }
+  .topnav a { margin-right: var(--s2); }
+}

@@ -1,0 +1,277 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "data/opal_monthly.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "date",
+        "train": "number",
+        "metro": "number",
+        "bus": "number",
+        "light_rail": "number",
+        "ferry": "number"
+      }
+    }
+  },
+  "vconcat": [
+    {
+      "width": "container",
+      "height": 260,
+      "layer": [
+        {
+          "transform": [
+            {
+              "fold": [
+                "train",
+                "metro",
+                "bus",
+                "light_rail",
+                "ferry"
+              ],
+              "as": [
+                "mode_key",
+                "trips"
+              ]
+            },
+            {
+              "calculate": "{'train':'Train','metro':'Metro','bus':'Bus','light_rail':'Light rail','ferry':'Ferry'}[datum.mode_key]",
+              "as": "mode"
+            }
+          ],
+          "mark": {
+            "type": "area",
+            "interpolate": "monotone",
+            "clip": true
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "type": "temporal",
+              "title": null,
+              "scale": {
+                "domain": {
+                  "param": "period"
+                }
+              },
+              "axis": {
+                "tickCount": 8
+              }
+            },
+            "y": {
+              "field": "trips",
+              "type": "quantitative",
+              "stack": "center",
+              "axis": null
+            },
+            "color": {
+              "field": "mode",
+              "type": "nominal",
+              "scale": {
+                "domain": [
+                  "Train",
+                  "Metro",
+                  "Bus",
+                  "Light rail",
+                  "Ferry"
+                ],
+                "range": [
+                  "#0A62C9",
+                  "#00A8A8",
+                  "#F58A07",
+                  "#A6700A",
+                  "#8A1FBF"
+                ]
+              },
+              "legend": null
+            },
+            "opacity": {
+              "condition": {
+                "test": "length(modePicks) == 0 || indexof(modePicks, datum.mode) >= 0",
+                "value": 1
+              },
+              "value": 0.2
+            },
+            "tooltip": [
+              {
+                "field": "mode"
+              },
+              {
+                "field": "month",
+                "timeUnit": "yearmonth",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "trips",
+                "format": ",",
+                "title": "Trips"
+              }
+            ]
+          }
+        },
+        {
+          "data": {
+            "values": [
+              {
+                "date": "2020-03-30",
+                "label": "First lockdown"
+              },
+              {
+                "date": "2021-06-26",
+                "label": "Delta lockdown"
+              },
+              {
+                "date": "2024-01-01",
+                "label": "Opal counting changes",
+                "side": "left"
+              },
+              {
+                "date": "2024-08-19",
+                "label": "Metro City opens"
+              }
+            ]
+          },
+          "transform": [
+            {
+              "calculate": "toDate(datum.date)",
+              "as": "d"
+            }
+          ],
+          "layer": [
+            {
+              "mark": {
+                "type": "rule",
+                "color": "#555",
+                "strokeDash": [
+                  3,
+                  3
+                ],
+                "clip": true
+              },
+              "encoding": {
+                "x": {
+                  "field": "d",
+                  "type": "temporal",
+                  "scale": {
+                    "domain": {
+                      "param": "period"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.side == 'left'"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "right",
+                "dx": -4,
+                "y": 8,
+                "fontSize": 11,
+                "color": "#333",
+                "clip": true
+              },
+              "encoding": {
+                "x": {
+                  "field": "d",
+                  "type": "temporal",
+                  "scale": {
+                    "domain": {
+                      "param": "period"
+                    }
+                  }
+                },
+                "text": {
+                  "field": "label"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.side != 'left'"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "left",
+                "dx": 4,
+                "y": 8,
+                "fontSize": 11,
+                "color": "#333",
+                "clip": true
+              },
+              "encoding": {
+                "x": {
+                  "field": "d",
+                  "type": "temporal",
+                  "scale": {
+                    "domain": {
+                      "param": "period"
+                    }
+                  }
+                },
+                "text": {
+                  "field": "label"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "width": "container",
+      "height": 50,
+      "transform": [
+        {
+          "calculate": "(datum.train + datum.metro + datum.bus + datum.light_rail + datum.ferry) / 1000000",
+          "as": "trips_m"
+        }
+      ],
+      "params": [
+        {
+          "name": "period",
+          "select": {
+            "type": "interval",
+            "encodings": [
+              "x"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "area",
+        "color": "#9EB9D4"
+      },
+      "encoding": {
+        "x": {
+          "field": "month",
+          "type": "temporal",
+          "title": "Drag across this strip to zoom the chart above (double-click to reset)",
+          "axis": {
+            "tickCount": 10
+          }
+        },
+        "y": {
+          "field": "trips_m",
+          "type": "quantitative",
+          "title": null,
+          "axis": null
+        }
+      }
+    }
+  ],
+  "padding": 0,
+  "params": [
+    {
+      "name": "modePicks",
+      "value": []
+    }
+  ]
+}

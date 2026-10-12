@@ -1,0 +1,740 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "fy",
+      "value": 2025,
+      "bind": {
+        "input": "range",
+        "min": 2016,
+        "max": 2025,
+        "step": 1,
+        "name": "Financial year ending June: ",
+        "element": "#slider_1_2"
+      }
+    }
+  ],
+  "hconcat": [
+    {
+      "width": 460,
+      "height": 360,
+      "projection": {
+        "type": "conicEqualArea",
+        "parallels": [
+          -18,
+          -36
+        ],
+        "rotate": [
+          -132,
+          0
+        ],
+        "center": [
+          0,
+          -27
+        ]
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "data/aus_states.topojson",
+            "format": {
+              "type": "topojson",
+              "feature": "aus_states"
+            }
+          },
+          "mark": {
+            "type": "geoshape",
+            "fill": "#E6E6E0",
+            "stroke": "white",
+            "strokeWidth": 1
+          }
+        },
+        {
+          "data": {
+            "url": "data/bitre_city_year.csv",
+            "format": {
+              "type": "csv",
+              "parse": {
+                "train": "number",
+                "light_rail": "number",
+                "bus": "number",
+                "ferry": "number",
+                "year": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "calculate": "datum.train + datum.light_rail + datum.bus + datum.ferry",
+              "as": "total"
+            },
+            {
+              "calculate": "datum.year == 2019 ? datum.total : null",
+              "as": "b"
+            },
+            {
+              "joinaggregate": [
+                {
+                  "op": "max",
+                  "field": "b",
+                  "as": "base"
+                }
+              ],
+              "groupby": [
+                "city"
+              ]
+            },
+            {
+              "calculate": "datum.total / datum.base * 100",
+              "as": "index"
+            },
+            {
+              "calculate": "format(datum.index, '.0f') + '%'",
+              "as": "pct_tip"
+            },
+            {
+              "filter": "datum.year == fy"
+            },
+            {
+              "lookup": "city",
+              "from": {
+                "data": {
+                  "values": [
+                    {
+                      "city": "Sydney",
+                      "lat": -33.87,
+                      "lon": 151.21,
+                      "llat": -32.6,
+                      "llon": 148.0,
+                      "side": "W"
+                    },
+                    {
+                      "city": "Melbourne",
+                      "lat": -37.81,
+                      "lon": 144.96,
+                      "llat": -37.4,
+                      "llon": 142.0,
+                      "side": "W"
+                    },
+                    {
+                      "city": "Brisbane",
+                      "lat": -27.47,
+                      "lon": 153.03,
+                      "llat": -26.5,
+                      "llon": 151.5,
+                      "side": "W"
+                    },
+                    {
+                      "city": "Perth",
+                      "lat": -31.95,
+                      "lon": 115.86,
+                      "llat": -31.9,
+                      "llon": 117.5,
+                      "side": "E"
+                    },
+                    {
+                      "city": "Adelaide",
+                      "lat": -34.93,
+                      "lon": 138.6,
+                      "llat": -34.6,
+                      "llon": 137.6,
+                      "side": "W"
+                    },
+                    {
+                      "city": "Canberra",
+                      "lat": -35.28,
+                      "lon": 149.13,
+                      "llat": -37.8,
+                      "llon": 150.0,
+                      "side": "E"
+                    },
+                    {
+                      "city": "Hobart",
+                      "lat": -42.88,
+                      "lon": 147.33,
+                      "llat": -42.9,
+                      "llon": 148.6,
+                      "side": "E"
+                    },
+                    {
+                      "city": "Darwin",
+                      "lat": -12.46,
+                      "lon": 130.84,
+                      "llat": -12.6,
+                      "llon": 132.2,
+                      "side": "E"
+                    }
+                  ]
+                },
+                "key": "city",
+                "fields": [
+                  "lat",
+                  "lon",
+                  "llat",
+                  "llon",
+                  "side"
+                ]
+              }
+            },
+            {
+              "calculate": "[datum.city, format(datum.index, '.0f') + '%']",
+              "as": "label"
+            }
+          ],
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          },
+          "layer": [
+            {
+              "params": [
+                {
+                  "name": "pick",
+                  "select": {
+                    "type": "point",
+                    "fields": [
+                      "city"
+                    ]
+                  },
+                  "value": [
+                    {
+                      "city": "Melbourne"
+                    }
+                  ]
+                }
+              ],
+              "mark": {
+                "type": "point",
+                "opacity": 0.9,
+                "cursor": "pointer",
+                "filled": true,
+                "shape": "circle"
+              },
+              "encoding": {
+                "color": {
+                  "field": "index",
+                  "type": "quantitative",
+                  "title": "Percentage of public transport trips (of 2018–2019 level)",
+                  "scale": {
+                    "type": "linear",
+                    "domain": [
+                      0,
+                      110
+                    ],
+                    "range": [
+                      "#EAF2FA",
+                      "#0B3A6B"
+                    ],
+                    "clamp": true
+                  },
+                  "legend": {
+                    "title": [
+                      "Percentage of public",
+                      "transport trips"
+                    ],
+                    "orient": "none",
+                    "legendX": 41,
+                    "legendY": 400,
+                    "direction": "horizontal",
+                    "gradientLength": 165,
+                    "values": [
+                      0,
+                      25,
+                      50,
+                      75,
+                      110
+                    ],
+                    "labelExpr": "datum.value + '%'",
+                    "type": "gradient",
+                    "titleFontWeight": "normal",
+                    "labelOverlap": false
+                  }
+                },
+                "order": {
+                  "field": "total",
+                  "sort": "descending"
+                },
+                "stroke": {
+                  "condition": {
+                    "param": "pick",
+                    "empty": false,
+                    "value": "#222222"
+                  },
+                  "value": "#6B6B6B"
+                },
+                "strokeWidth": {
+                  "condition": {
+                    "param": "pick",
+                    "empty": false,
+                    "value": 3
+                  },
+                  "value": 1
+                },
+                "tooltip": [
+                  {
+                    "field": "city",
+                    "title": "Capital"
+                  },
+                  {
+                    "field": "fy",
+                    "title": "Year"
+                  },
+                  {
+                    "field": "total",
+                    "format": ",.1f",
+                    "title": "Trips (millions)"
+                  },
+                  {
+                    "field": "pct_tip",
+                    "title": "Percentage of public transport trips"
+                  }
+                ],
+                "size": {
+                  "field": "total",
+                  "type": "quantitative",
+                  "scale": {
+                    "domain": [
+                      0,
+                      800
+                    ],
+                    "range": [
+                      0,
+                      2000
+                    ]
+                  },
+                  "legend": {
+                    "title": "Trips in the selected year (millions)",
+                    "orient": "none",
+                    "legendX": 245,
+                    "legendY": 400,
+                    "direction": "horizontal",
+                    "values": [
+                      10,
+                      100,
+                      500
+                    ],
+                    "symbolType": "circle",
+                    "symbolFillColor": "#BBBBBB",
+                    "symbolStrokeColor": "#777777",
+                    "titleFontWeight": "normal"
+                  }
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.side == 'W'"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "right",
+                "baseline": "middle",
+                "fontSize": 11,
+                "lineHeight": 13,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "longitude": {
+                  "field": "llon",
+                  "type": "quantitative"
+                },
+                "latitude": {
+                  "field": "llat",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "label"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.side == 'E'"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "left",
+                "baseline": "middle",
+                "fontSize": 11,
+                "lineHeight": 13,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "longitude": {
+                  "field": "llon",
+                  "type": "quantitative"
+                },
+                "latitude": {
+                  "field": "llat",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "label"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "width": 270,
+      "height": 360,
+      "data": {
+        "url": "data/bitre_city_year.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "train": "number",
+            "light_rail": "number",
+            "bus": "number",
+            "ferry": "number",
+            "year": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.train + datum.light_rail + datum.bus + datum.ferry",
+          "as": "total"
+        },
+        {
+          "calculate": "datum.year == 2019 ? datum.total : null",
+          "as": "b"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "b",
+              "as": "base"
+            }
+          ],
+          "groupby": [
+            "city"
+          ]
+        },
+        {
+          "calculate": "datum.total / datum.base * 100",
+          "as": "index"
+        },
+        {
+          "calculate": "format(datum.index, '.0f') + '%'",
+          "as": "pct_tip"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "min",
+              "field": "index",
+              "as": "low"
+            }
+          ],
+          "groupby": [
+            "city"
+          ]
+        },
+        {
+          "calculate": "datum.year == fy ? datum.index : null",
+          "as": "cur0"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "cur0",
+              "as": "cur"
+            }
+          ],
+          "groupby": [
+            "city"
+          ]
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#999",
+            "strokeDash": [
+              3,
+              3
+            ]
+          },
+          "encoding": {
+            "y": {
+              "datum": 100
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "line",
+            "strokeWidth": 1,
+            "opacity": 1,
+            "color": "#CCCCCC"
+          },
+          "encoding": {
+            "y": {
+              "field": "index",
+              "type": "quantitative",
+              "title": [
+                "Percentage of Public Transport Trips",
+                "(of 2018–2019 Level)"
+              ],
+              "scale": {
+                "domain": [
+                  40,
+                  120
+                ]
+              }
+            },
+            "detail": {
+              "field": "city"
+            },
+            "x": {
+              "field": "year",
+              "type": "quantitative",
+              "title": "Financial Year Ending June",
+              "axis": {
+                "format": "d",
+                "tickCount": 5
+              },
+              "scale": {
+                "domain": [
+                  2016,
+                  2025
+                ]
+              }
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "param": "pick",
+                "empty": false
+              }
+            }
+          ],
+          "mark": {
+            "type": "line",
+            "strokeWidth": 3.5,
+            "point": {
+              "filled": true,
+              "size": 30,
+              "color": "#3A5A80"
+            }
+          },
+          "encoding": {
+            "y": {
+              "field": "index",
+              "type": "quantitative"
+            },
+            "tooltip": [
+              {
+                "field": "city"
+              },
+              {
+                "field": "fy",
+                "title": "Year"
+              },
+              {
+                "field": "pct_tip",
+                "title": "Percentage of public transport trips"
+              }
+            ],
+            "x": {
+              "field": "year",
+              "type": "quantitative"
+            },
+            "stroke": {
+              "field": "cur",
+              "type": "quantitative",
+              "scale": {
+                "type": "linear",
+                "domain": [
+                  0,
+                  110
+                ],
+                "range": [
+                  "#EAF2FA",
+                  "#0B3A6B"
+                ],
+                "clamp": true
+              },
+              "legend": null,
+              "title": "Line colour"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "param": "pick",
+                "empty": false
+              }
+            },
+            {
+              "filter": "datum.year == 2025"
+            },
+            {
+              "calculate": "datum.city + ' ' + format(datum.index, '.0f') + '%'",
+              "as": "endlab"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 6,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#222"
+          },
+          "encoding": {
+            "y": {
+              "field": "index",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "endlab"
+            },
+            "x": {
+              "field": "year",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.year == fy && datum.city == 'Sydney'"
+            }
+          ],
+          "mark": {
+            "type": "rule",
+            "color": "#E39B2D",
+            "strokeWidth": 2
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.year == 2022 && datum.city == 'Sydney'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "y": 352,
+            "align": "center",
+            "fontSize": 11,
+            "color": "#666",
+            "text": "Delta lockdowns"
+          },
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": {
+                "param": "pick",
+                "empty": false
+              }
+            },
+            {
+              "filter": "datum.index == datum.low"
+            },
+            {
+              "calculate": "'Low: ' + format(datum.index, '.0f') + '% (' + datum.fy + ')'",
+              "as": "lowlab"
+            }
+          ],
+          "layer": [
+            {
+              "mark": {
+                "type": "point",
+                "filled": true,
+                "size": 70,
+                "color": "#222"
+              },
+              "encoding": {
+                "x": {
+                  "field": "year",
+                  "type": "quantitative"
+                },
+                "y": {
+                  "field": "index",
+                  "type": "quantitative"
+                }
+              }
+            },
+            {
+              "mark": {
+                "type": "text",
+                "align": "center",
+                "baseline": "top",
+                "dy": 10,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "x": {
+                  "field": "year",
+                  "type": "quantitative"
+                },
+                "y": {
+                  "field": "index",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "lowlab"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "spacing": 73,
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 64,
+    "bottom": 5
+  },
+  "resolve": {
+    "scale": {
+      "stroke": "independent"
+    },
+    "legend": {
+      "stroke": "independent"
+    }
+  }
+}

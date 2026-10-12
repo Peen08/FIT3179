@@ -1,0 +1,182 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 420,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/melb_stations.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "lat": "number",
+        "lon": "number",
+        "entries_2425": "number",
+        "pre_am": "number",
+        "am_peak": "number",
+        "interpeak": "number",
+        "pm_peak": "number",
+        "pm_late": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "window": [
+        {
+          "op": "row_number",
+          "as": "rank"
+        }
+      ],
+      "sort": [
+        {
+          "field": "entries_2425",
+          "order": "descending"
+        }
+      ]
+    },
+    {
+      "filter": "datum.rank <= 20"
+    },
+    {
+      "calculate": "datum.pre_am + datum.am_peak + datum.interpeak + datum.pm_peak + datum.pm_late",
+      "as": "day_total"
+    },
+    {
+      "fold": [
+        "pre_am",
+        "am_peak",
+        "interpeak",
+        "pm_peak",
+        "pm_late"
+      ],
+      "as": [
+        "band_key",
+        "entries"
+      ]
+    },
+    {
+      "calculate": "{'pre_am':'Early','am_peak':'Morning peak','interpeak':'Midday','pm_peak':'Evening peak','pm_late':'Late evening'}[datum.band_key]",
+      "as": "band"
+    },
+    {
+      "calculate": "datum.entries / datum.day_total * 100",
+      "as": "share"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "band",
+      "type": "ordinal",
+      "title": null,
+      "sort": [
+        "Early",
+        "Morning peak",
+        "Midday",
+        "Evening peak",
+        "Late evening"
+      ],
+      "axis": {
+        "labelAngle": 0,
+        "orient": "top",
+        "labelExpr": "split(datum.label, ' ')",
+        "labelLineHeight": 13,
+        "labelPadding": 18
+      }
+    },
+    "y": {
+      "field": "station",
+      "type": "nominal",
+      "title": null,
+      "sort": {
+        "field": "entries_2425",
+        "order": "descending"
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "color": {
+          "field": "share",
+          "type": "quantitative",
+          "title": "Percentage of day",
+          "scale": {
+            "scheme": "purples"
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 220
+          }
+        },
+        "tooltip": [
+          {
+            "field": "station"
+          },
+          {
+            "field": "band",
+            "title": "Time band"
+          },
+          {
+            "field": "share",
+            "format": ".0f",
+            "title": "Percentage of the day's entries"
+          }
+        ],
+        "opacity": {
+          "condition": {
+            "param": "rowHover",
+            "value": 1
+          },
+          "value": 0.25
+        }
+      },
+      "params": [
+        {
+          "name": "rowHover",
+          "select": {
+            "type": "point",
+            "fields": [
+              "station"
+            ],
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.share >= 40"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "color": "white"
+      },
+      "encoding": {
+        "text": {
+          "field": "share",
+          "format": ".0f"
+        },
+        "opacity": {
+          "condition": {
+            "param": "rowHover",
+            "value": 1
+          },
+          "value": 0.25
+        }
+      }
+    }
+  ]
+}

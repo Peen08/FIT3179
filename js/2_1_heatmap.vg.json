@@ -1,0 +1,255 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 280,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/opal_monthly.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "date",
+        "train": "number",
+        "metro": "number",
+        "bus": "number",
+        "light_rail": "number",
+        "ferry": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "(datum.train + datum.metro + datum.bus + datum.light_rail + datum.ferry) / 1000000",
+      "as": "trips_m"
+    },
+    {
+      "calculate": "datum.trips_m < 20 ? 'Under 20' : datum.trips_m < 40 ? '20 to 40' : datum.trips_m < 55 ? '40 to 55' : datum.trips_m < 65 ? '55 to 65' : '65 or more'",
+      "as": "band"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "month",
+      "timeUnit": "month",
+      "type": "ordinal",
+      "title": null,
+      "axis": {
+        "labelAngle": 0,
+        "format": "%B"
+      }
+    },
+    "y": {
+      "field": "month",
+      "timeUnit": "year",
+      "type": "ordinal",
+      "title": null
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "bandPick == 'All' || datum.band == bandPick",
+            "field": "trips_m",
+            "type": "quantitative",
+            "title": "Trips (millions)",
+            "scale": {
+              "domain": [
+                0,
+                40,
+                75
+              ],
+              "range": [
+                "#EAF2FA",
+                "#4A8CCB",
+                "#0B3A6B"
+              ],
+              "interpolate": "lab"
+            },
+            "legend": {
+              "titleFontWeight": "normal",
+              "gradientLength": 180,
+              "values": [
+                0,
+                25,
+                50,
+                75
+              ]
+            }
+          },
+          "value": "#F1F1EC"
+        },
+        "tooltip": [
+          {
+            "field": "month",
+            "timeUnit": "yearmonth",
+            "title": "Month",
+            "format": "%B %Y"
+          },
+          {
+            "field": "trips_m",
+            "format": ".1f",
+            "title": "Trips (millions)"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "window": [
+            {
+              "op": "row_number",
+              "as": "r"
+            }
+          ],
+          "sort": [
+            {
+              "field": "trips_m",
+              "order": "ascending"
+            }
+          ]
+        },
+        {
+          "filter": "datum.r == 1"
+        },
+        {
+          "calculate": "'Low: ' + format(datum.trips_m, '.0f') + ' million'",
+          "as": "lab"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "color": "#08306B"
+      },
+      "encoding": {
+        "text": {
+          "field": "lab"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "year(datum.month) == 2025 && month(datum.month) == 11"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M 2.75 -1.20 L 7.60 -1.20 L 7.60 1.20 L 2.75 1.20 Z",
+            "size": 1600,
+            "filled": true,
+            "color": "#EEF3F9",
+            "stroke": "#C6D5E6",
+            "strokeWidth": 1,
+            "opacity": 1
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "month",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "month",
+              "timeUnit": "year",
+              "type": "ordinal"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M 2.75 -0.30 L 1.95 0.00 M 1.95 0.00 L 2.15 -0.23 M 1.95 0.00 L 2.25 0.04",
+            "size": 1600,
+            "filled": false,
+            "stroke": "#4A6B8A",
+            "strokeWidth": 1.4
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "month",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "month",
+              "timeUnit": "year",
+              "type": "ordinal"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "middle",
+            "dx": 103.5,
+            "dy": -13.0,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "lineHeight": 13,
+            "color": "#1F3B5C",
+            "text": [
+              "2025 as a whole:",
+              "88% of the",
+              "2019 level"
+            ]
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "month",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "month",
+              "timeUnit": "year",
+              "type": "ordinal"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "params": [
+    {
+      "name": "bandPick",
+      "value": "All",
+      "bind": {
+        "input": "radio",
+        "options": [
+          "All",
+          "Under 20",
+          "20 to 40",
+          "40 to 55",
+          "55 to 65",
+          "65 or more"
+        ],
+        "labels": [
+          "All months",
+          "Under 20 million",
+          "20 to 40 million",
+          "40 to 55 million",
+          "55 to 65 million",
+          "65 million or more"
+        ],
+        "name": " ",
+        "element": "#legend_2_1"
+      }
+    }
+  ]
+}

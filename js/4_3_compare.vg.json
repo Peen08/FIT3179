@@ -1,0 +1,814 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "yearPick",
+      "value": "All years",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All years",
+          "2025",
+          "2026"
+        ],
+        "name": "Year",
+        "element": "#filter_4_3"
+      }
+    },
+    {
+      "name": "monthPick",
+      "value": "All months",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All months",
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
+        "labels": [
+          "All months",
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December"
+        ],
+        "name": "Month",
+        "element": "#filter_4_3"
+      }
+    }
+  ],
+  "hconcat": [
+    {
+      "title": {
+        "text": "Queensland: 50-cent Fares from August 2024",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "anchor": "start"
+      },
+      "width": 420,
+      "height": 220,
+      "data": {
+        "url": "data/seq_monthly.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "month": "date",
+            "train": "number",
+            "bus": "number",
+            "ferry": "number",
+            "light_rail": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.train + datum.bus + datum.ferry + datum.light_rail",
+          "as": "total"
+        },
+        {
+          "window": [
+            {
+              "op": "lag",
+              "field": "total",
+              "param": 12,
+              "as": "prev"
+            }
+          ],
+          "sort": [
+            {
+              "field": "month",
+              "order": "ascending"
+            }
+          ]
+        },
+        {
+          "filter": "datum.prev != null"
+        },
+        {
+          "calculate": "(datum.total / datum.prev - 1) * 100",
+          "as": "yoy"
+        },
+        {
+          "filter": "time(datum.month) >= time(toDate('2025-01-01')) && time(datum.month) <= time(toDate('2026-05-01'))"
+        },
+        {
+          "calculate": "datum.yoy >= 0 ? 'More trips than a year earlier' : 'Fewer trips than a year earlier'",
+          "as": "dir"
+        },
+        {
+          "filter": "(yearPick == 'All years' || year(datum.month) == toNumber(yearPick)) && (monthPick == 'All months' || timeFormat(datum.month, '%b') == monthPick)"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "month",
+          "timeUnit": "yearmonth",
+          "type": "ordinal",
+          "title": null,
+          "scale": {
+            "paddingInner": {
+              "expr": "monthPick == 'All months' ? 0.25 : 0.75"
+            }
+          },
+          "axis": {
+            "labelAngle": 0,
+            "ticks": false,
+            "labelLineHeight": 14,
+            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']"
+          }
+        },
+        "y": {
+          "field": "yoy",
+          "type": "quantitative",
+          "title": "Change from a Year Earlier (%)",
+          "scale": {
+            "domain": [
+              -15,
+              55
+            ]
+          },
+          "axis": {
+            "values": [
+              -10,
+              0,
+              10,
+              20,
+              30,
+              40,
+              50
+            ],
+            "labelExpr": "datum.label"
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "bar"
+          },
+          "encoding": {
+            "color": {
+              "field": "dir",
+              "type": "nominal",
+              "legend": null,
+              "scale": {
+                "domain": [
+                  "More trips than a year earlier",
+                  "Fewer trips than a year earlier"
+                ],
+                "range": [
+                  "#2166AC",
+                  "#C2571A"
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "month",
+                "timeUnit": "yearmonth",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "yoy",
+                "format": "+.1f",
+                "title": "Change from a year earlier (%)"
+              }
+            ]
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "monthPick == 'All months'"
+            },
+            {
+              "calculate": "time(datum.month) < time(datetime(2025, 7, 1)) ? 'first' : 'after'",
+              "as": "period"
+            },
+            {
+              "joinaggregate": [
+                {
+                  "op": "mean",
+                  "field": "yoy",
+                  "as": "avg"
+                },
+                {
+                  "op": "max",
+                  "field": "month",
+                  "as": "last"
+                }
+              ],
+              "groupby": [
+                "period"
+              ]
+            },
+            {
+              "calculate": "'Average +' + format(datum.avg, '.0f') + '%'",
+              "as": "avg_label"
+            },
+            {
+              "calculate": "['Average', '+' + format(datum.avg, '.0f') + '%']",
+              "as": "avg_lines"
+            }
+          ],
+          "layer": [
+            {
+              "mark": {
+                "type": "line",
+                "color": "#222",
+                "strokeWidth": 1.5,
+                "strokeDash": [
+                  5,
+                  3
+                ]
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal"
+                },
+                "y": {
+                  "field": "avg",
+                  "type": "quantitative"
+                },
+                "detail": {
+                  "field": "period"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "year(datum.month) == 2025 && month(datum.month) == 2"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "baseline": "bottom",
+                "dy": -4,
+                "fontSize": 11,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal"
+                },
+                "y": {
+                  "field": "avg",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "avg_label"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.period == 'after' && ((yearPick != '2026' && year(datum.month) == 2025 && month(datum.month) == 9) || (yearPick == '2026' && year(datum.month) == 2026 && month(datum.month) == 1))"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "center",
+                "baseline": "bottom",
+                "dy": -5,
+                "xOffset": {
+                  "expr": "yearPick == 'All years' ? 11.5 : (yearPick == '2025' ? 17 : 0)"
+                },
+                "fontSize": 11,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal"
+                },
+                "y": {
+                  "field": "avg",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "avg_label"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "transform": [
+            {
+              "filter": "year(datum.month) == 2025 && month(datum.month) == 7"
+            }
+          ],
+          "layer": [
+            {
+              "mark": {
+                "type": "rule",
+                "color": "#333",
+                "strokeDash": [
+                  4,
+                  3
+                ]
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal",
+                  "band": 0
+                },
+                "y": {}
+              }
+            },
+            {
+              "mark": {
+                "type": "text",
+                "align": "left",
+                "baseline": "bottom",
+                "dx": 4,
+                "y": "height",
+                "dy": -6,
+                "fontSize": 11,
+                "color": "#333",
+                "text": "From Aug 2025"
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal",
+                  "band": 0
+                },
+                "y": {}
+              }
+            }
+          ]
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#666"
+          },
+          "encoding": {
+            "y": {
+              "datum": 0
+            },
+            "x": {}
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "year(datum.month) == 2025 && month(datum.month) == 2"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "top",
+            "dx": 0,
+            "dy": {
+              "expr": "monthPick != 'All months' ? 22 : 6"
+            },
+            "fontSize": 11,
+            "color": "#444",
+            "text": "Cyclone Alfred"
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "yearmonth",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "yoy",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "year(datum.month) == 2026 && month(datum.month) == 2"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "bottom",
+            "dx": 0,
+            "dy": {
+              "expr": "monthPick != 'All months' ? -36 : -20"
+            },
+            "fontSize": 11,
+            "color": "#444",
+            "text": [
+              "Vs cyclone-hit",
+              "Mar 2025: +43%"
+            ],
+            "lineHeight": 13
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "yearmonth",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "yoy",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "monthPick != 'All months'"
+            },
+            {
+              "calculate": "(datum.yoy >= 0 ? '+' : '−') + format(abs(datum.yoy), '.1f') + '%'",
+              "as": "val"
+            }
+          ],
+          "layer": [
+            {
+              "transform": [
+                {
+                  "filter": "datum.yoy >= 0"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "baseline": "bottom",
+                "dy": -4,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "text": {
+                  "field": "val"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.yoy < 0"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "baseline": "top",
+                "dy": 4,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "text": {
+                  "field": "val"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "text": "Victoria: Free Weekend Travel, December 2025 – January 2026",
+        "fontSize": 14,
+        "fontWeight": 600,
+        "anchor": "start"
+      },
+      "width": 420,
+      "height": 220,
+      "data": {
+        "url": "data/vic_monthly.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "month": "date",
+            "metro_train": "number",
+            "tram": "number",
+            "metro_bus": "number",
+            "regional_train": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.metro_train + datum.tram + datum.metro_bus + datum.regional_train",
+          "as": "total"
+        },
+        {
+          "window": [
+            {
+              "op": "lag",
+              "field": "total",
+              "param": 12,
+              "as": "prev"
+            }
+          ],
+          "sort": [
+            {
+              "field": "month",
+              "order": "ascending"
+            }
+          ]
+        },
+        {
+          "filter": "datum.prev != null"
+        },
+        {
+          "calculate": "(datum.total / datum.prev - 1) * 100",
+          "as": "yoy"
+        },
+        {
+          "filter": "time(datum.month) >= time(toDate('2025-01-01')) && time(datum.month) <= time(toDate('2026-06-01'))"
+        },
+        {
+          "calculate": "datum.yoy >= 0 ? 'More trips than a year earlier' : 'Fewer trips than a year earlier'",
+          "as": "dir"
+        },
+        {
+          "filter": "(yearPick == 'All years' || year(datum.month) == toNumber(yearPick)) && (monthPick == 'All months' || timeFormat(datum.month, '%b') == monthPick)"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "month",
+          "timeUnit": "yearmonth",
+          "type": "ordinal",
+          "title": null,
+          "scale": {
+            "paddingInner": {
+              "expr": "monthPick == 'All months' ? 0.25 : 0.75"
+            }
+          },
+          "axis": {
+            "labelAngle": 0,
+            "ticks": false,
+            "labelLineHeight": 14,
+            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']"
+          }
+        },
+        "y": {
+          "field": "yoy",
+          "type": "quantitative",
+          "title": "Change from a Year Earlier (%)",
+          "scale": {
+            "domain": [
+              -15,
+              55
+            ]
+          },
+          "axis": {
+            "values": [
+              -10,
+              0,
+              10,
+              20,
+              30,
+              40,
+              50
+            ],
+            "labelExpr": "datum.label"
+          }
+        }
+      },
+      "layer": [
+        {
+          "layer": [
+            {
+              "transform": [
+                {
+                  "filter": "(year(datum.month) == 2025 && month(datum.month) == 11) || (year(datum.month) == 2026 && month(datum.month) == 0)"
+                }
+              ],
+              "mark": {
+                "type": "rect",
+                "color": "#1B7F79",
+                "opacity": 0.15
+              },
+              "encoding": {
+                "y": {
+                  "value": 0
+                },
+                "y2": {
+                  "value": 220
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "year(datum.month) == 2025 && month(datum.month) == 11"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "center",
+                "baseline": "top",
+                "y": 4,
+                "fontSize": 11,
+                "color": "#1B7F79",
+                "lineHeight": 13,
+                "text": [
+                  "Free",
+                  "weekends:",
+                  "about 0%"
+                ],
+                "xOffset": 11.5
+              },
+              "encoding": {
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal"
+                },
+                "y": {}
+              }
+            }
+          ]
+        },
+        {
+          "mark": {
+            "type": "bar",
+            "strokeWidth": 2
+          },
+          "encoding": {
+            "color": {
+              "field": "dir",
+              "type": "nominal",
+              "legend": null,
+              "scale": {
+                "domain": [
+                  "More trips than a year earlier",
+                  "Fewer trips than a year earlier"
+                ],
+                "range": [
+                  "#2166AC",
+                  "#C2571A"
+                ]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "month",
+                "timeUnit": "yearmonth",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "yoy",
+                "format": "+.1f",
+                "title": "Change from a year earlier (%)"
+              }
+            ],
+            "stroke": {
+              "condition": {
+                "test": "(year(datum.month) == 2025 && month(datum.month) == 11) || (year(datum.month) == 2026 && month(datum.month) == 0)",
+                "value": "#1B7F79"
+              },
+              "value": null
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#666"
+          },
+          "encoding": {
+            "y": {
+              "datum": 0
+            },
+            "x": {}
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "year(datum.month) == 2026 && month(datum.month) == 3"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "bottom",
+            "dx": 0,
+            "dy": {
+              "expr": "monthPick != 'All months' ? -36 : -20"
+            },
+            "fontSize": 11,
+            "color": "#444",
+            "text": [
+              "After the offer",
+              "ended: +25%"
+            ],
+            "lineHeight": 13
+          },
+          "encoding": {
+            "x": {
+              "field": "month",
+              "timeUnit": "yearmonth",
+              "type": "ordinal"
+            },
+            "y": {
+              "field": "yoy",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "monthPick != 'All months'"
+            },
+            {
+              "calculate": "(datum.yoy >= 0 ? '+' : '−') + format(abs(datum.yoy), '.1f') + '%'",
+              "as": "val"
+            }
+          ],
+          "layer": [
+            {
+              "transform": [
+                {
+                  "filter": "datum.yoy >= 0"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "baseline": "bottom",
+                "dy": -4,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "text": {
+                  "field": "val"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.yoy < 0"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "baseline": "top",
+                "dy": 4,
+                "fontSize": 12,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "text": {
+                  "field": "val"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resolve": {
+    "scale": {
+      "y": "shared",
+      "color": "shared"
+    }
+  },
+  "spacing": 48
+}

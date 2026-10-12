@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Back on Board – Public Transport in Australia</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="#s1">1 Big picture</a><a href="#s2">2 Sydney</a><a href="#s3">3 Melbourne</a><a href="#s4">4 Fares</a><a href="#sources">Sources</a>
+  </div>
+</nav>
+
+<div class="page">
+
+<header class="hero">
+  <h1>Public Transport Usage in Australia</h1>
+  <p class="subtitle">How Australians Ride Trains, Trams, Buses and Ferries.</p>
+  <div class="pure-g hero-intro">
+    <div class="pure-u-1 pure-u-lg-1-2"><p>Public transport <strong>patronage</strong> means the number of trips people make on trains, trams (also called light rail), buses and ferries. Australia's big cities had been adding riders every year until the pandemic emptied them almost overnight.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p>Five years later, <strong>public transport recovery remains uneven</strong> across Australian cities. This page examines the national recovery, takes a closer look at Sydney and Melbourne, and explores how cheaper fares helped bring passengers back.</p></div>
+  </div>
+  <div class="hero-figure">
+    <p class="big-number">1.6 billion trips in 2024–2025</p>
+    <p class="hero-note">across Australia's eight capital cities. Still only <strong>90% of the 1.78 billion</strong> made <strong>before the pandemic</strong>.</p>
+  </div>
+  <div class="kpis">
+    <a class="kpi" href="#s1"><span class="kpi-label">1 · Australia</span><span class="kpi-value">90%</span><span class="kpi-text">Public transport trips across capital cities in 2024–2025 compared with pre-pandemic levels (1.6 billion vs. 1.78 billion).</span></a>
+    <a class="kpi" href="#s2"><span class="kpi-label">2 · Sydney</span><span class="kpi-value">72 million</span><span class="kpi-text">Trips on Sydney's new driverless Metro in 2025, while older city-centre stations lost riders.</span></a>
+    <a class="kpi" href="#s3"><span class="kpi-label">3 · Melbourne</span><span class="kpi-value">1 in 10</span><span class="kpi-text">Morning boardings at major city-centre stations, highlighting the shift away from traditional commuting patterns.</span></a>
+    <a class="kpi" href="#s4"><span class="kpi-label">4 · Fares</span><span class="kpi-value">+16%</span><span class="kpi-text">Increase in public transport trips in South East Queensland in the year after fares fell to 50 cents.</span></a>
+  </div>
+</header>
+
+<!-- ============ SECTION 1 ============ -->
+<section id="s1">
+  <header class="section-head">
+    <h2><span class="num">1</span> The Big Picture<span class="section-question"> — How far has public transport recovered across Australia's eight capital cities since the pandemic?</span></h2>
+  </header>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Trips across the capitals fell to 862 million in 2021–2022, less than half their usual level. By 2024–2025 Perth had passed its old record, Brisbane and Canberra were back to normal, but Melbourne was still 18% short.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2 lead-terms"><div class="term-box"><h4>Patronage</h4><p>One trip or boarding on a train, tram, bus or ferry. A journey with a change of vehicle can count as two.</p></div><div class="term-box"><h4>Financial year</h4><p>Australia's government year runs July to June, so "2024–2025" means July 2024 to June 2025.</p></div></div>
+  </div>
+  <div class="chart">
+    <h3 class="chart-title">Yearly Public Transport Trips in Each Capital City (Compared with 2018–2019)</h3>
+    <div class="pure-g chart-desc">
+      <p class="pure-u-1 pure-u-md-1-2">Each small chart is one capital city's yearly trips compared with 2018–2019 (dashed line = 100%). Cities run from most to least recovered, and the value at the end of each line is 2024–2025. The grey band marks the pandemic years.</p>
+      <div class="pure-u-1 pure-u-md-1-2">
+        <p>Hover over any chart to compare the same year across all eight cities. Choose a group below to highlight it.</p>
+        <div id="legend_1_1" class="html-legend"></div>
+      </div>
+    </div>
+    <div id="chart_1_1"></div>
+  </div>
+  <div class="chart">
+    <h3 class="chart-title chart-title-gap">Public Transport Trips by State and Territory (Compared with 2018–2019)</h3>
+    <div class="chart-stack">
+      <div id="chart_1_2"></div>
+      <div id="slider_1_2" class="chart-control chart-control-overlay"></div>
+    </div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart">
+      <div class="chart-head">
+        <h3 class="chart-title">Public Transport Trips by Capital City, 2018–2019 and 2024–2025</h3>
+        <div id="legend_1_3" class="html-legend html-legend--stack"></div>
+      </div>
+      <div id="chart_1_3"></div>
+    </div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart">
+      <div class="chart-head">
+        <h3 class="chart-title">Change in Yearly Trips by Capital City, <span class="nowrap">2018–2019 to 2024–2025</span></h3>
+        <div class="shape-key shape-key--stack">
+        <span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#C2571A"/></svg>Fewer trips</span>
+        <span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#2166AC"/></svg>More trips</span>
+        <span><svg width="16" height="12" aria-hidden="true"><rect y="4" width="16" height="4" fill="#555"/></svg>Yearly total</span>
+        </div>
+      </div>
+      <div id="chart_1_5"></div>
+    </div></div>
+  </div>
+  <div class="chart">
+    <div class="chart-head">
+      <h3 class="chart-title">Trips by Mode and City in 2024–2025, Compared with 2018–2019</h3>
+      <div id="legend_1_4" class="html-legend html-legend--gap"></div>
+    </div>
+    <div id="chart_1_4"></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2 ============ -->
+<section id="s2">
+  <header class="section-head">
+    <h2><span class="num">2</span> Sydney: Recovery<span class="section-question"> — How quickly did Sydney's riders return, and where did they go once the new Metro opened?</span></h2>
+  </header>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Sydney recorded just 9 million trips in August 2021, down from <strong>63 million</strong> in a typical <strong>2019</strong> month. By <strong>2025</strong>, ridership had <strong>recovered to 88%</strong>, with the new Metro shifting passenger flows to different stations.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2 lead-terms"><div class="term-box"><h4>Opal</h4><p>Sydney's tap-on, tap-off travel card. One "trip" is one tap on and tap off.</p></div><div class="term-box"><h4>Metro</h4><p>Sydney’s driverless rail network, with five new stations serving the city centre and North Sydney, opened in August 2024.</p></div></div>
+  </div>
+  <div class="chart">
+    <h3 class="chart-title chart-title-gap">Monthly Opal Trips in Sydney, July 2016 to August 2026</h3>
+    <div id="chart_2_1"></div>
+    <div id="legend_2_1" class="html-legend html-legend--gap html-legend--wrap"></div>
+  </div>
+  <div class="chart">
+    <div class="chart-head">
+      <h3 class="chart-title">Monthly Opal Trips in Sydney by Mode</h3>
+      <div id="legend_2_2" class="html-legend html-legend--gap html-legend--wrap"></div>
+    </div>
+    <div id="chart_2_2"></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Yearly Station Trips across Sydney</h3><p class="chart-sub">Stations grouped into squares about 2 kilometres wide. Outlined squares contain a Metro station. Note: 2020 and 2024 left out (lockdowns / incomplete data).</p><div id="chart_2_3"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Change in Station Trips, 2019 to 2025</h3><p class="chart-sub">Station trips in 2025 as a percentage of 2019. The Bankstown line (Sydenham–Bankstown) closed in 2024 for conversion to Metro. Source: Transport for New South Wales. Click the legend to highlight a group.</p><div id="chart_2_4"></div></div></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Sydney's 10 Busiest Stations by Year</h3><p class="chart-sub">Rank by trips (1 = busiest). Hover a line to follow a station. 2020 and 2024 left out. Source: Transport for New South Wales.</p><div id="chart_2_5"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="note-box"><h4>Riders moved, they didn't vanish</h4><p><strong>Town Hall</strong> fell from <strong>71 million</strong> trips in 2019 to <strong>41 million</strong> in 2025, and <strong>Wynyard</strong> from <strong>49 million to 27 million</strong>. Yet <strong>Gadigal</strong> — a new Metro station a block from Town Hall — carried <strong>11.7 million</strong> trips in its first full year, and Metro as a whole carried <strong>72 million</strong>. Part of the "lost" city-centre traffic simply <strong>moved underground</strong>. Meanwhile the <strong>Bankstown line</strong> stations dropped to almost nothing because the line <strong>closed in 2024</strong> to be rebuilt as Metro.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3 ============ -->
+<section id="s3">
+  <header class="section-head">
+    <h2><span class="num">3</span> Melbourne: The City-Centre Effect<span class="section-question"> — Why Melbourne's city-centre stations recover slower than its suburbs?</span></h2>
+  </header>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Victoria's trains, trams and buses carried <strong>477 million trips in 2025, 81% of 2019</strong>. Its station data shows why the city centre matters. At Flinders Street, Southern Cross and Melbourne Central, only <strong>6–10% of peak-time</strong> boardings happen in the morning.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">These are places people travel <em>to</em> for work — so when office workers stay home, these stations lose the most.</p><div class="term-box"><h4>myki</h4><p>Melbourne's travel card.</p></div></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Morning Share of Peak Entries, Melbourne</h3><p class="chart-sub">Share of a station's peak-time entries that happen in the morning (weekday average, 2024–2025). Circle size = annual entries. Source: Victorian Department of Transport and Planning. Use the buttons below the map to highlight a group of stations.</p><div id="chart_3_1"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Weekday Entries by Time of Day</h3><p class="chart-sub">Share of a station's weekday entries in each time band, 2024–2025, 20 busiest stations. Source: Department of Transport and Planning, Victoria. Hover over a row to highlight a station.</p><div id="chart_3_2"></div></div></div>
+  </div>
+  <div class="chart"><h3 class="chart-title">Monthly Public Transport Trips in Victoria by Mode, 2018–2026</h3><p class="chart-sub">Monthly trips (millions). Grey = lockdowns; teal = free weekend travel (30 November 2025 – 1 February 2026). † Trams counted differently from January 2026. Source: Department of Transport and Planning, Victoria. Hover over a panel to compare the same month across modes.</p><div id="chart_3_3"></div></div>
+</section>
+
+<!-- ============ SECTION 4 ============ -->
+<section id="s4">
+  <header class="section-head">
+    <h2><span class="num">4</span> What brings riders back: The Price of a Ticket</h2>
+  </header>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">On 5 August 2024, <strong>Queensland</strong> cut every public transport fare in the south-east to just <strong>50 Australian cents</strong>. In the same December-to-July months a year later, South East Queensland carried <strong>16% more trips</strong> and the gain held into a second year. </p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Victoria's summer of free weekend travel, by contrast, barely moved its monthly totals.</p><div class="term-box"><h4>South East Queensland</h4><p>Brisbane, the Gold Coast and the Sunshine Coast.</p></div></div>
+  </div>
+  <div class="chart">
+    <div class="chart-head">
+      <h3 class="chart-title">Monthly Public Transport Trips in South East Queensland by Mode</h3>
+      <div id="filter_4_1" class="chart-filters"></div>
+    </div>
+    <div id="chart_4_1"></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Trips Before and After 50-Cent Fares</h3><p class="chart-sub">Average trips per month on each mode, for the same eight months (December to July) before and after fares dropped to 50 cents, to match with school holidays and seasons.</p>
+      <div class="shape-key">
+        <span><svg width="10" height="10" aria-hidden="true"><circle cx="5" cy="5" r="4.5"/></svg>Before: December 2023 – July 2024</span>
+        <span><svg width="11" height="12" aria-hidden="true"><path d="M0 0 L11 6 L0 12 Z"/></svg>After: December 2024 – July 2025</span>
+      </div>
+      <div id="chart_4_2"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2 note-stack">
+      <div class="note-box">
+        <p>Every mode carried <strong>more people after fares fell to 50 cents</strong>. Overall, average monthly trips rose <strong>16%</strong>, from <strong>13.7 million to 16.0 million</strong>.</p></div>
+     
+        <ul class="note-list">
+          <li><strong>Who rode more:</strong> <span class="mode-ferry">ferry</span> and <span class="mode-lightrail">light rail</span> grew <strong>fastest</strong>, which suggests cheap fares attracted optional trips, such as weekend outings, not only commuting.</li>
+          <li><strong>Not proof of cause:</strong> The charts show changes following the fare cut. However, this <strong>does not</strong> mean the fare cut was the only cause. Other factors like population growth, may also have contributed to the increase in ridership.</li>
+          <li><strong>Victoria's special case:</strong> its free travel (chart below) covered <strong>weekends only</strong>, so it barely shows in monthly totals. Its jump from March 2026 came after the offer ended.</li>
+        </ul>
+    </div>
+  </div>
+  <div class="chart">
+    <div class="chart-head">
+      <h3 class="chart-title">Change in Monthly Trips from a Year Earlier: Queensland and Victoria</h3>
+      <div id="filter_4_3" class="chart-filters"></div>
+    </div>
+    <div id="chart_4_3"></div>
+  </div>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>Queensland:</strong> cheap fares lifted travel, and the lift has held.</p>
+      <ul class="lead-list">
+        <li><strong>January – July 2025: +16% </strong> on average. Each month is compared with the same month on full fares, so this shows the effect of the fare cut.</li>
+        <li><strong>From August 2025: +11% </strong>on average. Both years now had 50-cent fares, so this is growth on top of the cut. Leaving out March 2026, which is compared with the cyclone-hit March 2025, it is about +8%.</li>
+      </ul></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>Victoria:</strong> free weekend travel made no visible difference.</p>
+      <ul class="lead-list">
+        <li><strong>During the offer</strong> (December 2025 – January 2026): about <strong>0%.</strong> Trips were almost the same as a year earlier (+0.1% and −0.2%).</li>
+        <li><strong>April 2026: +25%,</strong> but this came after the offer had ended, so it is not a free-travel effect.</li>
+        <li>Monthly totals mix weekday and weekend trips, so a small weekend-only effect could be hidden.</li>
+      </ul></div>
+  </div>
+</section>
+
+<footer id="sources">
+  <p><strong>Author:</strong> Pee Yee Peen</p>
+  <p><strong> Student ID:</strong> 33591032</p>
+  <p><strong>Last updated:</strong> 12 October 2026</p>
+  <p><strong>Data sources</strong> (all accessed October 2026):</p>
+  <ul>
+    <li>Bureau of Infrastructure and Transport Research Economics, <em>Australian Infrastructure and Transport Statistics Yearbook 2025</em>, Tables 2.5a–h. <a href="https://www.bitre.gov.au/publications/2025/australian-infrastructure-and-transport-statistics-yearbook-2025/passengers">bitre.gov.au</a></li>
+    <li>Transport for New South Wales, <em>Opal Trips – All Modes</em>. <a href="https://opendata.transport.nsw.gov.au/dataset/opal-trips-all-modes">opendata.transport.nsw.gov.au</a></li>
+    <li>Transport for New South Wales, <em>Train, Metro and Light Rail Station Entries and Exits</em> (monthly usage). <a href="https://data.nsw.gov.au/data/dataset/6a4428e7-f642-4a42-8c6b-bdf8599e9bda">data.nsw.gov.au</a></li>
+    <li>Transport for New South Wales, <em>Train Station Entrance Locations</em> (2020) and <em>Sydney Train Routes</em>. <a href="https://opendata.transport.nsw.gov.au/dataset/train-station-entrance-locations">opendata.transport.nsw.gov.au</a></li>
+    <li>Victorian Department of Transport and Planning, <em>Annual Metropolitan Train Station Patronage</em> (financial year 2024–2025) and <em>Monthly Public Transport Patronage by Mode</em>. <a href="https://discover.data.vic.gov.au/dataset/monthly-public-transport-patronage-by-mode">discover.data.vic.gov.au</a></li>
+    <li>Queensland Department of Transport and Main Roads, <em>Translink monthly performance data – Patronage, South East Queensland</em>. <a href="https://www.data.qld.gov.au/dataset/translink-monthly-performance-data">data.qld.gov.au</a></li>
+    <li>Australian Bureau of Statistics, <em>Australian Statistical Geography Standard Edition 3 (2021) State and Territory boundaries</em>, © Australian Bureau of Statistics, Creative Commons Attribution 4.0. <a href="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files">abs.gov.au</a></li>
+  </ul>
+  <p><strong>Use of artificial intelligence:</strong> Claude (Anthropic) was used to clean and reshape the datasets and check grammar. All charts, numbers and text were reviewed and edited by the author.</p>
+</footer>
+
+</div>
+
+<script src="js/vega_lite_vis.js"></script>
+</body>
+</html>

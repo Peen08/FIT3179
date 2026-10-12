@@ -1,0 +1,439 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 226,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/seq_monthly.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "date",
+        "train": "number",
+        "bus": "number",
+        "ferry": "number",
+        "light_rail": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "fold": [
+        "train",
+        "bus",
+        "ferry",
+        "light_rail"
+      ],
+      "as": [
+        "mode_key",
+        "trips"
+      ]
+    },
+    {
+      "calculate": "{'train':'Train','bus':'Bus','ferry':'Ferry','light_rail':'Light rail'}[datum.mode_key]",
+      "as": "mode"
+    },
+    {
+      "calculate": "time(datum.month) >= time(toDate('2023-12-01')) && time(datum.month) < time(toDate('2024-08-01')) ? 'before' : (time(datum.month) >= time(toDate('2024-12-01')) && time(datum.month) < time(toDate('2025-08-01')) ? 'after' : null)",
+      "as": "period"
+    },
+    {
+      "filter": "datum.period != null"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "trips",
+          "as": "avg"
+        }
+      ],
+      "groupby": [
+        "mode",
+        "period"
+      ]
+    },
+    {
+      "pivot": "period",
+      "value": "avg",
+      "groupby": [
+        "mode"
+      ]
+    },
+    {
+      "calculate": "datum.after / datum.before * 100",
+      "as": "idx"
+    },
+    {
+      "calculate": "100",
+      "as": "start"
+    },
+    {
+      "calculate": "'+' + format(datum.idx - 100, '.0f') + '%'",
+      "as": "pct_label"
+    },
+    {
+      "calculate": "format(datum.before / 1000000, '.2f') + 'm → ' + format(datum.after / 1000000, '.2f') + 'm'",
+      "as": "trips_label"
+    }
+  ],
+  "layer": [
+    {
+      "transform": [
+        {
+          "aggregate": [
+            {
+              "op": "count",
+              "as": "n"
+            }
+          ]
+        },
+        {
+          "calculate": "100",
+          "as": "start"
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#999",
+        "strokeDash": [
+          3,
+          3
+        ]
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative",
+          "title": "Change in Average Trips per Month",
+          "scale": {
+            "domain": [
+              83,
+              135
+            ]
+          },
+          "axis": {
+            "values": [
+              100,
+              110,
+              120,
+              130
+            ],
+            "grid": false,
+            "labelExpr": "datum.value == 100 ? 'No change' : '+' + (datum.value - 100) + '%'"
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "idx"
+        },
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 70,
+        "opacity": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "shape": "triangle-right",
+        "size": 160,
+        "filled": true,
+        "opacity": 1
+      },
+      "encoding": {
+        "x": {
+          "field": "idx",
+          "type": "quantitative"
+        },
+        "tooltip": [
+          {
+            "field": "mode",
+            "title": "Mode"
+          },
+          {
+            "field": "before",
+            "format": ",.0f",
+            "title": "Trips a month before"
+          },
+          {
+            "field": "after",
+            "format": ",.0f",
+            "title": "Trips a month after"
+          },
+          {
+            "field": "pct_label",
+            "title": "Change"
+          }
+        ],
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10,
+        "fontSize": 13,
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "field": "idx",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "pct_label"
+        },
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -10,
+        "fontSize": 11,
+        "color": "#666"
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "trips_label"
+        },
+        "color": {
+          "value": "#666"
+        },
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "x": -8,
+        "fontSize": 13,
+        "fontWeight": "normal"
+      },
+      "encoding": {
+        "y": {
+          "field": "mode",
+          "type": "nominal",
+          "title": null,
+          "sort": {
+            "field": "idx",
+            "order": "descending"
+          },
+          "axis": {
+            "domain": false,
+            "ticks": false,
+            "labelFontSize": 13,
+            "labelFontWeight": 600,
+            "labels": false
+          }
+        },
+        "text": {
+          "field": "mode"
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,842 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 520,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/bitre_city_year.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "train": "number",
+        "light_rail": "number",
+        "bus": "number",
+        "ferry": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "filter": "datum.fy == '2018–2019' || datum.fy == '2024–2025'"
+    },
+    {
+      "calculate": "(datum.train || 0) + (datum.light_rail || 0) + (datum.bus || 0) + (datum.ferry || 0)",
+      "as": "trips"
+    },
+    {
+      "calculate": "indexof(['Hobart', 'Darwin', 'Canberra'], datum.city) >= 0 ? 'Hobart, Darwin, Canberra' : datum.city",
+      "as": "step"
+    },
+    {
+      "calculate": "datum.fy == '2018–2019' ? datum.trips : 0",
+      "as": "before_part"
+    },
+    {
+      "calculate": "datum.fy == '2024–2025' ? datum.trips : 0",
+      "as": "after_part"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "before_part",
+          "as": "before"
+        },
+        {
+          "op": "sum",
+          "field": "after_part",
+          "as": "after"
+        }
+      ],
+      "groupby": [
+        "step"
+      ]
+    },
+    {
+      "calculate": "datum.after - datum.before",
+      "as": "delta"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "before",
+          "as": "total_before"
+        },
+        {
+          "op": "sum",
+          "field": "after",
+          "as": "total_after"
+        }
+      ]
+    },
+    {
+      "calculate": "indexof(['Melbourne', 'Sydney', 'Adelaide', 'Hobart, Darwin, Canberra', 'Brisbane', 'Perth'], datum.step)",
+      "as": "ord"
+    },
+    {
+      "window": [
+        {
+          "op": "sum",
+          "field": "delta",
+          "as": "cum"
+        }
+      ],
+      "sort": [
+        {
+          "field": "ord"
+        }
+      ],
+      "frame": [
+        null,
+        0
+      ]
+    },
+    {
+      "calculate": "datum.total_before + datum.cum - datum.delta",
+      "as": "start"
+    },
+    {
+      "calculate": "datum.total_before + datum.cum",
+      "as": "end"
+    },
+    {
+      "calculate": "datum.delta / (datum.total_after - datum.total_before)",
+      "as": "share"
+    },
+    {
+      "calculate": "datum.delta < 0 ? 'Fewer trips' : 'More trips'",
+      "as": "dir"
+    },
+    {
+      "calculate": "(datum.delta < 0 ? '−' : '+') + format(abs(datum.delta), abs(datum.delta) < 10 ? '.1f' : '.0f') + 'm'",
+      "as": "delta_label"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "step",
+      "type": "ordinal",
+      "title": "Capital City",
+      "scale": {
+        "domain": [
+          "2018–2019",
+          "Melbourne",
+          "Sydney",
+          "Adelaide",
+          "Hobart, Darwin, Canberra",
+          "Brisbane",
+          "Perth",
+          "2024–2025"
+        ],
+        "paddingInner": 0.3
+      },
+      "axis": {
+        "labelAngle": 0,
+        "ticks": false,
+        "labelFontSize": 11,
+        "labelLineHeight": 13,
+        "labelExpr": "datum.value == 'Hobart, Darwin, Canberra' ? ['Hobart,', 'Darwin,', 'Canberra'] : (datum.value == '2018–2019' || datum.value == '2024–2025' ? [datum.value, 'total'] : datum.value)",
+        "titlePadding": 10
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar"
+      },
+      "encoding": {
+        "y": {
+          "field": "start",
+          "type": "quantitative",
+          "title": "Trips per Year (Millions)",
+          "scale": {
+            "domain": [
+              0,
+              1800
+            ]
+          },
+          "axis": {
+            "values": [
+              0,
+              500,
+              1000,
+              1500,
+              2000
+            ],
+            "labelExpr": "format(datum.value, ',')"
+          }
+        },
+        "y2": {
+          "field": "end"
+        },
+        "color": {
+          "field": "dir",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Fewer trips",
+              "More trips",
+              "None"
+            ],
+            "range": [
+              "#C2571A",
+              "#2166AC",
+              "#777777"
+            ]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "step",
+            "title": "City"
+          },
+          {
+            "field": "before",
+            "format": ",.1f",
+            "title": "Trips 2018–2019 (millions)"
+          },
+          {
+            "field": "after",
+            "format": ",.1f",
+            "title": "Trips 2024–2025 (millions)"
+          },
+          {
+            "field": "delta_label",
+            "title": "Change"
+          },
+          {
+            "field": "share",
+            "format": ".0%",
+            "title": "Share of the national change"
+          }
+        ]
+      }
+    },
+    {
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": "datum.delta < 0"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "baseline": "top",
+            "dy": 4,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "y": {
+              "field": "end",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "delta_label"
+            },
+            "color": {
+              "field": "dir",
+              "type": "nominal",
+              "scale": {
+                "domain": [
+                  "Fewer trips",
+                  "More trips",
+                  "None"
+                ],
+                "range": [
+                  "#C2571A",
+                  "#2166AC",
+                  "#777777"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.delta >= 0"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "baseline": "bottom",
+            "dy": -4,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "y": {
+              "field": "end",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "delta_label"
+            },
+            "color": {
+              "field": "dir",
+              "type": "nominal",
+              "scale": {
+                "domain": [
+                  "Fewer trips",
+                  "More trips",
+                  "None"
+                ],
+                "range": [
+                  "#C2571A",
+                  "#2166AC",
+                  "#777777"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "window": [
+            {
+              "op": "row_number",
+              "as": "rn"
+            }
+          ]
+        },
+        {
+          "filter": "datum.rn == 1"
+        },
+        {
+          "fold": [
+            "total_before",
+            "total_after"
+          ],
+          "as": [
+            "which",
+            "value"
+          ]
+        },
+        {
+          "calculate": "datum.which == 'total_before' ? '2018–2019' : '2024–2025'",
+          "as": "step"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "tick",
+            "thickness": 4,
+            "color": "#555",
+            "size": 36
+          },
+          "encoding": {
+            "y": {
+              "field": "value",
+              "type": "quantitative"
+            },
+            "tooltip": [
+              {
+                "field": "step",
+                "title": "Financial year"
+              },
+              {
+                "field": "value",
+                "format": ",.0f",
+                "title": "Trips (millions)"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "baseline": "bottom",
+            "dy": -4,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "#333"
+          },
+          "encoding": {
+            "y": {
+              "field": "value",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "value",
+              "type": "quantitative",
+              "format": ",.0f"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "joinaggregate": [
+            {
+              "op": "min",
+              "field": "delta",
+              "as": "dmin"
+            }
+          ]
+        },
+        {
+          "filter": "datum.delta == datum.dmin"
+        },
+        {
+          "calculate": "[datum.step + ' alone:', format(datum.share, '.0%') + ' of the drop']",
+          "as": "note"
+        },
+        {
+          "calculate": "datum.total_after * 0.8",
+          "as": "note_y"
+        },
+        {
+          "calculate": "datum.total_after * 0.84",
+          "as": "line_bottom"
+        },
+        {
+          "calculate": "datum.end - datum.total_after * 0.05",
+          "as": "line_top"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#888",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "y": {
+              "field": "line_top",
+              "type": "quantitative"
+            },
+            "y2": {
+              "field": "line_bottom"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#333",
+            "lineHeight": 15,
+            "dx": -4
+          },
+          "encoding": {
+            "y": {
+              "field": "note_y",
+              "type": "quantitative"
+            },
+            "text": {
+              "field": "note"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "data": {
+        "values": [
+          {}
+        ]
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "rect",
+            "color": "#F3F3EE",
+            "stroke": "#E2E2DA",
+            "cornerRadius": 4,
+            "xOffset": -180.2,
+            "x2Offset": 129.8,
+            "yOffset": -14,
+            "y2Offset": 168
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "x2": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "y2": {
+              "datum": 880
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 0,
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "#222"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "How to read this chart"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 24.7,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#333"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "Start"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -86.2,
+            "dy": 24.7,
+            "fontSize": 12,
+            "fontWeight": "normal",
+            "color": "#444"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "1,780 million trips in 2018–2019"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 43.699999999999996,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#C2571A"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "Orange step"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -86.2,
+            "dy": 43.699999999999996,
+            "fontSize": 12,
+            "fontWeight": "normal",
+            "color": "#444"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "a city that lost trips"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 62.699999999999996,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#2166AC"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "Blue step"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -86.2,
+            "dy": 62.699999999999996,
+            "fontSize": 12,
+            "fontWeight": "normal",
+            "color": "#444"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "a city that gained trips"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 81.7,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#333"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "End"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -86.2,
+            "dy": 81.7,
+            "fontSize": 12,
+            "fontWeight": "normal",
+            "color": "#444"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "1,601 million in 2024–2025 (90%)"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 112.10000000000001,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#222"
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": "Key point:"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "top",
+            "dx": -166.2,
+            "dy": 131.1,
+            "fontSize": 12,
+            "fontWeight": "normal",
+            "color": "#444",
+            "lineHeight": 19
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "text": {
+              "value": [
+                "Melbourne and Sydney lost 178 million, almost all of the",
+                "179 million drop."
+              ]
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#222",
+            "strokeWidth": 1,
+            "yOffset": 15,
+            "y2Offset": 15,
+            "x2Offset": -39.7,
+            "xOffset": -166.2
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "x2": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "y2": {
+              "datum": 880
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#222",
+            "strokeWidth": 1,
+            "yOffset": 126.10000000000001,
+            "y2Offset": 126.10000000000001,
+            "x2Offset": -112.3,
+            "xOffset": -166.2
+          },
+          "encoding": {
+            "x": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "x2": {
+              "datum": "Hobart, Darwin, Canberra",
+              "type": "ordinal",
+              "band": 0
+            },
+            "y": {
+              "datum": 880,
+              "type": "quantitative"
+            },
+            "y2": {
+              "datum": 880
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "data/vic_monthly.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "date",
+        "metro_train": "number",
+        "tram": "number",
+        "metro_bus": "number",
+        "regional_train": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "fold": [
+        "metro_train",
+        "tram",
+        "metro_bus",
+        "regional_train"
+      ],
+      "as": [
+        "mode_key",
+        "trips"
+      ]
+    },
+    {
+      "calculate": "{'metro_train':'Metro train','tram':'Tram †','metro_bus':'Metro bus','regional_train':'Regional train'}[datum.mode_key]",
+      "as": "mode"
+    },
+    {
+      "calculate": "datum.trips / 1000000",
+      "as": "trips_m"
+    }
+  ],
+  "facet": {
+    "field": "mode",
+    "type": "nominal",
+    "title": null,
+    "sort": [
+      "Metro train",
+      "Tram †",
+      "Metro bus",
+      "Regional train"
+    ]
+  },
+  "columns": 4,
+  "spacing": 16,
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  },
+  "spec": {
+    "width": 215,
+    "height": 130,
+    "layer": [
+      {
+        "transform": [
+          {
+            "aggregate": [
+              {
+                "op": "count",
+                "as": "n"
+              }
+            ],
+            "groupby": [
+              "mode"
+            ]
+          },
+          {
+            "calculate": "toDate('2020-03-30')",
+            "as": "s"
+          },
+          {
+            "calculate": "toDate('2021-10-21')",
+            "as": "e"
+          }
+        ],
+        "mark": {
+          "type": "rect",
+          "color": "#EEEEEA"
+        },
+        "encoding": {
+          "x": {
+            "field": "s",
+            "type": "temporal"
+          },
+          "x2": {
+            "field": "e"
+          },
+          "y": {
+            "value": 0
+          },
+          "y2": {
+            "value": 115
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "aggregate": [
+              {
+                "op": "count",
+                "as": "n"
+              }
+            ],
+            "groupby": [
+              "mode"
+            ]
+          },
+          {
+            "calculate": "toDate('2025-11-30')",
+            "as": "s"
+          },
+          {
+            "calculate": "toDate('2026-02-01')",
+            "as": "e"
+          }
+        ],
+        "mark": {
+          "type": "rect",
+          "color": "#1B7F79",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "s",
+            "type": "temporal"
+          },
+          "x2": {
+            "field": "e"
+          },
+          "y": {
+            "value": 0
+          },
+          "y2": {
+            "value": 115
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "line",
+          "color": "#7B3FA0",
+          "strokeWidth": 1.4
+        },
+        "encoding": {
+          "x": {
+            "field": "month",
+            "type": "temporal",
+            "title": null,
+            "axis": {
+              "format": "%Y",
+              "tickCount": 3
+            }
+          },
+          "y": {
+            "field": "trips_m",
+            "type": "quantitative",
+            "title": null
+          },
+          "tooltip": [
+            {
+              "field": "mode"
+            },
+            {
+              "field": "month",
+              "timeUnit": "yearmonth",
+              "title": "Month",
+              "format": "%B %Y"
+            },
+            {
+              "field": "trips_m",
+              "format": ".1f",
+              "title": "Trips (millions)"
+            }
+          ]
+        }
+      },
+      {
+        "transform": [
+          {
+            "aggregate": [
+              {
+                "op": "count",
+                "as": "n"
+              }
+            ],
+            "groupby": [
+              "mode"
+            ]
+          },
+          {
+            "filter": "datum.mode == 'Metro train'"
+          },
+          {
+            "calculate": "toDate('2020-12-25')",
+            "as": "d"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "dx": 0,
+          "y": 8,
+          "fontSize": 10,
+          "fontWeight": "bold",
+          "color": "#666"
+        },
+        "encoding": {
+          "x": {
+            "field": "d",
+            "type": "temporal"
+          },
+          "text": {
+            "value": "Lockdowns"
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "aggregate": [
+              {
+                "op": "count",
+                "as": "n"
+              }
+            ],
+            "groupby": [
+              "mode"
+            ]
+          },
+          {
+            "filter": "datum.mode == 'Metro train'"
+          },
+          {
+            "calculate": "toDate('2025-11-30')",
+            "as": "d"
+          }
+        ],
+        "mark": {
+          "type": "text",
+          "align": "right",
+          "dx": -3,
+          "y": 8,
+          "fontSize": 10,
+          "fontWeight": "bold",
+          "color": "#1B7F79"
+        },
+        "encoding": {
+          "x": {
+            "field": "d",
+            "type": "temporal"
+          },
+          "text": {
+            "value": "Free weekends"
+          }
+        }
+      },
+      {
+        "params": [
+          {
+            "name": "monthHover",
+            "select": {
+              "type": "point",
+              "fields": [
+                "month"
+              ],
+              "on": "mouseover",
+              "nearest": true,
+              "clear": "mouseout"
+            }
+          }
+        ],
+        "mark": {
+          "type": "rule",
+          "color": "#333"
+        },
+        "encoding": {
+          "x": {
+            "field": "month",
+            "type": "temporal"
+          },
+          "opacity": {
+            "condition": {
+              "param": "monthHover",
+              "value": 0.6,
+              "empty": false
+            },
+            "value": 0
+          },
+          "tooltip": [
+            {
+              "field": "mode"
+            },
+            {
+              "field": "month",
+              "timeUnit": "yearmonth",
+              "title": "Month",
+              "format": "%B %Y"
+            },
+            {
+              "field": "trips_m",
+              "format": ".1f",
+              "title": "Trips (millions)"
+            }
+          ]
+        }
+      },
+      {
+        "transform": [
+          {
+            "filter": {
+              "param": "monthHover",
+              "empty": false
+            }
+          }
+        ],
+        "mark": {
+          "type": "point",
+          "filled": true,
+          "color": "#7B3FA0",
+          "size": 40
+        },
+        "encoding": {
+          "x": {
+            "field": "month",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "trips_m",
+            "type": "quantitative"
+          }
+        }
+      }
+    ]
+  }
+}

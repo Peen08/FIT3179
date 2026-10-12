@@ -1,0 +1,197 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 440,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "projection": {
+    "type": "mercator"
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/melb_land.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "melb_land"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#F1F1EC",
+        "stroke": "#DDDDDD"
+      }
+    },
+    {
+      "data": {
+        "url": "data/melb_stations.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lat": "number",
+            "lon": "number",
+            "entries_2425": "number",
+            "pre_am": "number",
+            "am_peak": "number",
+            "interpeak": "number",
+            "pm_peak": "number",
+            "pm_late": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "(datum.pre_am + datum.am_peak) / (datum.pre_am + datum.am_peak + datum.pm_peak + datum.pm_late) * 100",
+          "as": "morning"
+        },
+        {
+          "filter": "datum.lat > -38.45 && datum.lat < -37.45 && datum.lon > 144.5 && datum.lon < 145.55"
+        }
+      ],
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "circle",
+            "opacity": 0.85,
+            "stroke": "white",
+            "strokeWidth": 0.5
+          },
+          "encoding": {
+            "size": {
+              "field": "entries_2425",
+              "type": "quantitative",
+              "title": "Entries 2024–2025",
+              "scale": {
+                "type": "sqrt",
+                "range": [
+                  8,
+                  800
+                ]
+              },
+              "legend": {
+                "values": [
+                  1000000,
+                  5000000,
+                  15000000
+                ],
+                "labelExpr": "format(datum.value, ',')",
+                "orient": "bottom",
+                "direction": "horizontal"
+              }
+            },
+            "color": {
+              "field": "morning",
+              "type": "quantitative",
+              "title": "Percentage boarding in the morning",
+              "scale": {
+                "type": "threshold",
+                "domain": [
+                  30,
+                  45,
+                  55,
+                  70
+                ],
+                "range": [
+                  "#6A3D9A",
+                  "#B9A3D0",
+                  "#E5E5E0",
+                  "#8CC7C1",
+                  "#1B7F79"
+                ]
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "gradientLength": 260
+              }
+            },
+            "tooltip": [
+              {
+                "field": "station",
+                "title": "Station"
+              },
+              {
+                "field": "entries_2425",
+                "format": ",",
+                "title": "Entries 2024–2025"
+              },
+              {
+                "field": "morning",
+                "format": ".0f",
+                "title": "Percentage of peak entries in the morning"
+              }
+            ],
+            "opacity": {
+              "condition": {
+                "test": "boardPick == 'All stations' || (boardPick == 'Mostly morning (over 55%)' && datum.morning > 55) || (boardPick == 'Mostly evening (under 45%)' && datum.morning < 45)",
+                "value": 0.85
+              },
+              "value": 0.08
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Flinders Street'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 14,
+            "dy": 12,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "text": "City centre: people board here to go home"
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "indexof(['Craigieburn','Frankston','Werribee'], datum.station) >= 0"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 8,
+            "fontSize": 11
+          },
+          "encoding": {
+            "text": {
+              "field": "station"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "params": [
+    {
+      "name": "boardPick",
+      "value": "All stations",
+      "bind": {
+        "input": "radio",
+        "options": [
+          "All stations",
+          "Mostly morning (over 55%)",
+          "Mostly evening (under 45%)"
+        ],
+        "name": "Highlight: "
+      }
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "transparent",
+  "width": "container",
+  "height": "container",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "projection": {
+    "type": "conicEqualArea",
+    "parallels": [
+      -18,
+      -36
+    ],
+    "rotate": [
+      -132,
+      0
+    ],
+    "center": [
+      0,
+      -27
+    ],
+    "fit": {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            112.9,
+            -10.6
+          ],
+          [
+            153.7,
+            -10.6
+          ],
+          [
+            112.9,
+            -43.7
+          ],
+          [
+            153.7,
+            -43.7
+          ]
+        ]
+      }
+    }
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/aus_states.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "aus_states"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#E6E6E0",
+        "stroke": "white",
+        "strokeWidth": 1
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "city": "Sydney",
+            "state": "New South Wales",
+            "lat": -33.87,
+            "lon": 151.21,
+            "side": "R"
+          },
+          {
+            "city": "Melbourne",
+            "state": "Victoria",
+            "lat": -37.81,
+            "lon": 144.96,
+            "side": "B"
+          },
+          {
+            "city": "Brisbane",
+            "state": "Queensland",
+            "lat": -27.47,
+            "lon": 153.03,
+            "side": "R"
+          },
+          {
+            "city": "Perth",
+            "state": "Western Australia",
+            "lat": -31.95,
+            "lon": 115.86,
+            "side": "L"
+          },
+          {
+            "city": "Adelaide",
+            "state": "South Australia",
+            "lat": -34.93,
+            "lon": 138.6,
+            "side": "L"
+          },
+          {
+            "city": "Canberra",
+            "state": "Australian Capital Territory",
+            "lat": -35.28,
+            "lon": 149.13,
+            "side": "L"
+          },
+          {
+            "city": "Hobart",
+            "state": "Tasmania",
+            "lat": -42.88,
+            "lon": 147.33,
+            "side": "R"
+          },
+          {
+            "city": "Darwin",
+            "state": "Northern Territory",
+            "lat": -12.46,
+            "lon": 130.84,
+            "side": "R"
+          }
+        ]
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "circle",
+            "size": 45,
+            "color": "#1F6FB2",
+            "opacity": 1
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.side == 'L'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -7,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "city"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.side == 'R'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 7,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "city"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.side == 'B'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "dx": 0,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "dy": 13
+          },
+          "encoding": {
+            "text": {
+              "field": "city"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 330,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/syd_stations.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "lat": "number",
+        "lon": "number",
+        "y2019": "number",
+        "y2021": "number",
+        "y2022": "number",
+        "y2023": "number",
+        "y2025": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "fold": [
+        "y2019",
+        "y2021",
+        "y2022",
+        "y2023",
+        "y2025"
+      ],
+      "as": [
+        "year_key",
+        "trips"
+      ]
+    },
+    {
+      "calculate": "toNumber(substring(datum.year_key, 1))",
+      "as": "year"
+    },
+    {
+      "window": [
+        {
+          "op": "row_number",
+          "as": "rank"
+        }
+      ],
+      "sort": [
+        {
+          "field": "trips",
+          "order": "descending"
+        }
+      ],
+      "groupby": [
+        "year"
+      ]
+    },
+    {
+      "filter": "datum.rank <= 10"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "ordinal",
+      "title": null,
+      "axis": {
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": "rank",
+      "type": "ordinal",
+      "title": "Rank"
+    },
+    "color": {
+      "field": "station",
+      "type": "nominal",
+      "legend": null,
+      "scale": {
+        "range": [
+          "#1F6FB2",
+          "#7B3FA0",
+          "#E39B2D",
+          "#8C6D31",
+          "#5C8FB8",
+          "#08306B",
+          "#B9A3D0",
+          "#C9A227",
+          "#555555",
+          "#F0B58A",
+          "#4B2C6B",
+          "#999999",
+          "#9EB9D4"
+        ]
+      }
+    },
+    "opacity": {
+      "condition": {
+        "param": "hover",
+        "value": 1
+      },
+      "value": 0.25
+    }
+  },
+  "layer": [
+    {
+      "params": [
+        {
+          "name": "hover",
+          "select": {
+            "type": "point",
+            "fields": [
+              "station"
+            ],
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 80,
+        "opacity": 1
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "station"
+          },
+          {
+            "field": "year"
+          },
+          {
+            "field": "rank"
+          },
+          {
+            "field": "trips",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2025"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "station"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2025 && datum.station == 'Martin Place'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -12,
+        "dy": -12,
+        "fontSize": 10,
+        "fontStyle": "italic",
+        "color": "#555",
+        "text": "Metro opened 2024"
+      }
+    }
+  ]
+}

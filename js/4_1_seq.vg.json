@@ -1,0 +1,351 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 280,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "params": [
+    {
+      "name": "yearPick",
+      "value": "All years",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All years",
+          "2024",
+          "2025",
+          "2026"
+        ],
+        "name": "Year",
+        "element": "#filter_4_1"
+      }
+    },
+    {
+      "name": "show",
+      "value": "All modes",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All modes",
+          "Train",
+          "Bus",
+          "Ferry",
+          "Light rail"
+        ],
+        "name": "Mode",
+        "element": "#filter_4_1"
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "data/seq_monthly.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "month": "date",
+            "train": "number",
+            "bus": "number",
+            "ferry": "number",
+            "light_rail": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "fold": [
+            "train",
+            "bus",
+            "ferry",
+            "light_rail"
+          ],
+          "as": [
+            "mode_key",
+            "trips"
+          ]
+        },
+        {
+          "calculate": "{'train':'Train','bus':'Bus','ferry':'Ferry','light_rail':'Light rail'}[datum.mode_key]",
+          "as": "mode"
+        },
+        {
+          "filter": "show == 'All modes' || datum.mode == show"
+        },
+        {
+          "filter": "yearPick == 'All years' || year(datum.month) == toNumber(yearPick)"
+        },
+        {
+          "calculate": "datum.trips / 1000000",
+          "as": "trips_m"
+        },
+        {
+          "calculate": "time(datum.month)",
+          "as": "t"
+        },
+        {
+          "joinaggregate": [
+            {
+              "op": "max",
+              "field": "t",
+              "as": "t_last"
+            }
+          ]
+        },
+        {
+          "calculate": "datum.mode + ' ' + format(datum.trips_m, datum.trips_m < 1 ? '.2f' : '.1f') + 'm'",
+          "as": "end_label"
+        }
+      ],
+      "encoding": {
+        "x": {
+          "field": "month",
+          "type": "temporal",
+          "title": null,
+          "axis": {
+            "tickCount": {
+              "expr": "yearPick == 'All years' ? {interval: 'month', step: 3} : {interval: 'month', step: 1}"
+            },
+            "labelExpr": "[timeFormat(datum.value, '%b'), month(datum.value) == 0 ? timeFormat(datum.value, '%Y') : '']",
+            "labelFlush": true,
+            "labelOverlap": false,
+            "labelLineHeight": 14
+          },
+          "timeUnit": "yearmonth"
+        },
+        "y": {
+          "field": "trips_m",
+          "type": "quantitative",
+          "title": "Trips (Millions)"
+        },
+        "color": {
+          "field": "mode",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Train",
+              "Bus",
+              "Ferry",
+              "Light rail"
+            ],
+            "range": [
+              "#0A62C9",
+              "#F58A07",
+              "#8A1FBF",
+              "#A6700A"
+            ]
+          }
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "line",
+            "strokeWidth": 2,
+            "point": {
+              "size": 20
+            }
+          },
+          "encoding": {
+            "tooltip": [
+              {
+                "field": "mode"
+              },
+              {
+                "field": "month",
+                "timeUnit": "yearmonth",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "trips_m",
+                "format": ".2f",
+                "title": "Trips (millions)"
+              }
+            ]
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.t == datum.t_last && datum.mode != 'Ferry' && datum.mode != 'Light rail'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 6,
+            "fontSize": 12,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "end_label"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.t == datum.t_last && datum.mode == 'Ferry'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 6,
+            "dy": 8,
+            "fontSize": 12,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "end_label"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.t == datum.t_last && datum.mode == 'Light rail'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 6,
+            "dy": -6,
+            "fontSize": 12,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "end_label"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.mode == 'Bus' && month(datum.month) == 2 && year(datum.month) == 2026"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "filled": false,
+            "size": 90,
+            "strokeWidth": 1.5
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.mode == 'Bus' && month(datum.month) == 2 && year(datum.month) == 2026"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -6,
+            "dy": -8,
+            "fontSize": 11,
+            "color": "#444",
+            "fontWeight": "normal",
+            "text": "Highest month: 13.5m bus trips (March 2026)",
+            "baseline": "bottom"
+          },
+          "encoding": {
+            "color": {
+              "value": "#555"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.mode == 'Bus' && month(datum.month) == 0 && year(datum.month) == 2025 && yearPick == 'All years'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "dx": 0,
+            "dy": 10,
+            "fontSize": 11,
+            "color": "#444",
+            "fontWeight": "normal",
+            "text": [
+              "Summer school holidays:",
+              "fewer trips every December–January"
+            ],
+            "baseline": "top"
+          },
+          "encoding": {
+            "color": {
+              "value": "#555"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "date": "2024-08-05",
+            "label": "50-cent fares start (5 August 2024)"
+          }
+        ]
+      },
+      "transform": [
+        {
+          "calculate": "toDate(datum.date)",
+          "as": "d"
+        },
+        {
+          "filter": "yearPick == 'All years' || year(datum.d) == toNumber(yearPick)"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "rule",
+            "color": "#333",
+            "strokeDash": [
+              4,
+              3
+            ]
+          },
+          "encoding": {
+            "x": {
+              "field": "d",
+              "type": "temporal"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 5,
+            "y": 6,
+            "fontSize": 11,
+            "fontWeight": "normal"
+          },
+          "encoding": {
+            "x": {
+              "field": "d",
+              "type": "temporal"
+            },
+            "text": {
+              "field": "label"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

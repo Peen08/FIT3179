@@ -1,0 +1,223 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 420,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "projection": {
+    "type": "mercator"
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/syd_land.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "syd_land"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#F1F1EC",
+        "stroke": "#DDDDDD"
+      }
+    },
+    {
+      "data": {
+        "url": "data/syd_lines.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "syd_lines"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "filled": false,
+        "stroke": "#C8C8C8",
+        "strokeWidth": 1
+      }
+    },
+    {
+      "data": {
+        "url": "data/syd_stations.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lat": "number",
+            "lon": "number",
+            "y2019": "number",
+            "y2021": "number",
+            "y2022": "number",
+            "y2023": "number",
+            "y2025": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.y2025 / datum.y2019 * 100",
+          "as": "pct"
+        },
+        {
+          "calculate": "datum.y2019 == 0 ? 'New station' : (datum.y2025 < datum.y2019 * 0.02 ? 'Closed for upgrade' : (datum.pct < 60 ? 'Under 60%' : (datum.pct < 90 ? '60–90%' : (datum.pct < 110 ? '90–110%' : 'Over 110%'))))",
+          "as": "status"
+        },
+        {
+          "calculate": "max(datum.y2025, datum.y2019)",
+          "as": "size_val"
+        }
+      ],
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        }
+      },
+      "layer": [
+        {
+          "mark": {
+            "type": "circle",
+            "opacity": 0.85,
+            "stroke": "white",
+            "strokeWidth": 0.5
+          },
+          "encoding": {
+            "size": {
+              "field": "size_val",
+              "type": "quantitative",
+              "legend": null,
+              "scale": {
+                "type": "sqrt",
+                "range": [
+                  6,
+                  700
+                ]
+              }
+            },
+            "color": {
+              "field": "status",
+              "type": "nominal",
+              "title": "2025 compared with 2019",
+              "scale": {
+                "domain": [
+                  "New station",
+                  "Closed for upgrade",
+                  "Under 60%",
+                  "60–90%",
+                  "90–110%",
+                  "Over 110%"
+                ],
+                "range": [
+                  "#7B3FA0",
+                  "#000000",
+                  "#B3471A",
+                  "#F0B58A",
+                  "#D5D5D0",
+                  "#2166AC"
+                ]
+              },
+              "legend": {
+                "orient": "bottom",
+                "direction": "horizontal",
+                "columns": 3,
+                "title": "2025 compared with 2019"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "station",
+                "title": "Station"
+              },
+              {
+                "field": "y2019",
+                "format": ",",
+                "title": "Trips 2019"
+              },
+              {
+                "field": "y2025",
+                "format": ",",
+                "title": "Trips 2025"
+              },
+              {
+                "field": "pct",
+                "format": ".0f",
+                "title": "Percentage of 2019"
+              }
+            ],
+            "opacity": {
+              "condition": {
+                "param": "statusPick",
+                "value": 0.85
+              },
+              "value": 0.08
+            }
+          },
+          "params": [
+            {
+              "name": "statusPick",
+              "select": {
+                "type": "point",
+                "fields": [
+                  "status"
+                ]
+              },
+              "bind": "legend"
+            }
+          ]
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Town Hall'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -14,
+            "dy": 4,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "text": "Town Hall −42%"
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Bankstown'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "dy": 16,
+            "fontSize": 11,
+            "fontStyle": "italic",
+            "text": "Bankstown line closed"
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Crows Nest'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 12,
+            "fontSize": 11,
+            "fontStyle": "italic",
+            "text": "New Metro stations"
+          }
+        }
+      ]
+    }
+  ]
+}

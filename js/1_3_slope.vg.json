@@ -1,0 +1,487 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 520,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/bitre_city_year.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "train": "number",
+        "light_rail": "number",
+        "bus": "number",
+        "ferry": "number",
+        "year": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.train + datum.light_rail + datum.bus + datum.ferry",
+      "as": "total"
+    },
+    {
+      "filter": "datum.year == 2019 || datum.year == 2025"
+    },
+    {
+      "calculate": "datum.year == 2019 ? datum.total : null",
+      "as": "b"
+    },
+    {
+      "calculate": "datum.year == 2025 ? datum.total : null",
+      "as": "l"
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "b",
+          "as": "before"
+        },
+        {
+          "op": "max",
+          "field": "l",
+          "as": "after"
+        }
+      ],
+      "groupby": [
+        "city"
+      ]
+    },
+    {
+      "calculate": "datum.after >= datum.before ? 'More trips' : 'Fewer trips'",
+      "as": "trend"
+    },
+    {
+      "calculate": "datum.year == 2019 ? '2018–2019' : '2024–2025'",
+      "as": "period"
+    },
+    {
+      "calculate": "(datum.after / datum.before - 1) * 100",
+      "as": "chg"
+    },
+    {
+      "calculate": "(datum.city == 'Melbourne' || datum.city == 'Perth') ? datum.city + '  ' + format(datum.total, ',.0f') : datum.city",
+      "as": "rlab"
+    },
+    {
+      "lookup": "city",
+      "from": {
+        "data": {
+          "values": [
+            {
+              "city": "Sydney",
+              "ly": 709
+            },
+            {
+              "city": "Melbourne",
+              "ly": 480
+            },
+            {
+              "city": "Brisbane",
+              "ly": 172
+            },
+            {
+              "city": "Perth",
+              "ly": 139
+            },
+            {
+              "city": "Adelaide",
+              "ly": 72
+            },
+            {
+              "city": "Canberra",
+              "ly": 46
+            },
+            {
+              "city": "Hobart",
+              "ly": 27
+            },
+            {
+              "city": "Darwin",
+              "ly": 8
+            }
+          ]
+        },
+        "key": "city",
+        "fields": [
+          "ly"
+        ]
+      }
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "period",
+      "type": "ordinal",
+      "title": "Financial Year",
+      "axis": {
+        "labelAngle": 0,
+        "domain": false,
+        "ticks": false,
+        "titlePadding": 10
+      },
+      "scale": {
+        "padding": 1.1
+      }
+    },
+    "y": {
+      "field": "total",
+      "type": "quantitative",
+      "title": "Trips per Year (Millions)",
+      "scale": {
+        "domain": [
+          0,
+          800
+        ]
+      },
+      "axis": {
+        "grid": true,
+        "values": [
+          0,
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700,
+          800
+        ],
+        "gridColor": "#E5E5E0"
+      }
+    },
+    "color": {
+      "field": "trend",
+      "type": "nominal",
+      "title": null,
+      "scale": {
+        "domain": [
+          "More trips",
+          "Fewer trips"
+        ],
+        "range": [
+          "#2166AC",
+          "#C2571A"
+        ]
+      },
+      "legend": null
+    },
+    "detail": {
+      "field": "city"
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "opacity": {
+          "condition": {
+            "test": "trendSel == 'All' || datum.trend == trendSel",
+            "value": 1
+          },
+          "value": 0.12
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 50,
+        "opacity": 1
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "city"
+          },
+          {
+            "field": "period"
+          },
+          {
+            "field": "total",
+            "format": ",.1f",
+            "title": "Trips (millions)"
+          },
+          {
+            "field": "chg",
+            "format": "+.0f",
+            "title": "Change (percent)"
+          }
+        ],
+        "opacity": {
+          "condition": {
+            "test": "trendSel == 'All' || datum.trend == trendSel",
+            "value": 1
+          },
+          "value": 0.12
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2025"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 8,
+        "dy": 0,
+        "fontSize": 11,
+        "baseline": "middle"
+      },
+      "encoding": {
+        "text": {
+          "field": "rlab"
+        },
+        "opacity": {
+          "condition": {
+            "test": "trendSel == 'All' || datum.trend == trendSel",
+            "value": 1
+          },
+          "value": 0.12
+        },
+        "y": {
+          "field": "ly",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2019 && (datum.city == 'Melbourne' || datum.city == 'Perth')"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -8,
+        "fontSize": 11,
+        "color": "#555"
+      },
+      "encoding": {
+        "text": {
+          "field": "total",
+          "format": ",.0f"
+        },
+        "opacity": {
+          "condition": {
+            "test": "trendSel == 'All' || datum.trend == trendSel",
+            "value": 1
+          },
+          "value": 0.12
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2025 && datum.city == 'Melbourne'"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M -8.2 -0.95 L -0.5 -0.95 L -0.5 0.95 L -8.2 0.95 Z",
+            "size": 1600,
+            "filled": true,
+            "stroke": "#F0C9AE",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "y": {
+              "datum": 350
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#FBEDE4"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M -3.60 -0.95 L -1.50 -6.44 M -1.50 -6.44 L -1.46 -5.99 M -1.50 -6.44 L -1.83 -6.13",
+            "size": 1600,
+            "filled": false,
+            "stroke": "#C2571A",
+            "strokeWidth": 1.5
+          },
+          "encoding": {
+            "y": {
+              "datum": 350
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#C2571A"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "middle",
+            "dx": -87,
+            "fontSize": 11,
+            "lineHeight": 14,
+            "text": [
+              "Steepest fall: Melbourne",
+              "106 million fewer trips (−18%)"
+            ],
+            "dy": -7
+          },
+          "encoding": {
+            "y": {
+              "datum": 350
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#8A3A0F"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.year == 2019 && datum.city == 'Perth'"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M -2.35 -0.95 L 5.35 -0.95 L 5.35 0.95 L -2.35 0.95 Z",
+            "size": 1600,
+            "filled": true,
+            "stroke": "#B7CDE6",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "y": {
+              "datum": 245
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#E7EFF8"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "point",
+            "shape": "M -1.80 0.95 L -0.32 4.35 M -0.32 4.35 L -0.66 4.05 M -0.32 4.35 L -0.30 3.90",
+            "size": 1600,
+            "filled": false,
+            "stroke": "#2166AC",
+            "strokeWidth": 1.5
+          },
+          "encoding": {
+            "y": {
+              "datum": 245
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#2166AC"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "middle",
+            "dx": 30,
+            "fontSize": 11,
+            "lineHeight": 14,
+            "text": [
+              "Biggest rise: Perth",
+              "7 million more trips (+5%)"
+            ],
+            "dy": -7
+          },
+          "encoding": {
+            "y": {
+              "datum": 245
+            },
+            "opacity": {
+              "condition": {
+                "test": "trendSel == 'All' || datum.trend == trendSel",
+                "value": 1
+              },
+              "value": 0.12
+            },
+            "color": {
+              "value": "#174A7C"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "params": [
+    {
+      "name": "trendSel",
+      "value": "All",
+      "bind": {
+        "input": "radio",
+        "options": [
+          "All",
+          "More trips",
+          "Fewer trips"
+        ],
+        "labels": [
+          "All cities",
+          "More trips",
+          "Fewer trips"
+        ],
+        "name": " ",
+        "element": "#legend_1_3"
+      }
+    }
+  ]
+}

@@ -1,0 +1,389 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 420,
+  "params": [
+    {
+      "name": "year_pick",
+      "value": 2025,
+      "bind": {
+        "input": "select",
+        "options": [
+          2019,
+          2021,
+          2022,
+          2023,
+          2025
+        ],
+        "name": "Year: "
+      }
+    },
+    {
+      "name": "zoom",
+      "value": 34000,
+      "bind": {
+        "input": "range",
+        "min": 30000,
+        "max": 220000,
+        "step": 1000,
+        "name": "Zoom: "
+      }
+    },
+    {
+      "name": "centre",
+      "value": [
+        150.975,
+        -33.85
+      ],
+      "bind": {
+        "input": "select",
+        "options": [
+          [
+            150.975,
+            -33.85
+          ],
+          [
+            151.205,
+            -33.872
+          ],
+          [
+            151.0,
+            -33.815
+          ],
+          [
+            151.18,
+            -33.8
+          ]
+        ],
+        "labels": [
+          "Whole of Sydney",
+          "City centre",
+          "Parramatta",
+          "North Shore"
+        ],
+        "name": "Centre: "
+      }
+    }
+  ],
+  "projection": {
+    "type": "mercator",
+    "center": {
+      "expr": "centre"
+    },
+    "scale": {
+      "expr": "zoom"
+    }
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/syd_land.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "syd_land"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#F1F1EC",
+        "stroke": "#DDDDDD"
+      }
+    },
+    {
+      "data": {
+        "url": "data/syd_stations.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lat": "number",
+            "lon": "number",
+            "y2019": "number",
+            "y2021": "number",
+            "y2022": "number",
+            "y2023": "number",
+            "y2025": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "fold": [
+            "y2019",
+            "y2021",
+            "y2022",
+            "y2023",
+            "y2025"
+          ],
+          "as": [
+            "year_key",
+            "trips"
+          ]
+        },
+        {
+          "calculate": "toNumber(substring(datum.year_key, 1))",
+          "as": "year"
+        },
+        {
+          "filter": "datum.year == year_pick && datum.trips > 0"
+        },
+        {
+          "calculate": "floor(datum.lon / 0.025) * 0.025",
+          "as": "x0"
+        },
+        {
+          "calculate": "floor(datum.lat / 0.0207) * 0.0207",
+          "as": "y0"
+        },
+        {
+          "calculate": "datum.type == 'Sydney Trains' ? 0 : 1",
+          "as": "is_metro"
+        },
+        {
+          "aggregate": [
+            {
+              "op": "sum",
+              "field": "trips",
+              "as": "trips"
+            },
+            {
+              "op": "count",
+              "as": "stations"
+            },
+            {
+              "op": "max",
+              "field": "is_metro",
+              "as": "has_metro"
+            },
+            {
+              "op": "argmax",
+              "field": "trips",
+              "as": "top"
+            }
+          ],
+          "groupby": [
+            "x0",
+            "y0",
+            "year"
+          ]
+        },
+        {
+          "calculate": "datum.top.station",
+          "as": "busiest"
+        },
+        {
+          "calculate": "datum.trips / 1000000",
+          "as": "trips_m"
+        },
+        {
+          "calculate": "datum.trips_m < 2 ? 'Under 2' : datum.trips_m < 5 ? '2 to 5' : datum.trips_m < 10 ? '5 to 10' : datum.trips_m < 25 ? '10 to 25' : datum.trips_m < 50 ? '25 to 50' : 'Over 50'",
+          "as": "band"
+        },
+        {
+          "calculate": "{type: 'Feature', geometry: {type: 'Polygon', coordinates: [[[datum.x0, datum.y0], [datum.x0, datum.y0 + 0.0207], [datum.x0 + 0.025, datum.y0 + 0.0207], [datum.x0 + 0.025, datum.y0], [datum.x0, datum.y0]]]}}",
+          "as": "square"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "strokeJoin": "miter"
+      },
+      "encoding": {
+        "shape": {
+          "field": "square",
+          "type": "geojson"
+        },
+        "color": {
+          "field": "band",
+          "type": "ordinal",
+          "scale": {
+            "domain": [
+              "Under 2",
+              "2 to 5",
+              "5 to 10",
+              "10 to 25",
+              "25 to 50",
+              "Over 50"
+            ],
+            "range": [
+              "#C9DCEE",
+              "#A3C4E3",
+              "#76A8D5",
+              "#4A88C2",
+              "#1F5F9E",
+              "#0B3A6B"
+            ]
+          },
+          "legend": {
+            "title": "Trips per year in each square (millions)",
+            "symbolType": "square",
+            "symbolSize": 140,
+            "symbolStrokeWidth": 0,
+            "orient": "bottom",
+            "direction": "horizontal",
+            "columns": 6
+          }
+        },
+        "stroke": {
+          "condition": {
+            "test": "datum.has_metro == 1",
+            "value": "#222222"
+          },
+          "value": "#FFFFFF"
+        },
+        "strokeWidth": {
+          "condition": {
+            "test": "datum.has_metro == 1",
+            "value": 2
+          },
+          "value": 0.5
+        },
+        "order": {
+          "field": "has_metro"
+        },
+        "tooltip": [
+          {
+            "field": "trips",
+            "format": ",",
+            "title": "Trips in this square"
+          },
+          {
+            "field": "stations",
+            "title": "Number of stations"
+          },
+          {
+            "field": "busiest",
+            "title": "Busiest station"
+          },
+          {
+            "field": "year",
+            "title": "Year"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "data/syd_lines.topojson",
+        "format": {
+          "type": "topojson",
+          "feature": "syd_lines"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "filled": false,
+        "stroke": "#9A9A9A",
+        "strokeWidth": 0.8,
+        "opacity": 0.7
+      }
+    },
+    {
+      "data": {
+        "url": "data/syd_stations.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lat": "number",
+            "lon": "number",
+            "y2019": "number",
+            "y2021": "number",
+            "y2022": "number",
+            "y2023": "number",
+            "y2025": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "fold": [
+            "y2019",
+            "y2021",
+            "y2022",
+            "y2023",
+            "y2025"
+          ],
+          "as": [
+            "year_key",
+            "trips"
+          ]
+        },
+        {
+          "calculate": "toNumber(substring(datum.year_key, 1))",
+          "as": "year"
+        },
+        {
+          "filter": "datum.year == year_pick && datum.trips > 0"
+        }
+      ],
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        }
+      },
+      "layer": [
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Central'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "top",
+            "dy": 16,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "station"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Parramatta' || datum.station == 'Chatswood'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "dx": -12,
+            "fontSize": 11,
+            "fontWeight": "bold"
+          },
+          "encoding": {
+            "text": {
+              "field": "station"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "zoom > 90000 && indexof(['Town Hall','Gadigal','Martin Place','Wynyard','Barangaroo'], datum.station) >= 0"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 10,
+            "fontSize": 11
+          },
+          "encoding": {
+            "text": {
+              "field": "station"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
