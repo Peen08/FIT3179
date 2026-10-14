@@ -51,6 +51,10 @@
       "as": "pct"
     },
     {
+      "calculate": "format(datum.pct, '.0f') + '%'",
+      "as": "pct_tip"
+    },
+    {
       "calculate": "min(datum.pct, 160)",
       "as": "shown"
     },
@@ -291,9 +295,8 @@
                     "title": "Trips 2024–25 (millions)"
                   },
                   {
-                    "field": "pct",
-                    "format": ".0f",
-                    "title": "% of 2018–19"
+                    "field": "pct_tip",
+                    "title": "Percentage of 2018–2019"
                   }
                 ],
                 "y": {
@@ -507,7 +510,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -2.95 -1.32 L 2.95 -1.32 L 2.95 0.42 L -2.95 0.42 Z",
+                    "shape": "M -2.95 -0.72 L 2.95 -0.72 L 2.95 1.02 L -2.95 1.02 Z",
                     "size": 1600,
                     "filled": true,
                     "color": "#EEF3F9",
@@ -549,7 +552,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -1.50 -1.32 L -4.65 -2.52 M -4.65 -2.52 L -4.25 -2.56 M -4.65 -2.52 L -4.37 -2.23",
+                    "shape": "M -1.50 -0.72 L -5.10 -2.20 M -5.10 -2.20 L -4.82 -1.89 M -5.10 -2.20 L -4.68 -2.23",
                     "size": 1600,
                     "filled": false,
                     "stroke": "#4A6B8A",
@@ -591,7 +594,7 @@
                     "type": "text",
                     "align": "center",
                     "baseline": "middle",
-                    "dy": -15.5,
+                    "dy": -3.5,
                     "fontSize": 11,
                     "lineHeight": 13,
                     "color": "#1F3B5C",
@@ -1216,9 +1219,8 @@
                     "title": "Trips 2024–25 (millions)"
                   },
                   {
-                    "field": "pct",
-                    "format": ".0f",
-                    "title": "% of 2018–19"
+                    "field": "pct_tip",
+                    "title": "Percentage of 2018–2019"
                   }
                 ],
                 "y": {
@@ -1411,7 +1413,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -2.95 -1.32 L 2.95 -1.32 L 2.95 0.42 L -2.95 0.42 Z",
+                    "shape": "M -2.95 -0.72 L 2.95 -0.72 L 2.95 1.02 L -2.95 1.02 Z",
                     "size": 1600,
                     "filled": true,
                     "color": "#EEF3F9",
@@ -1453,7 +1455,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -1.50 -1.32 L -4.65 -2.52 M -4.65 -2.52 L -4.25 -2.56 M -4.65 -2.52 L -4.37 -2.23",
+                    "shape": "M -1.50 -0.72 L -5.10 -2.20 M -5.10 -2.20 L -4.82 -1.89 M -5.10 -2.20 L -4.68 -2.23",
                     "size": 1600,
                     "filled": false,
                     "stroke": "#4A6B8A",
@@ -1495,7 +1497,7 @@
                     "type": "text",
                     "align": "center",
                     "baseline": "middle",
-                    "dy": -15.5,
+                    "dy": -3.5,
                     "fontSize": 11,
                     "lineHeight": 13,
                     "color": "#1F3B5C",
@@ -2125,9 +2127,8 @@
                     "title": "Trips 2024–25 (millions)"
                   },
                   {
-                    "field": "pct",
-                    "format": ".0f",
-                    "title": "% of 2018–19"
+                    "field": "pct_tip",
+                    "title": "Percentage of 2018–2019"
                   }
                 ],
                 "y": {
@@ -2320,7 +2321,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -2.95 -1.32 L 2.95 -1.32 L 2.95 0.42 L -2.95 0.42 Z",
+                    "shape": "M -2.95 -0.72 L 2.95 -0.72 L 2.95 1.02 L -2.95 1.02 Z",
                     "size": 1600,
                     "filled": true,
                     "color": "#EEF3F9",
@@ -2362,7 +2363,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -1.50 -1.32 L -4.65 -2.52 M -4.65 -2.52 L -4.25 -2.56 M -4.65 -2.52 L -4.37 -2.23",
+                    "shape": "M -1.50 -0.72 L -5.10 -2.20 M -5.10 -2.20 L -4.82 -1.89 M -5.10 -2.20 L -4.68 -2.23",
                     "size": 1600,
                     "filled": false,
                     "stroke": "#4A6B8A",
@@ -2404,7 +2405,7 @@
                     "type": "text",
                     "align": "center",
                     "baseline": "middle",
-                    "dy": -15.5,
+                    "dy": -3.5,
                     "fontSize": 11,
                     "lineHeight": 13,
                     "color": "#1F3B5C",
@@ -3036,9 +3037,8 @@
                     "title": "Trips 2024–25 (millions)"
                   },
                   {
-                    "field": "pct",
-                    "format": ".0f",
-                    "title": "% of 2018–19"
+                    "field": "pct_tip",
+                    "title": "Percentage of 2018–2019"
                   }
                 ],
                 "y": {
@@ -3252,7 +3252,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -2.95 -1.32 L 2.95 -1.32 L 2.95 0.42 L -2.95 0.42 Z",
+                    "shape": "M -2.95 -0.72 L 2.95 -0.72 L 2.95 1.02 L -2.95 1.02 Z",
                     "size": 1600,
                     "filled": true,
                     "color": "#EEF3F9",
@@ -3294,7 +3294,7 @@
                 {
                   "mark": {
                     "type": "point",
-                    "shape": "M -1.50 -1.32 L -4.65 -2.52 M -4.65 -2.52 L -4.25 -2.56 M -4.65 -2.52 L -4.37 -2.23",
+                    "shape": "M -1.50 -0.72 L -5.10 -2.20 M -5.10 -2.20 L -4.82 -1.89 M -5.10 -2.20 L -4.68 -2.23",
                     "size": 1600,
                     "filled": false,
                     "stroke": "#4A6B8A",
@@ -3336,7 +3336,7 @@
                     "type": "text",
                     "align": "center",
                     "baseline": "middle",
-                    "dy": -15.5,
+                    "dy": -3.5,
                     "fontSize": 11,
                     "lineHeight": 13,
                     "color": "#1F3B5C",

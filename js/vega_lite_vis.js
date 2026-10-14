@@ -33,10 +33,80 @@ var charts = [
 
 // Week 7 pattern: vegaEmbed(box, file).catch(console.error), once per chart
 charts.forEach(function (c) {
-  var embed = vegaEmbed(c[0], c[1], { actions: false, renderer: "svg", config: sharedConfig });
-  if (c[0] === "#chart_2_2") embed = embed.then(function (res) { modeCheckboxes(res.view); });
-  embed.catch(console.error);
+  if (!document.querySelector(c[0])) return;   // box commented out in index.html
+  vegaEmbed(c[0], c[1], { actions: false, renderer: "svg", config: sharedConfig }).then(function (res) {
+    if (c[0] === "#chart_2_2") modeCheckboxes(res.view);
+    if (c[0] === "#chart_2_3") zoomNote(res.view);
+    if (c[0] === "#chart_1_2") placeYearSlider(res.view);
+    if (c[0] !== "#chart_1_2") balanceInCard(res.view, c[0]);   // 1.2 is lined up with the two cards below it instead
+  }).catch(console.error);
 });
+
+// Equal white space left and right of each chart inside its card.
+// Measures what is actually drawn (axis titles, labels, legends) and slides the chart sideways
+// by half the difference. Re-run after resizing, font loading and filter changes.
+function balanceInCard(view, box) {
+  var el = document.querySelector(box), card = el.closest(".chart");
+  if (!card) return;
+  el.style.position = "relative";
+  function run() {
+    el.style.left = "0px";
+    var cr = card.getBoundingClientRect(), cs = getComputedStyle(card);
+    var L = cr.left + parseFloat(cs.borderLeftWidth), R = cr.right - parseFloat(cs.borderRightWidth);
+    var minX = Infinity, maxX = -Infinity;
+    el.querySelectorAll("svg text, svg path, svg line, svg rect, svg circle").forEach(function (n) {
+      var fill = n.getAttribute("fill"), stroke = n.getAttribute("stroke");
+      if ((!fill || fill === "transparent" || fill === "none") && (!stroke || stroke === "transparent" || stroke === "none")) return;
+      for (var a = n; a && a !== el; a = a.parentNode) if (a.getAttribute && a.getAttribute("opacity") === "0") return;
+      var r = n.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      minX = Math.min(minX, r.left); maxX = Math.max(maxX, r.right);
+    });
+    if (minX === Infinity || maxX - minX > R - L) return;   // wider than the card: leave it scrollable from the left
+    el.style.left = Math.round(((R - maxX) - (minX - L)) / 2) + "px";
+  }
+  function later() { setTimeout(run, 50); }
+  run();
+  view.addResizeListener(later);
+  window.addEventListener("resize", later);
+  card.addEventListener("change", later);
+  card.addEventListener("input", later);
+  if (document.fonts) document.fonts.ready.then(run);
+}
+
+// Chart 1.2 year slider: centred under the line chart's x-axis, just below its axis title.
+// Measured from the drawn chart, so it stays in place when the chart shrinks to fit a narrower card
+function placeYearSlider(view) {
+  var slider = document.querySelector("#slider_1_2"), stack = slider.parentNode;
+  function run() {
+    if (getComputedStyle(slider).position !== "absolute") return;   // small screens: slider sits under the chart
+    var line = document.querySelector("#chart_1_2 .concat_1_group");
+    var axis = line && line.querySelector(".role-axis[aria-label^='X-axis']");
+    if (!axis) return;
+    var a = axis.getBoundingClientRect(), s = stack.getBoundingClientRect();
+    slider.style.left = Math.round(a.left + a.width / 2 - s.left) + "px";
+    slider.style.top = Math.round(a.bottom - s.top + 22) + "px";
+  }
+  run();
+  view.addResizeListener(run);
+  window.addEventListener("resize", run);
+  if (document.fonts) document.fonts.ready.then(run);
+}
+
+// Chart 2.3 zoom unit: "1.0×" of the whole-Sydney view, plus how many km the map spans.
+// Mercator: 1 km = scale / (6371 × cos latitude) pixels, with scale = zoom × 34000
+function zoomNote(view) {
+  var note = document.querySelector("#zoom_note_2_3");
+  function update() {
+    var zoom = view.signal("zoom"), lat = view.signal("centre")[1];
+    var km = view.width() * 6371 * Math.cos(lat * Math.PI / 180) / (zoom * 34000);
+    note.innerHTML = "<strong>" + zoom.toFixed(1) + "×</strong> · map ≈ " + Math.round(km) + " km across";
+  }
+  view.addSignalListener("zoom", update);
+  view.addSignalListener("centre", update);
+  view.addResizeListener(update);
+  update();
+}
 
 // Chart 2.2 filter: tick several modes at once, or "All modes" on its own.
 // Vega-Lite radio buttons allow only one choice, so these checkboxes set the "modePicks" list instead

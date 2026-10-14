@@ -103,7 +103,7 @@
         "x": {
           "field": "month",
           "type": "temporal",
-          "title": null,
+          "title": "Month and Year",
           "axis": {
             "tickCount": {
               "expr": "yearPick == 'All years' ? {interval: 'month', step: 3} : {interval: 'month', step: 1}"
@@ -132,10 +132,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }

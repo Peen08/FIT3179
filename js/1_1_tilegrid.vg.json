@@ -39,6 +39,10 @@
       "as": "index"
     },
     {
+      "calculate": "format(datum.index, '.0f') + '%'",
+      "as": "index_tip"
+    },
+    {
       "calculate": "datum.year == 2025 ? datum.index : null",
       "as": "l"
     },
@@ -93,7 +97,7 @@
               "city": "Adelaide",
               "fyr": 2025,
               "ftext": "Still short: 91%",
-              "fpos": "above"
+              "fpos": "below-left"
             },
             {
               "city": "Sydney",
@@ -347,8 +351,7 @@
               "title": "Trips (millions)"
             },
             {
-              "field": "index",
-              "format": ".0f",
+              "field": "index_tip",
               "title": "Percentage of 2018–2019"
             }
           ],
@@ -728,9 +731,9 @@
               "fontSize": 11,
               "fontWeight": "bold",
               "align": "right",
-              "baseline": "bottom",
+              "baseline": "top",
               "dx": -2,
-              "dy": -7
+              "dy": 7
             },
             "encoding": {
               "x": {
@@ -1096,7 +1099,7 @@
               "fontWeight": "bold",
               "align": "right",
               "baseline": "top",
-              "dx": 4,
+              "dx": -8,
               "dy": 8
             },
             "encoding": {
@@ -1274,7 +1277,11 @@
           {
             "mark": {
               "type": "rule",
-              "color": "#555",
+              "color": "#999",
+              "strokeDash": [
+                3,
+                3
+              ],
               "strokeWidth": 1
             },
             "encoding": {
@@ -1454,7 +1461,12 @@
               "text": {
                 "field": "ix"
               }
-            }
+            },
+            "transform": [
+              {
+                "filter": "datum.year < 2025"
+              }
+            ]
           },
           {
             "mark": {

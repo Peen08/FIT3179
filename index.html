@@ -11,21 +11,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<nav class="topnav">
-  <div class="topnav-inner">
-    <a href="#s1">1 Big picture</a><a href="#s2">2 Sydney</a><a href="#s3">3 Melbourne</a><a href="#s4">4 Fares</a><a href="#sources">Sources</a>
-  </div>
-</nav>
-
 <div class="page">
 
 <header class="hero">
-  <h1>Public Transport Usage in Australia</h1>
+  <h1>Public Transport Usage in Australia <span class="nowrap"><svg class="flag" viewBox="0 0 1280 640" role="img" aria-label="Flag of Australia"><rect width="1280" height="640" fill="#012169"/><clipPath id="uj"><rect width="640" height="320"/></clipPath><g clip-path="url(#uj)"><path d="M0,0 L640,320 M640,0 L0,320" stroke="#fff" stroke-width="64"/><path d="M0,0 L640,320 M640,0 L0,320" stroke="#C8102E" stroke-width="21"/><path d="M320,0 V320 M0,160 H640" stroke="#fff" stroke-width="107"/><path d="M320,0 V320 M0,160 H640" stroke="#C8102E" stroke-width="64"/></g><g fill="#fff"><polygon points="320.0,384.0 338.5,441.6 395.1,420.1 361.6,470.5 413.6,501.4 353.4,506.6 361.7,566.5 320.0,522.7 278.3,566.5 286.6,506.6 226.4,501.4 278.4,470.5 244.9,420.1 301.5,441.6"/><polygon points="960.0,61.3 968.8,88.7 995.7,78.5 979.8,102.5 1004.6,117.2 975.9,119.7 979.8,148.2 960.0,127.3 940.2,148.2 944.1,119.7 915.4,117.2 940.2,102.5 924.3,78.5 951.2,88.7"/><polygon points="800.0,237.3 808.8,264.7 835.7,254.5 819.8,278.5 844.6,293.2 815.9,295.7 819.8,324.2 800.0,303.3 780.2,324.2 784.1,295.7 755.4,293.2 780.2,278.5 764.3,254.5 791.2,264.7"/><polygon points="1110.0,203.3 1118.8,230.7 1145.7,220.5 1129.8,244.5 1154.6,259.2 1125.9,261.7 1129.8,290.2 1110.0,269.3 1090.2,290.2 1094.1,261.7 1065.4,259.2 1090.2,244.5 1074.3,220.5 1101.2,230.7"/><polygon points="960.0,487.3 968.8,514.7 995.7,504.5 979.8,528.5 1004.6,543.2 975.9,545.7 979.8,574.2 960.0,553.3 940.2,574.2 944.1,545.7 915.4,543.2 940.2,528.5 924.3,504.5 951.2,514.7"/><polygon points="1040.0,315.3 1046.3,333.4 1065.4,333.7 1050.2,345.3 1055.7,363.6 1040.0,352.7 1024.3,363.6 1029.8,345.3 1014.6,333.7 1033.7,333.4"/></g></svg></span></h1>
   <p class="subtitle">How Australians Ride Trains, Trams, Buses and Ferries.</p>
   <div class="pure-g hero-intro">
     <div class="pure-u-1 pure-u-lg-1-2"><p>Public transport <strong>patronage</strong> means the number of trips people make on trains, trams (also called light rail), buses and ferries. Australia's big cities had been adding riders every year until the pandemic emptied them almost overnight.</p></div>
@@ -49,7 +43,7 @@
     <h2><span class="num">1</span> The Big Picture<span class="section-question"> — How far has public transport recovered across Australia's eight capital cities since the pandemic?</span></h2>
   </header>
   <div class="pure-g lead-row">
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Trips across the capitals fell to 862 million in 2021–2022, less than half their usual level. By 2024–2025 Perth had passed its old record, Brisbane and Canberra were back to normal, but Melbourne was still 18% short.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Trips across the capitals fell to 862 million in 2021–2022, <strong>less than half</strong> their usual level. By 2024–2025 Perth had passed its old record, Brisbane and Canberra were back to normal, but Melbourne was still 18% short. Sydney and Melbourne carried <strong>77% of all trips</strong> before the pandemic, so they account for almost all of the <strong>179 million trips</strong> still missing nationally. </p></div>
     <div class="pure-u-1 pure-u-lg-1-2 lead-terms"><div class="term-box"><h4>Patronage</h4><p>One trip or boarding on a train, tram, bus or ferry. A journey with a change of vehicle can count as two.</p></div><div class="term-box"><h4>Financial year</h4><p>Australia's government year runs July to June, so "2024–2025" means July 2024 to June 2025.</p></div></div>
   </div>
   <div class="chart">
@@ -76,15 +70,19 @@
         <h3 class="chart-title">Public Transport Trips by Capital City, 2018–2019 and 2024–2025</h3>
         <div id="legend_1_3" class="html-legend html-legend--stack"></div>
       </div>
+      <p class="chart-sub">Canberra, Hobart and Darwin sit close together near the bottom: each changed by less than 2 million trips a year.</p>
       <div id="chart_1_3"></div>
     </div></div>
     <div class="pure-u-1 pure-u-lg-1-2"><div class="chart">
       <div class="chart-head">
         <h3 class="chart-title">Change in Yearly Trips by Capital City, <span class="nowrap">2018–2019 to 2024–2025</span></h3>
-        <div class="shape-key shape-key--stack">
+        <div class="chart-head-side">
+          <div id="filter_1_5" class="chart-filters"></div>
+          <div class="shape-key shape-key--stack">
         <span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#C2571A"/></svg>Fewer trips</span>
         <span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#2166AC"/></svg>More trips</span>
-        <span><svg width="16" height="12" aria-hidden="true"><rect y="4" width="16" height="4" fill="#555"/></svg>Yearly total</span>
+        <span><svg width="12" height="12" aria-hidden="true"><rect width="12" height="12" rx="2" fill="#888888"/></svg>Yearly total</span>
+          </div>
         </div>
       </div>
       <div id="chart_1_5"></div>
@@ -105,7 +103,7 @@
     <h2><span class="num">2</span> Sydney: Recovery<span class="section-question"> — How quickly did Sydney's riders return, and where did they go once the new Metro opened?</span></h2>
   </header>
   <div class="pure-g lead-row">
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Sydney recorded just 9 million trips in August 2021, down from <strong>63 million</strong> in a typical <strong>2019</strong> month. By <strong>2025</strong>, ridership had <strong>recovered to 88%</strong>, with the new Metro shifting passenger flows to different stations.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Sydney recorded just 9 million trips in August 2021, down from <strong>63 million</strong> in a typical <strong>2019</strong> month. By <strong>2025</strong>, ridership had <strong>recovered to 88%</strong>, with the new Metro shifting passenger flows to different stations. In the heatmap, the pale cells mark the <strong>two lockdowns</strong>, from April 2020 and again from July to October 2021, while the 2025 and 2026 rows are almost as dark as 2019.</p></div>
     <div class="pure-u-1 pure-u-lg-1-2 lead-terms"><div class="term-box"><h4>Opal</h4><p>Sydney's tap-on, tap-off travel card. One "trip" is one tap on and tap off.</p></div><div class="term-box"><h4>Metro</h4><p>Sydney’s driverless rail network, with five new stations serving the city centre and North Sydney, opened in August 2024.</p></div></div>
   </div>
   <div class="chart">
@@ -120,17 +118,36 @@
     </div>
     <div id="chart_2_2"></div>
   </div>
+  <!-- Sydney station charts (2.3, 2.4, 2.5) and note hidden for now
   <div class="pure-g">
-    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Yearly Station Trips across Sydney</h3><p class="chart-sub">Stations grouped into squares about 2 kilometres wide. Outlined squares contain a Metro station. Note: 2020 and 2024 left out (lockdowns / incomplete data).</p><div id="chart_2_3"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Yearly Station Trips across Sydney</h3><p class="chart-sub">Stations grouped into squares about 2 kilometres wide. Outlined squares contain a Metro station. Note: 2020 and 2024 left out (lockdowns / incomplete data).</p><div id="chart_2_3"></div>
+      <div class="seq-key">
+        <div class="seq-key-title">Trips per year in each square (millions)</div>
+        <div class="seq-key-row">
+          <div class="seq-key-scale">
+            <div class="seq-key-bar"><span style="background:#C9DCEE"></span><span style="background:#A3C4E3"></span><span style="background:#76A8D5"></span><span style="background:#4A88C2"></span><span style="background:#1F5F9E"></span><span style="background:#0B3A6B"></span></div>
+            <div class="seq-key-labels"><span style="left:0">0</span><span style="left:16.667%">2</span><span style="left:33.333%">5</span><span style="left:50%">10</span><span style="left:66.667%">25</span><span style="left:83.333%">50</span><span style="left:100%">50+</span></div>
+          </div>
+          <span class="seq-key-metro"><svg width="14" height="14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" fill="#A3C4E3" stroke="#222" stroke-width="2"/></svg>Contains a Metro station</span>
+        </div>
+      </div>
+      <div class="map-filters">
+        <div id="filter_2_3" class="chart-filters"></div>
+        <div class="chart-filters map-zoom"><div id="zoom_2_3"></div><span id="zoom_note_2_3" class="zoom-note"></span></div>
+      </div>
+      <p class="map-finding"><strong>Key finding:</strong> the city centre is the darkest square in every year, but it has recovered the least. Its stations carried <strong>227 million</strong> trips in 2019 and <strong>169 million</strong> in 2025 (<strong>75%</strong>), below Sydney's overall 82%. Squares with a new Metro station did best: North Sydney–Crows Nest grew from 18 to 22 million trips (<strong>+24%</strong>), and Chatswood is back to its 2019 level.</p>
+    </div></div>
     <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Change in Station Trips, 2019 to 2025</h3><p class="chart-sub">Station trips in 2025 as a percentage of 2019. The Bankstown line (Sydenham–Bankstown) closed in 2024 for conversion to Metro. Source: Transport for New South Wales. Click the legend to highlight a group.</p><div id="chart_2_4"></div></div></div>
   </div>
   <div class="pure-g">
     <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Sydney's 10 Busiest Stations by Year</h3><p class="chart-sub">Rank by trips (1 = busiest). Hover a line to follow a station. 2020 and 2024 left out. Source: Transport for New South Wales.</p><div id="chart_2_5"></div></div></div>
     <div class="pure-u-1 pure-u-lg-1-2"><div class="note-box"><h4>Riders moved, they didn't vanish</h4><p><strong>Town Hall</strong> fell from <strong>71 million</strong> trips in 2019 to <strong>41 million</strong> in 2025, and <strong>Wynyard</strong> from <strong>49 million to 27 million</strong>. Yet <strong>Gadigal</strong> — a new Metro station a block from Town Hall — carried <strong>11.7 million</strong> trips in its first full year, and Metro as a whole carried <strong>72 million</strong>. Part of the "lost" city-centre traffic simply <strong>moved underground</strong>. Meanwhile the <strong>Bankstown line</strong> stations dropped to almost nothing because the line <strong>closed in 2024</strong> to be rebuilt as Metro.</p></div></div>
   </div>
+  -->
 </section>
 
 <!-- ============ SECTION 3 ============ -->
+<!-- Section 3 hidden for now
 <section id="s3">
   <header class="section-head">
     <h2><span class="num">3</span> Melbourne: The City-Centre Effect<span class="section-question"> — Why Melbourne's city-centre stations recover slower than its suburbs?</span></h2>
@@ -145,15 +162,16 @@
   </div>
   <div class="chart"><h3 class="chart-title">Monthly Public Transport Trips in Victoria by Mode, 2018–2026</h3><p class="chart-sub">Monthly trips (millions). Grey = lockdowns; teal = free weekend travel (30 November 2025 – 1 February 2026). † Trams counted differently from January 2026. Source: Department of Transport and Planning, Victoria. Hover over a panel to compare the same month across modes.</p><div id="chart_3_3"></div></div>
 </section>
+-->
 
 <!-- ============ SECTION 4 ============ -->
 <section id="s4">
   <header class="section-head">
-    <h2><span class="num">4</span> What brings riders back: The Price of a Ticket</h2>
+    <h2><span class="num">3</span> What Brings Riders Back: The Price of a Ticket</h2>
   </header>
   <div class="pure-g lead-row">
     <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">On 5 August 2024, <strong>Queensland</strong> cut every public transport fare in the south-east to just <strong>50 Australian cents</strong>. In the same December-to-July months a year later, South East Queensland carried <strong>16% more trips</strong> and the gain held into a second year. </p></div>
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Victoria's summer of free weekend travel, by contrast, barely moved its monthly totals.</p><div class="term-box"><h4>South East Queensland</h4><p>Brisbane, the Gold Coast and the Sunshine Coast.</p></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Every mode gained, and buses, the largest mode, had their busiest month in March 2026 with <strong>13.5 million trips</strong>.</p><div class="term-box"><h4>South East Queensland</h4><p>Brisbane, the Gold Coast and the Sunshine Coast.</p></div></div>
   </div>
   <div class="chart">
     <div class="chart-head">
@@ -174,9 +192,10 @@
         <p>Every mode carried <strong>more people after fares fell to 50 cents</strong>. Overall, average monthly trips rose <strong>16%</strong>, from <strong>13.7 million to 16.0 million</strong>.</p></div>
      
         <ul class="note-list">
-          <li><strong>Who rode more:</strong> <span class="mode-ferry">ferry</span> and <span class="mode-lightrail">light rail</span> grew <strong>fastest</strong>, which suggests cheap fares attracted optional trips, such as weekend outings, not only commuting.</li>
+          <li><strong>Who rode more:</strong> <span class="mode-ferry"><strong>ferry</strong></span> and <span class="mode-lightrail"><strong>light rail</strong></span> grew <strong>fastest</strong>, which suggests cheap fares attracted optional trips, such as weekend outings, not only commuting.</li>
           <li><strong>Not proof of cause:</strong> The charts show changes following the fare cut. However, this <strong>does not</strong> mean the fare cut was the only cause. Other factors like population growth, may also have contributed to the increase in ridership.</li>
           <li><strong>Victoria's special case:</strong> its free travel (chart below) covered <strong>weekends only</strong>, so it barely shows in monthly totals. Its jump from March 2026 came after the offer ended.</li>
+          <li><strong>Biggest gain in numbers:</strong> <span class="mode-bus"><strong>buses</strong></span>. Although buses grew the least in percentage terms (+12%), they added about <strong>1.07 million extra trips a month</strong>, the most of any mode and almost half of the total increase.</li>
         </ul>
     </div>
   </div>
@@ -216,7 +235,7 @@
     <li>Queensland Department of Transport and Main Roads, <em>Translink monthly performance data – Patronage, South East Queensland</em>. <a href="https://www.data.qld.gov.au/dataset/translink-monthly-performance-data">data.qld.gov.au</a></li>
     <li>Australian Bureau of Statistics, <em>Australian Statistical Geography Standard Edition 3 (2021) State and Territory boundaries</em>, © Australian Bureau of Statistics, Creative Commons Attribution 4.0. <a href="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files">abs.gov.au</a></li>
   </ul>
-  <p><strong>Use of artificial intelligence:</strong> Claude (Anthropic) was used to clean and reshape the datasets and check grammar. All charts, numbers and text were reviewed and edited by the author.</p>
+  <p><strong>Use of artificial intelligence:</strong> Claude was used to clean and reshape the datasets and check grammar. All charts, numbers and text were reviewed and edited by the author.</p>
 </footer>
 
 </div>

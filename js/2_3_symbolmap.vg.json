@@ -15,18 +15,8 @@
           2023,
           2025
         ],
-        "name": "Year: "
-      }
-    },
-    {
-      "name": "zoom",
-      "value": 34000,
-      "bind": {
-        "input": "range",
-        "min": 30000,
-        "max": 220000,
-        "step": 1000,
-        "name": "Zoom: "
+        "name": "Year",
+        "element": "#filter_2_3"
       }
     },
     {
@@ -61,7 +51,20 @@
           "Parramatta",
           "North Shore"
         ],
-        "name": "Centre: "
+        "name": "Centre",
+        "element": "#filter_2_3"
+      }
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 6.5,
+        "step": 0.1,
+        "name": "Zoom",
+        "element": "#zoom_2_3"
       }
     }
   ],
@@ -71,7 +74,7 @@
       "expr": "centre"
     },
     "scale": {
-      "expr": "zoom"
+      "expr": "zoom * 34000"
     }
   },
   "layer": [
@@ -175,10 +178,6 @@
           "as": "trips_m"
         },
         {
-          "calculate": "datum.trips_m < 2 ? 'Under 2' : datum.trips_m < 5 ? '2 to 5' : datum.trips_m < 10 ? '5 to 10' : datum.trips_m < 25 ? '10 to 25' : datum.trips_m < 50 ? '25 to 50' : 'Over 50'",
-          "as": "band"
-        },
-        {
           "calculate": "{type: 'Feature', geometry: {type: 'Polygon', coordinates: [[[datum.x0, datum.y0], [datum.x0, datum.y0 + 0.0207], [datum.x0 + 0.025, datum.y0 + 0.0207], [datum.x0 + 0.025, datum.y0], [datum.x0, datum.y0]]]}}",
           "as": "square"
         }
@@ -193,16 +192,16 @@
           "type": "geojson"
         },
         "color": {
-          "field": "band",
-          "type": "ordinal",
+          "field": "trips_m",
+          "type": "quantitative",
           "scale": {
+            "type": "threshold",
             "domain": [
-              "Under 2",
-              "2 to 5",
-              "5 to 10",
-              "10 to 25",
-              "25 to 50",
-              "Over 50"
+              2,
+              5,
+              10,
+              25,
+              50
             ],
             "range": [
               "#C9DCEE",
@@ -213,15 +212,7 @@
               "#0B3A6B"
             ]
           },
-          "legend": {
-            "title": "Trips per year in each square (millions)",
-            "symbolType": "square",
-            "symbolSize": 140,
-            "symbolStrokeWidth": 0,
-            "orient": "bottom",
-            "direction": "horizontal",
-            "columns": 6
-          }
+          "legend": null
         },
         "stroke": {
           "condition": {
@@ -279,107 +270,85 @@
     },
     {
       "data": {
-        "url": "data/syd_stations.csv",
-        "format": {
-          "type": "csv",
-          "parse": {
-            "lat": "number",
-            "lon": "number",
-            "y2019": "number",
-            "y2021": "number",
-            "y2022": "number",
-            "y2023": "number",
-            "y2025": "number"
+        "values": [
+          {
+            "label": "City centre",
+            "lon": 151.255,
+            "lat": -33.852,
+            "x1": 151.225,
+            "y1": -33.8652,
+            "x2": 151.253,
+            "y2": -33.852,
+            "align": "left"
+          },
+          {
+            "label": "Parramatta",
+            "lon": 151.0125,
+            "lat": -33.772,
+            "x1": 151.0125,
+            "y1": -33.8031,
+            "x2": 151.0125,
+            "y2": -33.777,
+            "align": "center"
+          },
+          {
+            "label": "Chatswood",
+            "lon": 151.204,
+            "lat": -33.7928,
+            "align": "left"
           }
-        }
-      },
-      "transform": [
-        {
-          "fold": [
-            "y2019",
-            "y2021",
-            "y2022",
-            "y2023",
-            "y2025"
-          ],
-          "as": [
-            "year_key",
-            "trips"
-          ]
-        },
-        {
-          "calculate": "toNumber(substring(datum.year_key, 1))",
-          "as": "year"
-        },
-        {
-          "filter": "datum.year == year_pick && datum.trips > 0"
-        }
-      ],
-      "encoding": {
-        "longitude": {
-          "field": "lon",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "lat",
-          "type": "quantitative"
-        }
+        ]
       },
       "layer": [
         {
           "transform": [
             {
-              "filter": "datum.station == 'Central'"
+              "filter": "isValid(datum.x1)"
             }
           ],
           "mark": {
-            "type": "text",
-            "align": "center",
-            "baseline": "top",
-            "dy": 16,
-            "fontSize": 11,
-            "fontWeight": "bold"
+            "type": "rule",
+            "stroke": "#555555",
+            "strokeWidth": 0.8
           },
           "encoding": {
-            "text": {
-              "field": "station"
+            "longitude": {
+              "field": "x1",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "y1",
+              "type": "quantitative"
+            },
+            "longitude2": {
+              "field": "x2"
+            },
+            "latitude2": {
+              "field": "y2"
             }
           }
         },
         {
-          "transform": [
-            {
-              "filter": "datum.station == 'Parramatta' || datum.station == 'Chatswood'"
-            }
-          ],
           "mark": {
             "type": "text",
-            "align": "right",
-            "dx": -12,
+            "baseline": "middle",
             "fontSize": 11,
-            "fontWeight": "bold"
+            "fontWeight": "bold",
+            "align": {
+              "expr": "datum.align"
+            }
           },
           "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            },
             "text": {
-              "field": "station"
-            }
-          }
-        },
-        {
-          "transform": [
-            {
-              "filter": "zoom > 90000 && indexof(['Town Hall','Gadigal','Martin Place','Wynyard','Barangaroo'], datum.station) >= 0"
-            }
-          ],
-          "mark": {
-            "type": "text",
-            "align": "left",
-            "dx": 10,
-            "fontSize": 11
-          },
-          "encoding": {
-            "text": {
-              "field": "station"
+              "field": "label"
             }
           }
         }

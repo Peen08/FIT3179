@@ -123,7 +123,8 @@
               130
             ],
             "grid": false,
-            "labelExpr": "datum.value == 100 ? 'No change' : '+' + (datum.value - 100) + '%'"
+            "labelExpr": "datum.value == 100 ? 'No change' : '+' + (datum.value - 100) + '%'",
+            "titlePadding": 14
           }
         }
       }
@@ -153,7 +154,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         },
@@ -169,10 +170,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }
@@ -201,7 +202,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         },
@@ -217,10 +218,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }
@@ -256,7 +257,7 @@
           },
           {
             "field": "pct_label",
-            "title": "Change"
+            "title": "Change (percentage)"
           }
         ],
         "y": {
@@ -271,7 +272,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         },
@@ -287,10 +288,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }
@@ -324,7 +325,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         },
@@ -340,10 +341,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }
@@ -380,7 +381,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         }
@@ -392,7 +393,7 @@
         "align": "right",
         "x": -8,
         "fontSize": 13,
-        "fontWeight": "normal"
+        "fontWeight": "bold"
       },
       "encoding": {
         "y": {
@@ -407,7 +408,7 @@
             "domain": false,
             "ticks": false,
             "labelFontSize": 13,
-            "labelFontWeight": 600,
+            "labelFontWeight": "bold",
             "labels": false
           }
         },
@@ -426,10 +427,10 @@
               "Light rail"
             ],
             "range": [
-              "#0A62C9",
-              "#F58A07",
-              "#8A1FBF",
-              "#A6700A"
+              "#6A3D9A",
+              "#2E8B3E",
+              "#B8860B",
+              "#C2378A"
             ]
           }
         }

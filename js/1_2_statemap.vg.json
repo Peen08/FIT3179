@@ -390,7 +390,7 @@
       ]
     },
     {
-      "width": 270,
+      "width": 317,
       "height": 360,
       "data": {
         "url": "data/bitre_city_year.csv",
@@ -492,13 +492,25 @@
               "type": "quantitative",
               "title": [
                 "Percentage of Public Transport Trips",
-                "(of 2018–2019 Level)"
+                "(2018–2019 = 100%)"
               ],
               "scale": {
                 "domain": [
                   40,
                   120
                 ]
+              },
+              "axis": {
+                "values": [
+                  0,
+                  20,
+                  40,
+                  60,
+                  80,
+                  100,
+                  120
+                ],
+                "labelExpr": "datum.value + '%'"
               }
             },
             "detail": {
@@ -627,8 +639,12 @@
           ],
           "mark": {
             "type": "rule",
-            "color": "#E39B2D",
-            "strokeWidth": 2
+            "color": "#999",
+            "strokeDash": [
+              3,
+              3
+            ],
+            "strokeWidth": 1
           },
           "encoding": {
             "x": {
@@ -722,11 +738,11 @@
       ]
     }
   ],
-  "spacing": 73,
+  "spacing": 79,
   "padding": {
     "left": 5,
     "top": 5,
-    "right": 64,
+    "right": 2,
     "bottom": 5
   },
   "resolve": {

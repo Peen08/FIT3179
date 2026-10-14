@@ -1,10 +1,12 @@
 /* ---------- Colours, fonts and spacing ---------- */
 :root {
-  --ink: #1F1F1F; --muted: #5F5F5F; --bg: #FAFAF7; --card: #FFFFFF; --line: #E5E5E0; --accent: #1F6FB2; --band: #EAF1F8;
-  --para: 18px; --para-lh: 1.6;   /* one size and line spacing for every paragraph */
+  --ink: #1F1F1F; --muted: #5F5F5F; --bg: #EEF2F6; --card: #FFFFFF; --line: #DCE2E9; --accent: #1F6FB2; --band: #DDE7F2;
+  --para: 16px; --para-lh: 1.6;   /* one size and line spacing for every paragraph */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;   /* titles */
+  --display: "Playfair Display", "Source Serif 4", Georgia, serif;   /* main title only */
   --sans: "Source Sans 3", Arial, sans-serif;                      /* subtitles, body, labels */
   --gutter: 24px;           /* space between columns */
+  --sheet-pad: 56px;        /* white sheet side padding */
   --page: 1100px;           /* widest the content gets */
   --measure: 680px;         /* comfortable reading line length (~65 characters) */
   --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px; --s7: 96px;   /* 8px spacing scale */
@@ -19,8 +21,8 @@ p { margin: 0 0 var(--s2); }
 /* Titles: serif. Everything else: sans-serif */
 h1, h2 { font-family: var(--serif); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }   /* serif only for the main title and section titles */
 .big-number { font-family: var(--sans); font-weight: 700; text-wrap: balance; }
-h1 { font-size: 56px; line-height: 1.05; margin: 0 0 var(--s2); }
-h2 { font-size: 28px; line-height: 1.2; margin: 0 0 var(--s3); max-width: var(--measure); }
+h1 { font-family: var(--display); font-weight: 800; font-size: 56px; line-height: 1.05; letter-spacing: -0.005em; margin: 0 0 var(--s2); }
+h2 { font-size: 34px; line-height: 1.2; margin: 0 0 var(--s3); max-width: var(--measure); }
 h4 { font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1.3; margin: 0 0 var(--s1); }
 .lead, .text, .transition, .subtitle, .hero-note, .hero-intro p { text-wrap: pretty; }
 .num { display: block; font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
@@ -28,15 +30,10 @@ h4 { font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1
 .num::before { content: "Section "; }
 
 /* ---------- One centred column for everything (shared left/right edges) ---------- */
-.page { max-width: var(--page); margin: 0 auto; padding: 0 var(--gutter); }
+/* The page is a white sheet on the grey-blue background; side padding keeps the content 1052px wide */
+.page { max-width: calc(var(--page) + 2 * var(--sheet-pad) - 48px); margin: var(--s4) auto; padding: 0 var(--sheet-pad); background: var(--card);
+  border-radius: 8px; box-shadow: 0 1px 3px rgba(31, 52, 82, 0.08), 0 8px 24px rgba(31, 52, 82, 0.06); }
 
-/* ---------- Top navigation ---------- */
-.topnav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.94); border-bottom: 1px solid var(--line);
-  font-size: 14px; font-weight: 600; backdrop-filter: blur(6px); }
-.topnav-inner { max-width: var(--page); margin: 0 auto; padding: 12px var(--gutter); overflow-x: auto; white-space: nowrap; }
-.topnav a { color: var(--muted); text-decoration: none; margin-right: var(--s3); }
-.topnav a:last-child { margin-right: 0; }
-.topnav a:hover { color: var(--accent); }
 section[id], footer[id] { scroll-margin-top: 64px; }   /* sticky nav doesn't cover the heading after a jump */
 
 /* ---------- Grid: equal gutters so every box lines up with the text edge ---------- */
@@ -59,9 +56,9 @@ section[id], footer[id] { scroll-margin-top: 64px; }   /* sticky nav doesn't cov
 .kpi-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .kpi-value { font-family: var(--sans); font-size: 32px; font-weight: 700; line-height: 1.1; margin: var(--s1) 0; }
 .kpi-text { font-size: 14px; line-height: 1.45; color: var(--muted); }
-.subtitle { font-family: var(--sans); font-size: 22px; line-height: 1.45; color: var(--muted); margin: 0; max-width: 560px; }
+.subtitle { font-family: var(--sans); font-size: 22px; font-weight: 600; line-height: 1.45; color: var(--muted); margin: 0; max-width: 560px; }
 .big-number { font-size: 40px; line-height: 1.15; color: var(--accent); margin: 0 0 var(--s1); }
-.hero-note { font-size: var(--para); line-height: var(--para-lh); color: var(--muted); margin: 0; max-width: 560px; }
+.hero-note { font-size: 20px; line-height: var(--para-lh); color: var(--muted); margin: 0; max-width: 560px; }
 /* Story intro: second row on the same columns, so each paragraph lines up with the title or the map above it */
 .hero-intro { margin-top: var(--s3); }
 .hero-intro p { font-size: var(--para); line-height: var(--para-lh); margin: 0; }
@@ -69,7 +66,7 @@ section[id], footer[id] { scroll-margin-top: 64px; }   /* sticky nav doesn't cov
 /* ---------- Sections and text blocks ---------- */
 section { margin: var(--s4) 0; }
 /* Section header band: label, title and key question on a tint that spans the content edges */
-.section-head { background: var(--band); border-radius: 6px; padding: 20px 20px 20px 0; margin: 0 0 var(--s4); }   /* no left padding: text lines up with the paragraphs */
+.section-head { background: var(--band); padding: 20px var(--sheet-pad); margin: 0 calc(-1 * var(--sheet-pad)) var(--s4); }   /* band runs to the sheet edges; text still lines up with the paragraphs */
 .section-head h2 { margin: 0; max-width: none; line-height: 1.15; text-wrap: pretty; }
 .section-head .num { margin-bottom: 6px; }
 .section-question { font-family: var(--sans); font-size: 19px; font-weight: 400; line-height: 1.45; letter-spacing: 0;
@@ -109,7 +106,7 @@ section { margin: var(--s4) 0; }
 .note-stack .note-box > p:last-child { margin-bottom: var(--s2); }
 .note-stack .note-box > p { font-size: var(--para); line-height: var(--para-lh); }   /* same size as the page's paragraphs */   /* room below the last line of a short note */
 /* Mode names in text, coloured to match the charts */
-.mode-train { color: #0A62C9; } .mode-bus { color: #F58A07; } .mode-ferry { color: #8A1FBF; } .mode-lightrail { color: #A6700A; }
+.mode-train { color: #6A3D9A; } .mode-bus { color: #2E8B3E; } .mode-ferry { color: #B8860B; } .mode-lightrail { color: #C2378A; }
 /* Point-form list inside a note card */
 .note-list { margin: var(--s1) 0; padding-left: 1.2em; color: #3A3A3A; font-size: 15px; line-height: 1.5; }
 .note-list li { margin: 0 0 4px; }
@@ -121,9 +118,12 @@ section { margin: var(--s4) 0; }
 .shape-key span { display: inline-flex; align-items: center; gap: 6px; }
 .shape-key svg { fill: #555; }
 .chart-head:has(.shape-key--stack) { flex-wrap: nowrap; align-items: flex-start; }
+/* Filter above a stacked key, together on the right of a title */
+.chart-head:has(.chart-head-side) { flex-wrap: nowrap; align-items: flex-start; }
+.chart-head-side { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s1); flex: 0 0 auto; }
 .shape-key--stack { flex-direction: column; gap: 4px; margin: 4px 0 0; flex: 0 0 auto; }   /* key stacked to the right of a half-width title */
 .term-box p, .note-box p { margin: 0; color: #3A3A3A; font-size: 15px; line-height: 1.5; }   /* card text matches its 15px card title */
-.kl-box { background: #EEF4FA; border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+.kl-box { background: var(--card); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
   padding: var(--s2) 20px; font-size: var(--para); line-height: var(--para-lh); margin: var(--s3) 0 0; }
 
 /* ---------- Chart cards ---------- */
@@ -152,7 +152,9 @@ section { margin: var(--s4) 0; }
 #chart_1_4 { display: flex; justify-content: center; }   /* equal space left and right of the lollipop chart */
 .chart-key { display: flex; align-items: center; justify-content: flex-start; gap: 6px; margin: 2px 0 0 58px; font-size: 12px; color: var(--ink); }
 .swatch-none { width: 14px; height: 14px; background: #E2E2DC; border: 1px solid #CFCFC8; }
-.chart-control-overlay { position: absolute; top: 418px; left: 731px; transform: translateX(-50%); white-space: nowrap; }
+.chart-control-overlay { position: absolute; transform: translateX(-50%); white-space: nowrap; }   /* left/top set in vega_lite_vis.js, under the line chart */
+#chart_1_2 .vega-embed { display: block; }
+#chart_1_2 svg { display: block; max-width: 100%; height: auto; }   /* map + line chart shrink to fit the card: no sideways scrolling */
 .chart-control .vega-bind { display: flex; align-items: center; gap: var(--s1); }
 .chart-control .vega-bind-name { font-weight: 600; color: var(--ink); }
 /* Slim slider sized to the 13px text */
@@ -198,25 +200,48 @@ section { margin: var(--s4) 0; }
 .chart-filters .vega-bind label { display: flex; align-items: center; gap: 6px; }
 .chart-filters .vega-bind-name { font-weight: 600; color: var(--ink); }
 .chart-filters select { font: inherit; font-size: 12px; color: var(--ink); padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--card); }
+/* Chart 2.3: sequential key with equal-width steps, then filters under the map */
+.seq-key { margin-top: var(--s1); font-size: 12px; color: var(--ink); }
+.seq-key-title { font-weight: 600; margin-bottom: 4px; }
+.seq-key-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--s1) var(--s3); }
+.seq-key-scale { flex: 0 1 300px; min-width: 200px; }
+.seq-key-bar { display: flex; height: 12px; }
+.seq-key-bar span { flex: 1; }
+.seq-key-labels { position: relative; height: 16px; margin: 2px 8px 0 0; color: var(--muted); }
+.seq-key-labels span { position: absolute; top: 0; transform: translateX(-50%); }
+.seq-key-labels span:first-child { transform: none; }
+.seq-key-metro { display: inline-flex; align-items: center; gap: 6px; }
+.map-filters { display: flex; flex-direction: column; gap: var(--s1); margin-top: var(--s2); }
+.map-filters .chart-filters { flex-wrap: wrap; align-items: center; }
+.map-zoom .vega-bind label { gap: 8px; }
+.map-zoom input[type="range"] { -webkit-appearance: none; appearance: none; width: 180px; height: 4px; margin: 0; background: var(--line); border-radius: 2px; }
+.map-zoom input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+.map-zoom input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
+.map-zoom .vega-bind label > span:last-child { display: none; }   /* raw value replaced by the zoom note */
+.zoom-note { color: var(--ink); }
+.zoom-note strong { font-weight: 600; }
+.map-finding { font-size: 14px; line-height: 1.5; color: var(--ink); margin: var(--s2) 0 0; }
 #legend_2_2 label:nth-of-type(n+2)::after { content: ""; order: -1; width: 12px; height: 12px; border-radius: 2px; }   /* square keys for the areas */
-#legend_2_2 label:nth-of-type(2)::after { background: #0A62C9; }
+#legend_2_2 label:nth-of-type(2)::after { background: #6A3D9A; }
 #legend_2_2 label:nth-of-type(3)::after { background: #00A8A8; }
-#legend_2_2 label:nth-of-type(4)::after { background: #F58A07; }
-#legend_2_2 label:nth-of-type(5)::after { background: #A6700A; }
-#legend_2_2 label:nth-of-type(6)::after { background: #8A1FBF; }
+#legend_2_2 label:nth-of-type(4)::after { background: #2E8B3E; }
+#legend_2_2 label:nth-of-type(5)::after { background: #C2378A; }
+#legend_2_2 label:nth-of-type(6)::after { background: #B8860B; }
 .chart svg { user-select: none; -webkit-user-select: none; }   /* dragging a brush won't select page text */
 
 /* ---------- Footer ---------- */
 footer { margin-top: var(--s6); border-top: 1px solid var(--line); padding: var(--s3) 0 var(--s6); font-size: 14px; line-height: 1.55; color: var(--muted); }
-footer p { max-width: 820px; }
-footer ul { padding-left: 1.25em; margin: 0 0 var(--s2); max-width: 820px; }
+footer p { max-width: none; }
+footer ul { padding-left: 1.25em; margin: 0 0 var(--s2); }   /* full sheet width: one line per source where it fits */
 footer li { margin: 0 0 var(--s1); }
 footer a { color: var(--accent); }
 
 /* ---------- Below 1024px wide: columns stack (set by pure-u-lg-*), headings shrink ---------- */
 @media (max-width: 1023px) {
+  :root { --sheet-pad: var(--gutter); }
+  .page { margin: 0 auto; border-radius: 0; box-shadow: none; }   /* sheet fills small screens */
   :root { --gutter: 16px; --s7: 64px; }
-  h1 { font-size: 40px; } h2 { font-size: 24px; }
+  h1 { font-size: 40px; } h2 { font-size: 28px; }
   .section-question { font-size: 17px; }
   .big-number { font-size: 30px; }
   .subtitle { font-size: 19px; }
@@ -226,5 +251,20 @@ footer a { color: var(--accent); }
   .chart-foot { grid-template-columns: 1fr; gap: 0; }
   .chart-control-overlay { position: static; transform: none; margin-top: var(--s2); }
   .hero-intro [class*="pure-u"] + [class*="pure-u"] p { margin-top: var(--s2); }
-  .topnav a { margin-right: var(--s2); }
 }
+
+/* ---------- Australian flag after the main title ---------- */
+h1 .flag { height: 0.62em; width: auto; vertical-align: 0.02em; margin-left: 0.12em; border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); }
+
+/* ---------- Chart tooltips (Vega) ---------- */
+body #vg-tooltip-element { font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink);
+  background: #FFFFFF; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(31, 52, 82, 0.16); padding: 10px 14px; }
+body #vg-tooltip-element table { border-collapse: collapse; }
+body #vg-tooltip-element table tr td { padding: 3px 0; vertical-align: top; }
+body #vg-tooltip-element table tr + tr td { border-top: 1px solid #EEF1F5; }
+body #vg-tooltip-element table tr td.key { color: var(--muted); font-weight: 400; text-align: left; padding-right: 16px; max-width: 200px; }
+body #vg-tooltip-element table tr td.value { color: var(--ink); font-weight: 600; text-align: right; max-width: 220px; max-height: none; }
+body #vg-tooltip-element table tr:first-child td.value { font-size: 14px; font-weight: 700; }   /* first row (usually the city or month) reads as the heading */
+

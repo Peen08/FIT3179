@@ -59,7 +59,7 @@
     {
       "title": {
         "text": "Queensland: 50-cent Fares from August 2024",
-        "fontSize": 14,
+        "fontSize": 16,
         "fontWeight": 600,
         "anchor": "start"
       },
@@ -107,6 +107,10 @@
           "as": "yoy"
         },
         {
+          "calculate": "format(datum.yoy, '+.1f') + '%'",
+          "as": "yoy_tip"
+        },
+        {
           "filter": "time(datum.month) >= time(toDate('2025-01-01')) && time(datum.month) <= time(toDate('2026-05-01'))"
         },
         {
@@ -122,7 +126,7 @@
           "field": "month",
           "timeUnit": "yearmonth",
           "type": "ordinal",
-          "title": null,
+          "title": "Month and Year",
           "scale": {
             "paddingInner": {
               "expr": "monthPick == 'All months' ? 0.25 : 0.75"
@@ -132,7 +136,8 @@
             "labelAngle": 0,
             "ticks": false,
             "labelLineHeight": 14,
-            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']"
+            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']",
+            "titlePadding": 8
           }
         },
         "y": {
@@ -188,9 +193,8 @@
                 "format": "%B %Y"
               },
               {
-                "field": "yoy",
-                "format": "+.1f",
-                "title": "Change from a year earlier (%)"
+                "field": "yoy_tip",
+                "title": "Change from a year earlier (percentage)"
               }
             ]
           }
@@ -504,7 +508,7 @@
     {
       "title": {
         "text": "Victoria: Free Weekend Travel, December 2025 – January 2026",
-        "fontSize": 14,
+        "fontSize": 16,
         "fontWeight": 600,
         "anchor": "start"
       },
@@ -552,6 +556,10 @@
           "as": "yoy"
         },
         {
+          "calculate": "format(datum.yoy, '+.1f') + '%'",
+          "as": "yoy_tip"
+        },
+        {
           "filter": "time(datum.month) >= time(toDate('2025-01-01')) && time(datum.month) <= time(toDate('2026-06-01'))"
         },
         {
@@ -567,7 +575,7 @@
           "field": "month",
           "timeUnit": "yearmonth",
           "type": "ordinal",
-          "title": null,
+          "title": "Month and Year",
           "scale": {
             "paddingInner": {
               "expr": "monthPick == 'All months' ? 0.25 : 0.75"
@@ -577,7 +585,8 @@
             "labelAngle": 0,
             "ticks": false,
             "labelLineHeight": 14,
-            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']"
+            "labelExpr": "[(yearPick == 'All years' && monthPick == 'All months' && month(datum.value) % 3 != 0) ? '' : timeFormat(datum.value, '%b'), (month(datum.value) == 0 || monthPick != 'All months') ? timeFormat(datum.value, '%Y') : '']",
+            "titlePadding": 8
           }
         },
         "y": {
@@ -615,7 +624,7 @@
               ],
               "mark": {
                 "type": "rect",
-                "color": "#1B7F79",
+                "color": "#666666",
                 "opacity": 0.15
               },
               "encoding": {
@@ -639,7 +648,7 @@
                 "baseline": "top",
                 "y": 4,
                 "fontSize": 11,
-                "color": "#1B7F79",
+                "color": "#222222",
                 "lineHeight": 13,
                 "text": [
                   "Free",
@@ -688,15 +697,14 @@
                 "format": "%B %Y"
               },
               {
-                "field": "yoy",
-                "format": "+.1f",
-                "title": "Change from a year earlier (%)"
+                "field": "yoy_tip",
+                "title": "Change from a year earlier (percentage)"
               }
             ],
             "stroke": {
               "condition": {
                 "test": "(year(datum.month) == 2025 && month(datum.month) == 11) || (year(datum.month) == 2026 && month(datum.month) == 0)",
-                "value": "#1B7F79"
+                "value": "#666666"
               },
               "value": null
             }
