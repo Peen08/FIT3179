@@ -284,10 +284,6 @@ footer a { color: var(--accent); }
   .hero-intro [class*="pure-u"] + [class*="pure-u"] p { margin-top: var(--s2); }
 }
 
-/* ---------- Australian flag after the main title ---------- */
-h1 .flag { height: 0.62em; width: auto; vertical-align: 0.02em; margin-left: 0.12em; border-radius: 3px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); }
-
 /* ---------- Chart tooltips (Vega) ---------- */
 body #vg-tooltip-element { font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink);
   background: #FFFFFF; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 6px;
