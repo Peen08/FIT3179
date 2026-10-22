@@ -19,7 +19,7 @@
     }
   ],
   "width": "container",
-  "height": 453,
+  "height": 530,
   "autosize": {
     "type": "fit-x",
     "contains": "padding"

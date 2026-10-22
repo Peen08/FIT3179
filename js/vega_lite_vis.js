@@ -8,10 +8,10 @@ var sharedConfig = {
   header: { labelFont: "'Source Sans 3', Arial, sans-serif", labelFontSize: 13, labelFontWeight: 600, title: null },
   axis: { labelFontSize: 12, titleFontSize: 13, titleFontWeight: "normal", grid: false },
   legend: { labelFontSize: 12, titleFontSize: 12, titleLimit: 300, labelLimit: 220 },
-  view: { stroke: null }
+  view: { stroke: null } // remove the border of the chart outline
 };
 
-// Each pair: [the box id in index.html, the chart file]
+// All charts to be rendered: [the box id in index.html, the chart file]
 var charts = [
   ["#chart_1_1", "js/1_1_tilegrid.vg.json"],
   ["#chart_1_2", "js/1_2_statemap.vg.json"],
@@ -31,16 +31,37 @@ var charts = [
   ["#chart_4_3", "js/4_3_compare.vg.json"]
 ];
 
+// Load fonts before rendering
+var fontsReady = document.fonts
+  ? Promise.all(["400 12px 'Source Sans 3'", "600 12px 'Source Sans 3'", "700 12px 'Source Sans 3'"].map(function (f) {
+      return document.fonts.load(f);
+    })).catch(function () {})
+  : Promise.resolve();
+
 // Week 7 pattern: vegaEmbed(box, file).catch(console.error), once per chart
-charts.forEach(function (c) {
+fontsReady.then(function () { charts.forEach(function (c) {
   if (!document.querySelector(c[0])) return;   // box commented out in index.html
-  vegaEmbed(c[0], c[1], { actions: false, renderer: "svg", config: sharedConfig }).then(function (res) {
+  vegaEmbed(c[0], c[1], { actions: { export: true, source: true, editor: true, compiled: true }, renderer: "svg", config: sharedConfig }).then(function (res) {
+    cardMenu(c[0]); // Run custom functions after rendering
     if (c[0] === "#chart_2_2") modeCheckboxes(res.view);
     if (c[0] === "#chart_2_3") zoomNote(res.view);
     if (c[0] === "#chart_1_2") placeYearSlider(res.view);
-    if (c[0] !== "#chart_1_2") balanceInCard(res.view, c[0]);   // 1.2 is lined up with the two cards below it instead
+    if (["#chart_1_2", "#chart_2_5", "#chart_3_3"].indexOf(c[0]) < 0) balanceInCard(res.view, c[0]);   // 1.2 lines up with the cards below; 2.5 shares its row with a key; 3.3 is centred in CSS
   }).catch(console.error);
-});
+}); });
+
+// Move the chart's "⋯" menu to the top-right corner of its card.
+// The wrapper keeps the vega-embed class so the menu keeps Vega-Embed's own styling; the links keep their handlers.
+function cardMenu(box) {
+  var card = document.querySelector(box).closest(".chart");
+  var menu = document.querySelector(box + " details");
+  if (!card || !menu) return;
+  var holder = document.createElement("div");
+  holder.className = "vega-embed card-menu";
+  holder.appendChild(menu);
+  card.appendChild(holder);
+  card.classList.add("has-card-menu");
+}
 
 // Equal white space left and right of each chart inside its card.
 // Measures what is actually drawn (axis titles, labels, legends) and slides the chart sideways
@@ -51,6 +72,7 @@ function balanceInCard(view, box) {
   el.style.position = "relative";
   function run() {
     el.style.left = "0px";
+    el.style.width = "";
     var cr = card.getBoundingClientRect(), cs = getComputedStyle(card);
     var L = cr.left + parseFloat(cs.borderLeftWidth), R = cr.right - parseFloat(cs.borderRightWidth);
     var minX = Infinity, maxX = -Infinity;
@@ -63,7 +85,11 @@ function balanceInCard(view, box) {
       minX = Math.min(minX, r.left); maxX = Math.max(maxX, r.right);
     });
     if (minX === Infinity || maxX - minX > R - L) return;   // wider than the card: leave it scrollable from the left
-    el.style.left = Math.round(((R - maxX) - (minX - L)) / 2) + "px";
+    var shift = Math.round(((R - maxX) - (minX - L)) / 2);
+    el.style.left = shift + "px";
+    // a fixed-width chart slid right would push its full-width box past the card edge: trim the box by the same amount
+    var svg = el.querySelector("svg");
+    if (shift > 0 && svg && svg.getBoundingClientRect().width < el.clientWidth - shift) el.style.width = "calc(100% - " + shift + "px)";
   }
   function later() { setTimeout(run, 50); }
   run();

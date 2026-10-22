@@ -58,6 +58,10 @@
     },
     {
       "filter": "datum.rank <= 10"
+    },
+    {
+      "calculate": "indexof(['Central','Town Hall','Martin Place','Circular Quay'], datum.station) >= 0 ? datum.station : 'Other'",
+      "as": "grp"
     }
   ],
   "encoding": {
@@ -75,24 +79,23 @@
       "title": "Rank"
     },
     "color": {
-      "field": "station",
+      "field": "grp",
       "type": "nominal",
       "legend": null,
       "scale": {
+        "domain": [
+          "Central",
+          "Town Hall",
+          "Martin Place",
+          "Circular Quay",
+          "Other"
+        ],
         "range": [
-          "#1F6FB2",
-          "#7B3FA0",
-          "#E39B2D",
-          "#8C6D31",
-          "#5C8FB8",
-          "#08306B",
-          "#B9A3D0",
-          "#C9A227",
-          "#555555",
-          "#F0B58A",
-          "#4B2C6B",
-          "#999999",
-          "#9EB9D4"
+          "#8C5A2B",
+          "#E377C2",
+          "#7D8F1A",
+          "#17BECF",
+          "#C8C8C8"
         ]
       }
     },
@@ -102,6 +105,9 @@
         "value": 1
       },
       "value": 0.25
+    },
+    "detail": {
+      "field": "station"
     }
   },
   "layer": [
@@ -121,16 +127,50 @@
       ],
       "mark": {
         "type": "line",
-        "strokeWidth": 3
+        "strokeWidth": 10,
+        "opacity": 0
+      },
+      "encoding": {
+        "opacity": {
+          "value": 0
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "!(datum.grp != 'Other')"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.grp != 'Other'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3.5
       }
     },
     {
       "mark": {
         "type": "circle",
-        "size": 80,
         "opacity": 1
       },
       "encoding": {
+        "size": {
+          "condition": {
+            "test": "datum.grp != 'Other'",
+            "value": 80
+          },
+          "value": 40
+        },
         "tooltip": [
           {
             "field": "station"
@@ -163,6 +203,37 @@
       "encoding": {
         "text": {
           "field": "station"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.grp != 'Other'",
+            "field": "grp",
+            "type": "nominal",
+            "scale": {
+              "domain": [
+                "Central",
+                "Town Hall",
+                "Martin Place",
+                "Circular Quay",
+                "Other"
+              ],
+              "range": [
+                "#8C5A2B",
+                "#E377C2",
+                "#7D8F1A",
+                "#17BECF",
+                "#C8C8C8"
+              ]
+            }
+          },
+          "value": "#888888"
+        },
+        "fontWeight": {
+          "condition": {
+            "test": "datum.grp != 'Other'",
+            "value": "bold"
+          },
+          "value": "normal"
         }
       }
     },

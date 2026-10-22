@@ -62,7 +62,14 @@
               "field": "trips",
               "type": "quantitative",
               "stack": "center",
-              "axis": null
+              "axis": {
+                "title": "Trips per Month",
+                "labels": false,
+                "ticks": false,
+                "domain": false,
+                "grid": false,
+                "titlePadding": 6
+              }
             },
             "color": {
               "field": "mode",

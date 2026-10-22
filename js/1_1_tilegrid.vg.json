@@ -59,7 +59,7 @@
       ]
     },
     {
-      "calculate": "datum.latest >= 95 ? 'Back to 2018–2019 level (95% or more)' : 'Still short (under 95%)'",
+      "calculate": "round(datum.latest) >= 100 ? 'Recovered (100% or more)' : 'Still short (under 100%)'",
       "as": "status"
     },
     {
@@ -96,8 +96,11 @@
             {
               "city": "Adelaide",
               "fyr": 2025,
-              "ftext": "Still short: 91%",
-              "fpos": "below-left"
+              "ftext": [
+                "Still short:",
+                "91%"
+              ],
+              "fpos": "below-deep"
             },
             {
               "city": "Sydney",
@@ -326,12 +329,12 @@
             "title": null,
             "scale": {
               "domain": [
-                "Back to 2018–2019 level (95% or more)",
-                "Still short (under 95%)"
+                "Recovered (100% or more)",
+                "Still short (under 100%)"
               ],
               "range": [
-                "#2166AC",
-                "#C2571A"
+                "#4A90D9",
+                "#E07B39"
               ]
             },
             "legend": null
@@ -427,12 +430,12 @@
             "title": null,
             "scale": {
               "domain": [
-                "Back to 2018–2019 level (95% or more)",
-                "Still short (under 95%)"
+                "Recovered (100% or more)",
+                "Still short (under 100%)"
               ],
               "range": [
-                "#2166AC",
-                "#C2571A"
+                "#4A90D9",
+                "#E07B39"
               ]
             },
             "legend": null
@@ -518,12 +521,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -609,12 +612,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -706,12 +709,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -797,12 +800,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -890,12 +893,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -980,12 +983,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -1073,12 +1076,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -1164,12 +1167,197 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          }
+        ]
+      },
+      {
+        "transform": [
+          {
+            "filter": "datum.year == datum.fyr && datum.fpos == 'below-deep'"
+          }
+        ],
+        "layer": [
+          {
+            "mark": {
+              "type": "point",
+              "filled": true,
+              "size": 40
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
+                  ],
+                  "range": [
+                    "#4A90D9",
+                    "#E07B39"
+                  ]
+                },
+                "legend": null
+              },
+              "opacity": {
+                "condition": {
+                  "value": 1,
+                  "test": "grp == 'All' || datum.status == grp"
+                },
+                "value": 0.15
+              }
+            }
+          },
+          {
+            "mark": {
+              "type": "text",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "align": "right",
+              "baseline": "top",
+              "dx": 0,
+              "dy": 30,
+              "lineHeight": 13
+            },
+            "encoding": {
+              "x": {
+                "field": "year",
+                "type": "quantitative",
+                "axis": {
+                  "title": "Financial Year Ending June",
+                  "values": [
+                    2016,
+                    2019,
+                    2022,
+                    2025
+                  ],
+                  "format": "d",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 12,
+                  "tickSize": 4
+                },
+                "scale": {
+                  "domain": [
+                    2016,
+                    2025
+                  ],
+                  "zero": false
+                }
+              },
+              "y": {
+                "field": "index",
+                "type": "quantitative",
+                "axis": {
+                  "title": [
+                    "Percentage of Public",
+                    "Transport Trips"
+                  ],
+                  "values": [
+                    0,
+                    50,
+                    100
+                  ],
+                  "labelExpr": "datum.value + '%'",
+                  "grid": false,
+                  "labelFontSize": 11,
+                  "titleFontSize": 11,
+                  "tickSize": 4,
+                  "titleLineHeight": 13
+                },
+                "scale": {
+                  "domain": [
+                    0,
+                    145
+                  ]
+                }
+              },
+              "text": {
+                "field": "ftext"
+              },
+              "color": {
+                "field": "status",
+                "type": "nominal",
+                "title": null,
+                "scale": {
+                  "domain": [
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
+                  ],
+                  "range": [
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -1383,12 +1571,12 @@
                 "title": null,
                 "scale": {
                   "domain": [
-                    "Back to 2018–2019 level (95% or more)",
-                    "Still short (under 95%)"
+                    "Recovered (100% or more)",
+                    "Still short (under 100%)"
                   ],
                   "range": [
-                    "#2166AC",
-                    "#C2571A"
+                    "#4A90D9",
+                    "#E07B39"
                   ]
                 },
                 "legend": null
@@ -1497,13 +1685,13 @@
         "input": "radio",
         "options": [
           "All",
-          "Back to 2018–2019 level (95% or more)",
-          "Still short (under 95%)"
+          "Recovered (100% or more)",
+          "Still short (under 100%)"
         ],
         "labels": [
           "All cities",
-          "Recovered (95% or more)",
-          "Still short (under 95%)"
+          "Recovered",
+          "Still short"
         ],
         "name": " ",
         "element": "#legend_1_1"

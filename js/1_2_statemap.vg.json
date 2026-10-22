@@ -104,9 +104,9 @@
                       "city": "Sydney",
                       "lat": -33.87,
                       "lon": 151.21,
-                      "llat": -32.6,
-                      "llon": 148.0,
-                      "side": "W"
+                      "llat": -30.9,
+                      "llon": 152.9,
+                      "side": "E"
                     },
                     {
                       "city": "Melbourne",
@@ -224,30 +224,29 @@
                   "scale": {
                     "type": "linear",
                     "domain": [
-                      0,
+                      30,
                       110
                     ],
                     "range": [
-                      "#EAF2FA",
-                      "#0B3A6B"
+                      "#EFEAF6",
+                      "#7A5BB3"
                     ],
                     "clamp": true
                   },
                   "legend": {
                     "title": [
-                      "Percentage of public",
-                      "transport trips"
+                      "Percentage of public transport trips"
                     ],
                     "orient": "none",
                     "legendX": 41,
                     "legendY": 400,
                     "direction": "horizontal",
-                    "gradientLength": 165,
+                    "gradientLength": 185,
                     "values": [
-                      0,
-                      25,
+                      30,
                       50,
-                      75,
+                      70,
+                      90,
                       110
                     ],
                     "labelExpr": "datum.value + '%'",
@@ -390,7 +389,7 @@
       ]
     },
     {
-      "width": 317,
+      "width": 306,
       "height": 360,
       "data": {
         "url": "data/bitre_city_year.csv",
@@ -548,7 +547,7 @@
             "point": {
               "filled": true,
               "size": 30,
-              "color": "#3A5A80"
+              "color": "#5B3FA0"
             }
           },
           "encoding": {
@@ -579,12 +578,12 @@
               "scale": {
                 "type": "linear",
                 "domain": [
-                  0,
+                  30,
                   110
                 ],
                 "range": [
-                  "#EAF2FA",
-                  "#0B3A6B"
+                  "#A08CCF",
+                  "#4B2C8F"
                 ],
                 "clamp": true
               },

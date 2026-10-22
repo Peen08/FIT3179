@@ -1,7 +1,7 @@
 /* ---------- Colours, fonts and spacing ---------- */
 :root {
   --ink: #1F1F1F; --muted: #5F5F5F; --bg: #EEF2F6; --card: #FFFFFF; --line: #DCE2E9; --accent: #1F6FB2; --band: #DDE7F2;
-  --para: 16px; --para-lh: 1.6;   /* one size and line spacing for every paragraph */
+  --para: 18px; --para-lh: 1.6;   /* one size and line spacing for every paragraph */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;   /* titles */
   --display: "Playfair Display", "Source Serif 4", Georgia, serif;   /* main title only */
   --sans: "Source Sans 3", Arial, sans-serif;                      /* subtitles, body, labels */
@@ -30,6 +30,14 @@ h4 { font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1
 .num::before { content: "Section "; }
 
 /* ---------- One centred column for everything (shared left/right edges) ---------- */
+/* ---------- Top navigation: sticky, links centred ---------- */
+.topnav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.94); border-bottom: 1px solid var(--line);
+  font-size: 14px; font-weight: 600; backdrop-filter: blur(6px); }
+.topnav-inner { max-width: var(--page); margin: 0 auto; padding: 12px var(--gutter); overflow-x: auto; white-space: nowrap; text-align: center; }
+.topnav a { color: var(--muted); text-decoration: none; margin: 0 var(--s2); }
+.topnav a:hover { color: var(--accent); }
+section { scroll-margin-top: 56px; }   /* section titles land below the sticky bar */
+
 /* The page is a white sheet on the grey-blue background; side padding keeps the content 1052px wide */
 .page { max-width: calc(var(--page) + 2 * var(--sheet-pad) - 48px); margin: var(--s4) auto; padding: 0 var(--sheet-pad); background: var(--card);
   border-radius: 8px; box-shadow: 0 1px 3px rgba(31, 52, 82, 0.08), 0 8px 24px rgba(31, 52, 82, 0.06); }
@@ -132,15 +140,37 @@ section { margin: var(--s4) 0; }
 .chart-plain { background: transparent; border: none; padding: 0; margin: 0; }
 .chart > div { width: 100%; }                          /* inner box: "width": "container" charts fill this */
 .pure-g > [class*="pure-u"] > .chart { height: calc(100% - var(--gutter)); }   /* cards in one row share a height */
-.chart .vega-embed summary { display: none; }
+/* "⋯" actions menu (save as SVG/PNG, view source, open in editor) in the top-right corner of each card */
+.chart .vega-embed.has-actions { padding-right: 0; }   /* no space reserved beside the chart itself */
+.chart.has-card-menu { position: relative; }
+.card-menu { position: absolute !important; top: 10px; right: 10px; left: auto; width: auto !important; z-index: 3; padding: 0 !important; }   /* not the full-width ".chart > div" box */
+.card-menu details { position: relative; }
+.card-menu summary { position: static !important; display: flex; align-items: center; justify-content: center; opacity: 0.45; transition: opacity 0.15s; }
+.chart:hover .card-menu summary, .card-menu details[open] summary { opacity: 1; }   /* clearer when the card is hovered */
+.card-menu .vega-actions { top: 34px !important; right: 0 !important; }
+/* keep titles, filters and legends clear of the button */
+.has-card-menu > .chart-title, .has-card-menu > .chart-head { padding-right: 30px; }
 /* Card header written in HTML (used where the description is split into two columns) */
-.chart-title { font-family: var(--sans); font-size: 20px; font-weight: 700; line-height: 1.25; margin: 0 0 var(--s1); }
+.chart-title { font-family: var(--sans); font-size: 22px; font-weight: 700; line-height: 1.25; margin: 0 0 var(--s1); }
 /* Chart description under an HTML title: one paragraph that wraps to the card width */
-.chart-sub { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 0 0 var(--s2); }
+.chart-sub { font-size: 14px; line-height: 1.45; color: var(--muted); margin: 0 0 var(--s2); }
 /* One short note under each panel of a two-panel chart */
 .panel-notes { margin-top: var(--s2); }
 .panel-notes p { font-size: 14px; line-height: 1.5; color: var(--ink); margin: 0 0 var(--s1); }
 .chart-desc { margin-bottom: var(--s2); }
+.chart-desc > [class*="pure-u"]:first-child { padding-right: 12px; }   /* even gutter: both description boxes the same width */
+.chart-desc > [class*="pure-u"]:last-child { padding-left: 12px; }
+@media (max-width: 767px) { .chart-desc > [class*="pure-u"] { padding: 0; } }
+/* Filter and colour key in one row under a chart title */
+.key-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s3); margin: 0 0 var(--s2); }
+.key-row .shape-key { margin: 0; }
+/* Radio legend in one row under a chart title, starting at the left edge */
+.html-legend--row { margin: 0 0 var(--s2); }
+.html-legend.html-legend--right .vega-bind-radio { justify-content: flex-end; gap: 24px; }   /* options together on the right */
+.html-legend.html-legend--right .vega-bind-radio label:not(:last-child) { margin-right: 0; }
+.html-legend.legend-below, .shape-key.legend-below { margin: var(--s2) 0 0; }   /* legend in one row under its chart */
+.html-legend.html-legend--row .vega-bind-radio { justify-content: flex-start; gap: 24px; }
+.html-legend.html-legend--row .vega-bind-radio label:not(:last-child) { margin-right: 0; }
 .chart-title-gap { margin-bottom: var(--s2); }
 /* Chart control (e.g. year slider) under the second panel: right half of the card */
 .chart-foot { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); margin-top: var(--s1); }
@@ -164,7 +194,7 @@ section { margin: var(--s4) 0; }
   background: var(--accent); cursor: pointer; }
 .chart-control input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
 .chart-control .vega-bind label > span:last-child, .chart-control output { font-weight: 600; color: var(--ink); }
-.chart-desc p { font-size: 13px; line-height: 1.45; color: var(--muted); margin: 0; }
+.chart-desc p { font-size: 14px; line-height: 1.45; color: var(--muted); margin: 0; }
 /* Legend written into the page (Vega-Lite radio input), styled as colour keys */
 .html-legend { margin-top: var(--s1); font-size: 13px; }
 .html-legend .vega-bind { display: block; width: 100%; }
@@ -179,11 +209,12 @@ section { margin: var(--s4) 0; }
 .html-legend input { accent-color: var(--accent); margin: 0; order: -2; }   /* radio, then colour line, then text */
 #legend_1_1 label:nth-of-type(2)::after, #legend_1_1 label:nth-of-type(3)::after,
 #legend_1_3 label:nth-of-type(2)::after, #legend_1_3 label:nth-of-type(3)::after { content: ""; order: -1; width: 16px; height: 3px; border-radius: 2px; }
-#legend_1_1 label:nth-of-type(2)::after, #legend_1_3 label:nth-of-type(2)::after { background: #2166AC; }
-#legend_1_1 label:nth-of-type(3)::after, #legend_1_3 label:nth-of-type(3)::after { background: #C2571A; }
+#legend_1_3 label:nth-of-type(2)::after { background: #2166AC; }
+#legend_1_1 label:nth-of-type(2)::after, #legend_1_4 label:nth-of-type(2)::after { background: #4A90D9; }   /* recovered */
+#legend_1_3 label:nth-of-type(3)::after { background: #C2571A; }
+#legend_1_1 label:nth-of-type(3)::after, #legend_1_4 label:nth-of-type(3)::after { background: #E07B39; }   /* still short */
 #legend_1_4 label:nth-of-type(n+2)::after { content: ""; order: -1; width: 16px; height: 3px; border-radius: 2px; }   /* line keys, like the other legends */
-#legend_1_4 label:nth-of-type(2)::after { background: #C2571A; }
-#legend_1_4 label:nth-of-type(3)::after { background: #2166AC; }          /* hides the empty actions button */
+          /* hides the empty actions button */
 /* Title and filter on one row: title left, filter right (wraps under the title on narrow screens) */
 .chart-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-bottom: var(--s2); }
 .nowrap { white-space: nowrap; }   /* keep a date range on one line */
@@ -268,3 +299,19 @@ body #vg-tooltip-element table tr td.key { color: var(--muted); font-weight: 400
 body #vg-tooltip-element table tr td.value { color: var(--ink); font-weight: 600; text-align: right; max-width: 220px; max-height: none; }
 body #vg-tooltip-element table tr:first-child td.value { font-size: 14px; font-weight: 700; }   /* first row (usually the city or month) reads as the heading */
 
+/* Bump chart: station names in the text use the same colours as their lines */
+.st-central, .st-townhall, .st-martin, .st-quay { font-weight: 700; }
+.st-central { color: #8C5A2B; } .st-townhall { color: #E377C2; } .st-martin { color: #7D8F1A; } .st-quay { color: #17BECF; }
+.bump-note .lead { margin: 0; padding-left: var(--s1); }
+.bump-wrap { display: flex; align-items: flex-start; gap: var(--s2); }
+.bump-wrap #chart_2_5 { flex: 1 1 auto; min-width: 0; }
+.bump-key { flex-direction: column; gap: 6px; flex: 0 0 auto; margin: 8px 0 0; }   /* dot key in a column beside the chart */
+@media (max-width: 767px) { .bump-wrap { flex-direction: column; } .bump-key { flex-direction: row; flex-wrap: wrap; } }
+.bump-note .lead + .lead { margin-top: var(--s2); }   /* space between the two bump-chart paragraphs */
+/* Horizon chart key: one, two and three overlaid layers of the same colour */
+.horizon-key { align-items: center; gap: 6px; margin-top: var(--s1); }
+.horizon-key .hz { width: 22px; height: 12px; border-radius: 2px; margin-left: 10px; }
+.horizon-key .hz:first-child { margin-left: 0; }
+.horizon-key .hz-tight { margin-left: -6px; width: 16px; }   /* three shades read as one scale */
+#chart_3_3 .vega-embed { display: block; }
+#chart_3_3 svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }   /* horizon chart shrinks to fit: no sideways scrolling */
