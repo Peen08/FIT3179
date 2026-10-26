@@ -64,6 +64,10 @@
     {
       "calculate": "datum.entries / datum.day_total * 100",
       "as": "share"
+    },
+    {
+      "calculate": "format(datum.share, '.0f') + '%'",
+      "as": "share_tip"
     }
   ],
   "encoding": {
@@ -93,6 +97,14 @@
       "sort": {
         "field": "entries_2425",
         "order": "descending"
+      },
+      "axis": {
+        "labelFontWeight": {
+          "expr": "indexof(['Flinders Street','Southern Cross','Melbourne Central','Parliament','Flagstaff','Craigieburn'], datum.value) >= 0 ? 'bold' : 'normal'"
+        },
+        "labelColor": {
+          "expr": "indexof(['Flinders Street','Southern Cross','Melbourne Central','Parliament','Flagstaff','Craigieburn'], datum.value) >= 0 ? '#1F3B5C' : '#444'"
+        }
       }
     }
   },
@@ -107,14 +119,34 @@
         "color": {
           "field": "share",
           "type": "quantitative",
-          "title": "Percentage of day",
+          "title": "Share of day (%)",
           "scale": {
-            "scheme": "purples"
+            "domain": [
+              0,
+              35,
+              70
+            ],
+            "range": [
+              "#FCE9F2",
+              "#E0619E",
+              "#8A1453"
+            ],
+            "interpolate": "lab"
           },
           "legend": {
-            "orient": "bottom",
-            "direction": "horizontal",
-            "gradientLength": 220
+            "values": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70
+            ],
+            "orient": "right",
+            "direction": "vertical",
+            "gradientLength": 180
           }
         },
         "tooltip": [
@@ -126,8 +158,7 @@
             "title": "Time band"
           },
           {
-            "field": "share",
-            "format": ".0f",
+            "field": "share_tip",
             "title": "Percentage of the day's entries"
           }
         ],
@@ -175,6 +206,255 @@
             "value": 1
           },
           "value": 0.25
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "indexof(['Flinders Street','Southern Cross','Melbourne Central','Parliament','Flagstaff'], datum.station) >= 0 && datum.band == 'Evening peak'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "filled": false,
+        "stroke": "#1F3B5C",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "field": "band",
+          "type": "ordinal",
+          "sort": [
+            "Early",
+            "Morning peak",
+            "Midday",
+            "Evening peak",
+            "Late evening"
+          ]
+        },
+        "y": {
+          "field": "station",
+          "type": "nominal",
+          "sort": {
+            "field": "entries_2425",
+            "order": "descending"
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Craigieburn' && datum.band == 'Morning peak'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "filled": false,
+        "stroke": "#1F3B5C",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x": {
+          "field": "band",
+          "type": "ordinal",
+          "sort": [
+            "Early",
+            "Morning peak",
+            "Midday",
+            "Evening peak",
+            "Late evening"
+          ]
+        },
+        "y": {
+          "field": "station",
+          "type": "nominal",
+          "sort": {
+            "field": "entries_2425",
+            "order": "descending"
+          }
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "fill": "#EEF3F9",
+        "stroke": "#C6D5E6",
+        "strokeWidth": 1,
+        "cornerRadius": 2
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 12"
+          }
+        },
+        "x2": {
+          "value": {
+            "expr": "width + 146"
+          }
+        },
+        "y": {
+          "value": 232
+        },
+        "y2": {
+          "value": 304
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "fontSize": 11,
+        "lineHeight": 14,
+        "color": "#1F3B5C",
+        "text": [
+          "City-centre stations:"
+        ],
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 20"
+          }
+        },
+        "y": {
+          "value": 240
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "fontSize": 11,
+        "lineHeight": 14,
+        "color": "#1F3B5C",
+        "text": [
+          "Flinders Street, Southern",
+          "Cross, Melbourne Central,",
+          "Parliament, Flagstaff"
+        ]
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 20"
+          }
+        },
+        "y": {
+          "value": 254
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "fill": "#EEF3F9",
+        "stroke": "#C6D5E6",
+        "strokeWidth": 1,
+        "cornerRadius": 2
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 12"
+          }
+        },
+        "x2": {
+          "value": {
+            "expr": "width + 146"
+          }
+        },
+        "y": {
+          "value": 314
+        },
+        "y2": {
+          "value": 374
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "fontSize": 11,
+        "lineHeight": 14,
+        "color": "#1F3B5C",
+        "text": [
+          "Suburban station:"
+        ],
+        "fontWeight": "bold"
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 20"
+          }
+        },
+        "y": {
+          "value": 322
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street' && datum.band == 'Early'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "fontSize": 11,
+        "lineHeight": 14,
+        "color": "#1F3B5C",
+        "text": [
+          "Craigieburn: most entries",
+          "in the morning peak"
+        ]
+      },
+      "encoding": {
+        "x": {
+          "value": {
+            "expr": "width + 20"
+          }
+        },
+        "y": {
+          "value": 336
         }
       }
     }

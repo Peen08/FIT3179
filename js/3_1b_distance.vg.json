@@ -1,0 +1,757 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": 373,
+  "autosize": {
+    "type": "fit-x",
+    "contains": "padding"
+  },
+  "data": {
+    "url": "data/melb_stations.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "lat": "number",
+        "lon": "number",
+        "entries_2425": "number",
+        "pre_am": "number",
+        "am_peak": "number",
+        "interpeak": "number",
+        "pm_peak": "number",
+        "pm_late": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "(datum.pre_am + datum.am_peak) / (datum.pre_am + datum.am_peak + datum.pm_peak + datum.pm_late) * 100",
+      "as": "morning"
+    },
+    {
+      "filter": "datum.lat > -38.45 && datum.lat < -37.45 && datum.lon > 144.5 && datum.lon < 145.55"
+    },
+    {
+      "filter": "datum.entries_2425 >= 100000 && isValid(datum.morning)"
+    },
+    {
+      "calculate": "111.32 * sqrt(pow(datum.lat + 37.8183, 2) + pow((datum.lon - 144.9671) * cos(37.8183 * PI / 180), 2))",
+      "as": "dist"
+    },
+    {
+      "calculate": "datum.morning < 30 ? 'Under 30%: mostly evening' : datum.morning < 45 ? '30–45%' : datum.morning < 55 ? '45–55%: about even' : datum.morning < 70 ? '55–70%' : 'Over 70%: mostly morning'",
+      "as": "cls"
+    },
+    {
+      "calculate": "format(datum.morning, '.0f') + '%'",
+      "as": "morning_tip"
+    }
+  ],
+  "params": [
+    {
+      "name": "boardPick",
+      "value": "All stations"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "dist",
+      "type": "quantitative",
+      "title": "Distance from Flinders Street (km)",
+      "scale": {
+        "type": "linear",
+        "domain": [
+          0,
+          60
+        ],
+        "nice": false
+      },
+      "axis": {
+        "values": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          50,
+          60
+        ]
+      }
+    },
+    "y": {
+      "field": "morning",
+      "type": "quantitative",
+      "title": "Peak Entries in the Morning (%)",
+      "scale": {
+        "domain": [
+          0,
+          100
+        ]
+      },
+      "axis": {
+        "values": [
+          0,
+          25,
+          50,
+          75,
+          100
+        ],
+        "labelExpr": "datum.value + '%'"
+      }
+    }
+  },
+  "layer": [
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "color": "#888",
+        "opacity": 0.12,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 0,
+          "type": "quantitative"
+        },
+        "x2": {
+          "datum": 2
+        },
+        "y": {
+          "datum": 0,
+          "type": "quantitative"
+        },
+        "y2": {
+          "datum": 100
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#999",
+        "strokeDash": [
+          3,
+          3
+        ],
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 0,
+          "type": "quantitative"
+        },
+        "x2": {
+          "datum": 60
+        },
+        "y": {
+          "datum": 50,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "stroke": "white",
+        "strokeWidth": 0.8,
+        "clip": true
+      },
+      "encoding": {
+        "size": {
+          "field": "entries_2425",
+          "type": "quantitative",
+          "title": "Entries 2024–2025 (millions)",
+          "scale": {
+            "type": "sqrt",
+            "range": [
+              10,
+              320
+            ]
+          },
+          "legend": null
+        },
+        "color": {
+          "field": "cls",
+          "type": "nominal",
+          "title": "Share of peak entries in the morning",
+          "scale": {
+            "domain": [
+              "Under 30%: mostly evening",
+              "30–45%",
+              "45–55%: about even",
+              "55–70%",
+              "Over 70%: mostly morning"
+            ],
+            "range": [
+              "#2B3A8C",
+              "#8E9BD3",
+              "#BDBDB5",
+              "#EDBE4F",
+              "#A87400"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "vertical",
+            "columns": 2,
+            "symbolType": "circle",
+            "symbolSize": 110,
+            "titleFontWeight": "normal",
+            "labelLimit": 200,
+            "columnPadding": 14,
+            "rowPadding": 3
+          }
+        },
+        "order": {
+          "field": "entries_2425",
+          "sort": "descending"
+        },
+        "opacity": {
+          "condition": {
+            "test": "boardPick == 'All stations' || (boardPick == 'Mostly morning (over 55%)' && datum.morning > 55) || (boardPick == 'Mostly evening (under 45%)' && datum.morning < 45)",
+            "value": 0.85
+          },
+          "value": 0.08
+        },
+        "tooltip": [
+          {
+            "field": "station",
+            "title": "Station"
+          },
+          {
+            "field": "dist",
+            "format": ".1f",
+            "title": "Distance from Flinders Street (km)"
+          },
+          {
+            "field": "entries_2425",
+            "format": ",",
+            "title": "Entries 2024–2025"
+          },
+          {
+            "field": "morning_tip",
+            "title": "Percentage of peak entries in the morning"
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "scatterZoom",
+          "select": "interval",
+          "bind": "scales"
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "baseline": "bottom",
+        "dy": -3,
+        "fontSize": 11,
+        "color": "white",
+        "text": "Even split (50%)",
+        "stroke": "white",
+        "strokeWidth": 3,
+        "strokeJoin": "round",
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 60,
+          "type": "quantitative"
+        },
+        "y": {
+          "datum": 50,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "baseline": "bottom",
+        "dy": -3,
+        "fontSize": 11,
+        "color": "#555",
+        "text": "Even split (50%)",
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 60,
+          "type": "quantitative"
+        },
+        "y": {
+          "datum": 50,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "dx": 4,
+        "y": 4,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "white",
+        "lineHeight": 13,
+        "text": [
+          "City centre (shaded, within 2 km):",
+          "only 5–10% board in the morning"
+        ],
+        "stroke": "white",
+        "strokeWidth": 3,
+        "strokeJoin": "round",
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 2,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Flinders Street'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "dx": 4,
+        "y": 4,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#222",
+        "lineHeight": 13,
+        "text": [
+          "City centre (shaded, within 2 km):",
+          "only 5–10% board in the morning"
+        ],
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "datum": 2,
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Craigieburn'"
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#555",
+        "strokeWidth": 1.3,
+        "xOffset": 19.7,
+        "yOffset": -19.7,
+        "x2Offset": 6.6,
+        "y2Offset": -6.6,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "dist"
+        },
+        "y2": {
+          "field": "morning"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Craigieburn'"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "triangle-up",
+        "filled": true,
+        "size": 45,
+        "color": "#555",
+        "angle": -135.0,
+        "xOffset": 6.6,
+        "yOffset": -6.6,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Craigieburn'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 21.8,
+        "dy": -21.8,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "white",
+        "lineHeight": 13,
+        "text": "Craigieburn",
+        "opacity": 1,
+        "clip": true,
+        "stroke": "white",
+        "strokeWidth": 3,
+        "strokeJoin": "round"
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Craigieburn'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 21.8,
+        "dy": -21.8,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#222",
+        "lineHeight": 13,
+        "text": "Craigieburn",
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Frankston'"
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#555",
+        "strokeWidth": 1.3,
+        "xOffset": -0.0,
+        "yOffset": -19.5,
+        "x2Offset": -0.0,
+        "y2Offset": -8.9,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "dist"
+        },
+        "y2": {
+          "field": "morning"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Frankston'"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "triangle-up",
+        "filled": true,
+        "size": 45,
+        "color": "#555",
+        "angle": 180.0,
+        "xOffset": -0.0,
+        "yOffset": -8.9,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Frankston'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "center",
+        "baseline": "bottom",
+        "dx": 0.0,
+        "dy": -22.5,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "white",
+        "lineHeight": 13,
+        "text": "Frankston",
+        "opacity": 1,
+        "clip": true,
+        "stroke": "white",
+        "strokeWidth": 3,
+        "strokeJoin": "round"
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Frankston'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "center",
+        "baseline": "bottom",
+        "dx": 0.0,
+        "dy": -22.5,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#222",
+        "lineHeight": 13,
+        "text": "Frankston",
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Box Hill'"
+        }
+      ],
+      "mark": {
+        "type": "rule",
+        "color": "#555",
+        "strokeWidth": 1.3,
+        "xOffset": 14.5,
+        "yOffset": -14.5,
+        "x2Offset": 7.0,
+        "y2Offset": -7.0,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        },
+        "x2": {
+          "field": "dist"
+        },
+        "y2": {
+          "field": "morning"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Box Hill'"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "triangle-up",
+        "filled": true,
+        "size": 45,
+        "color": "#555",
+        "angle": -135.0,
+        "xOffset": 7.0,
+        "yOffset": -7.0,
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Box Hill'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 16.7,
+        "dy": -16.7,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "white",
+        "lineHeight": 13,
+        "text": "Box Hill",
+        "opacity": 1,
+        "clip": true,
+        "stroke": "white",
+        "strokeWidth": 3,
+        "strokeJoin": "round"
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.station == 'Box Hill'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 16.7,
+        "dy": -16.7,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#222",
+        "lineHeight": 13,
+        "text": "Box Hill",
+        "opacity": 1,
+        "clip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "dist",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "morning",
+          "type": "quantitative"
+        }
+      }
+    }
+  ]
+}

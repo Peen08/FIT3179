@@ -18,7 +18,7 @@
 
 <nav class="topnav">
   <div class="topnav-inner">
-    <a href="#s1">1 Big Picture</a><a href="#s2">2 Sydney</a><a href="#s4">3 Fares</a><a href="#sources">Sources</a>
+    <a href="#s1">1 Big Picture</a><a href="#s2">2 Sydney</a><a href="#s3">3 Melbourne</a><a href="#s4">4 Fares</a><a href="#sources">Sources</a>
   </div>
 </nav>
 
@@ -66,12 +66,19 @@
   <div class="chart">
     <h3 class="chart-title">Public Transport Trips by State and Territory (Compared with 2018–2019)</h3>
     <div class="pure-g chart-desc">
-      <p class="pure-u-1 pure-u-md-1-2">Each circle is a capital city. Its size shows the trips made in the selected year, and its colour shows those trips as a percentage of 2018–2019.</p>
-      <p class="pure-u-1 pure-u-md-1-2">Click a circle to show that city's line on the right. The grey lines are the other cities. Drag the slider under the line chart to change the year (dashed vertical line marks).</p>
+      <p class="pure-u-1 pure-u-md-1-2">Each circle is a capital city. Its size shows the trips made in the selected year, and its colour shows those trips as a percentage of 2018–2019: <strong>orange</strong> is still short, grey is back to 100%, and <strong>blue</strong> is above it.</p>
+      <p class="pure-u-1 pure-u-md-1-2">Click a circle to show that city's line on the right. The grey lines are the other cities. Drag the year slider under the line chart to change the year (the dashed vertical line marks it). The shaded band marks the Delta lockdowns.</p>
     </div>
-    <div class="chart-stack">
-      <div id="chart_1_2"></div>
-      <div id="slider_1_2" class="chart-control chart-control-overlay"></div>
+    <div id="chart_1_2"></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-3-4"><div class="chart">
+      <h3 class="chart-title">Public Transport Trips per Capital-City Resident, 2024–2025</h3>
+      <div id="chart_1_6"></div>
+    </div></div>
+    <div class="pure-u-1 pure-u-lg-1-4 bump-note">
+      <p class="lead">Each state is shaded by its capital city's public transport trips in 2024–2025, <strong>divided by the capital city's population</strong> (its Greater Capital City area), so large and small cities can be compared fairly.</p>
+      <p class="lead"><strong>Recovery is not the same as use.</strong> Brisbane is back to its pre-pandemic level, yet each Brisbane resident made only <strong>57 trips</strong>, under half the <strong>126</strong> in Sydney. Hobart (26) and Darwin (29) have the lowest use.</p>
     </div>
   </div>
   <div class="pure-g">
@@ -111,7 +118,7 @@
     <h2><span class="num">2</span> Sydney: Recovery<span class="section-question"> — How quickly did Sydney's riders return, and where did they go once the new Metro opened?</span></h2>
   </header>
   <div class="pure-g lead-row">
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Sydney recorded just 9 million trips in August 2021, down from <strong>63 million</strong> in a typical <strong>2019</strong> month. By <strong>2025</strong>, ridership had <strong>recovered to 88%</strong>, with the new Metro shifting passenger flows to different stations.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Sydney recorded just 9 million trips in August 2021, down from <strong>63 million</strong> in a typical <strong>2019</strong> month. By <strong>2025</strong>, ridership had <strong>recovered to 88%</strong> of 2019 (all Opal trips), with the new Metro shifting passenger flows to different stations.</p></div>
     <div class="pure-u-1 pure-u-lg-1-2 lead-terms"><div class="term-box"><h4>Opal</h4><p>Sydney's tap-on, tap-off travel card. One "trip" is one tap on and tap off.</p></div><div class="term-box"><h4>Metro</h4><p>Sydney’s driverless rail network, with five new stations serving the city centre and North Sydney, opened in August 2024.</p></div></div>
   </div>
   <div class="chart">
@@ -126,75 +133,105 @@
     </div>
     <div id="chart_2_2"></div>
   </div>
-  <!-- Station map charts (2.3, 2.4) hidden for now
   <div class="pure-g">
-    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Yearly Station Trips across Sydney</h3><p class="chart-sub">Stations grouped into squares about 2 kilometres wide. Outlined squares contain a Metro station. Note: 2020 and 2024 left out (lockdowns / incomplete data).</p><div id="chart_2_3"></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Yearly Station Trips across Sydney</h3><p class="chart-sub">Stations grouped into squares about 2 kilometres wide. Outlined squares contain a Metro station. Note: 2020 and 2024 left out (lockdowns / incomplete data). Double click to reset.</p>
+      <div class="map-filters map-filters--top map-filters--row">
+        <div id="filter_2_3" class="chart-filters"></div>
+        <div id="zoom_2_3" class="chart-filters"></div>
+      </div><div id="chart_2_3"></div>
       <div class="seq-key">
         <div class="seq-key-title">Trips per year in each square (millions)</div>
         <div class="seq-key-row">
           <div class="seq-key-scale">
-            <div class="seq-key-bar"><span style="background:#C9DCEE"></span><span style="background:#A3C4E3"></span><span style="background:#76A8D5"></span><span style="background:#4A88C2"></span><span style="background:#1F5F9E"></span><span style="background:#0B3A6B"></span></div>
+            <div class="seq-key-bar"><span style="background:#F2F0C9"></span><span style="background:#DCE49A"></span><span style="background:#B5CF66"></span><span style="background:#82B03D"></span><span style="background:#4F8A22"></span><span style="background:#2C5E12"></span></div>
             <div class="seq-key-labels"><span style="left:0">0</span><span style="left:16.667%">2</span><span style="left:33.333%">5</span><span style="left:50%">10</span><span style="left:66.667%">25</span><span style="left:83.333%">50</span><span style="left:100%">50+</span></div>
           </div>
-          <span class="seq-key-metro"><svg width="14" height="14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" fill="#A3C4E3" stroke="#222" stroke-width="2"/></svg>Contains a Metro station</span>
+          <span class="seq-key-metro"><svg width="14" height="14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" fill="#DCE49A" stroke="#222" stroke-width="2"/></svg>Contains a Metro station</span>
         </div>
       </div>
-      <div class="map-filters">
-        <div id="filter_2_3" class="chart-filters"></div>
-        <div class="chart-filters map-zoom"><div id="zoom_2_3"></div><span id="zoom_note_2_3" class="zoom-note"></span></div>
-      </div>
-      <p class="map-finding"><strong>Key finding:</strong> the city centre is the darkest square in every year, but it has recovered the least. Its stations carried <strong>227 million</strong> trips in 2019 and <strong>169 million</strong> in 2025 (<strong>75%</strong>), below Sydney's overall 82%. Squares with a new Metro station did best: North Sydney–Crows Nest grew from 18 to 22 million trips (<strong>+24%</strong>), and Chatswood is back to its 2019 level.</p>
-    </div></div>
-    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Change in Station Trips, 2019 to 2025</h3><p class="chart-sub">Station trips in 2025 as a percentage of 2019. The Bankstown line (Sydenham–Bankstown) closed in 2024 for conversion to Metro. Source: Transport for New South Wales. Click the legend to highlight a group.</p><div id="chart_2_4"></div></div></div>
+     </div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Change in Station Trips, 2019 to 2025</h3><p class="chart-sub">Station trips in 2025 as a percentage of 2019. The Bankstown line (Sydenham–Bankstown) closed in 2024 for conversion to Metro. Double click to reset.</p>
+      <div class="map-filters map-filters--top map-filters--row">
+        <div id="filter_2_4" class="chart-filters"></div>
+        <div id="zoom_2_4" class="chart-filters"></div>
+      </div><div id="chart_2_4"></div>
+     </div></div>
   </div>
-  -->
-  <!-- Bump chart (2.5) hidden for now
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>The busiest place recovered the least.</strong> The city centre is the darkest square in every year, but its stations carried <strong>227 million</strong> trips in 2019 and only <strong>169 million</strong> in 2025 (<strong>75%</strong>), below the 82% across all Sydney stations (station entries, a different count from all Opal trips). Squares with a new Metro station did best: North Sydney–Crows Nest grew from 18 to 22 million trips (<strong>+24%</strong>), and Chatswood is back to its 2019 level.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>Most stations are still short of 2019:</strong> together they carried <strong>82%</strong> of their 2019 entries. The biggest drop is <strong>North Sydney (33%)</strong>, whose riders moved to the new Victoria Cross Metro station next door. Most stations above 110% are on the Metro North West line, which opened in May 2019, so their 2019 count covers only part of the year.</p></div>
+  </div>
   <div class="pure-g">
     <div class="pure-u-1 pure-u-lg-3-4"><div class="chart"><h3 class="chart-title">Sydney's 10 Busiest Stations by Year</h3><p class="chart-sub">2020 and 2024 left out: 2020 was disrupted by lockdowns, and the 2024 station data is incomplete.</p><div class="bump-wrap">
         <div id="chart_2_5"></div>
         <div class="shape-key bump-key">
           <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#8C5A2B"/></svg>Central</span>
           <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#E377C2"/></svg>Town Hall</span>
-          <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#7D8F1A"/></svg>Martin Place</span>
+          <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#B08D00"/></svg>Martin Place</span>
           <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#17BECF"/></svg>Circular Quay</span>
           <span><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4" fill="#C8C8C8"/></svg>Other top-10 stations</span>
         </div>
       </div>
       </div></div>
     <div class="pure-u-1 pure-u-lg-1-4 bump-note"><p class="lead"><strong>Riders moved, they didn't vanish.</strong> In 2025 <span class="st-central">Central</span> became Sydney's busiest station, overtaking <span class="st-townhall">Town Hall</span>, which fell from <strong>71 million</strong> trips in 2019 to <strong>41 million</strong>.</p>
-      <p class="lead"><span class="st-martin">Martin Place</span>, which gained a Metro station in 2024, jumped into the <strong>top five</strong> with 21.6 million trips. <span class="st-quay">Circular Quay</span> had the <strong>biggest fall</strong>, from 5th to 9th (21.4 million to 13.5 million trips). Part of the "lost" city-centre traffic simply moved underground onto the Metro.</p></div>
+      <p class="lead"><span class="st-martin">Martin Place</span>, which gained a Metro station in 2024, jumped into the <strong>top five</strong> with 21.6 million trips. <span class="st-quay">Circular Quay</span> had the <strong>biggest fall</strong>, from 5th to 9th (21.4 million to 13.5 million trips).</p>
+      <p class="lead">A break in a line, or a line that starts or stops part-way, means that station was outside the top 10 that year.</p></div>
   </div>
-  -->
 
 </section>
 
 <!-- ============ SECTION 3 ============ -->
-<!-- Section 3 (Melbourne) hidden for now
 <section id="s3">
   <header class="section-head">
-    <h2><span class="num">3</span> Melbourne: The City-Centre Effect<span class="section-question"> — Why Melbourne's city-centre stations recover slower than its suburbs?</span></h2>
+    <h2><span class="num">3</span> Melbourne: The City-Centre Effect<span class="section-question"> — Why is the city centre recovering more slowly?</span></h2>
   </header>
   <div class="pure-g lead-row">
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Victoria's trains, trams and buses carried <strong>477 million trips in 2025, 81% of 2019</strong>. Its station data shows why the city centre matters. At Flinders Street, Southern Cross and Melbourne Central, only <strong>6–10% of peak-time</strong> boardings happen in the morning.</p></div>
-    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">These are places people travel <em>to</em> for work — so when office workers stay home, these stations lose the most.</p><div class="term-box"><h4>myki</h4><p>Melbourne's travel card.</p></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">Victoria's trains, trams and buses carried <strong>477 million trips in 2025, 81% of 2019</strong>. Its station data shows why the city centre matters. At the five busiest city-centre stations, including Flinders Street, Southern Cross and Melbourne Central, only <strong>5–10% of peak-time</strong> boardings happen in the morning.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">These are places people travel to for work, so when office workers stay home, these stations lose the most.</p><div class="term-box"><h4>myki</h4><p>Melbourne's travel card.</p></div></div>
   </div>
   <div class="pure-g">
-    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Morning Share of Peak Entries, Melbourne</h3><p class="chart-sub">Share of a station's peak-time entries that happen in the morning (weekday average, 2024–2025). Circle size = annual entries. Source: Victorian Department of Transport and Planning. Use the buttons below the map to highlight a group of stations.</p><div id="chart_3_1"></div></div></div>
-    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Weekday Entries by Time of Day</h3><p class="chart-sub">Share of a station's weekday entries in each time band, 2024–2025, 20 busiest stations. Source: Department of Transport and Planning, Victoria. Hover over a row to highlight a station.</p><div id="chart_3_2"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Morning Share of Peak Entries, Melbourne</h3><p class="chart-sub">Each circle is a metropolitan train station. Scroll on the map to zoom in on the crowded city centre, drag to move around, and double-click to reset.</p><div id="legend_3_1" class="html-legend html-legend--gap html-legend--wrap"></div>
+      <div id="chart_3_1"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><div class="chart"><h3 class="chart-title">Morning Share by Distance from City Centre</h3>
+      <p class="chart-sub chart-sub--after">Scroll on the chart to zoom in on the inner stations, drag to move along it, and double-click to reset.</p>
+      <div id="chart_3_1b"></div></div></div>
   </div>
-  <div class="chart"><div class="chart-head"><h3 class="chart-title">Monthly Public Transport Trips in Victoria by Mode, 2018–2026</h3><div id="legend_3_3" class="html-legend html-legend--right"></div></div>
+  <div class="pure-g lead-row">
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>The further out, the more morning boardings.</strong> At the busiest city-centre stations, within 2 km of Flinders Street, only <strong>5–10%</strong> of peak entries happen in the morning. Between 3 and 10 km out, the typical station is <strong>61%</strong> morning, and beyond 10 km it is <strong>71%</strong>, with Craigieburn at 82% and Werribee at 79%.</p></div>
+    <div class="pure-u-1 pure-u-lg-1-2"><p class="lead"><strong>Where it happens:</strong> <strong>27 of the 32</strong> mostly-evening (blue) stations sit inside the 10 km ring, while gold morning stations stretch out along every line. People leave home from the suburbs and arrive in the city, so the city-centre stations depend on office workers coming back.</p></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-3-4"><div class="chart"><h3 class="chart-title">Weekday Entries by Time of Day</h3><div id="chart_3_2"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-4 bump-note"><p class="lead"><strong>City stations are evening stations.</strong> Each row of the heatmap adds up to 100%. The city-centre stations at the top take most of their day's entries in the <strong>evening peak</strong>: 68% at Parliament, 64% at Flagstaff and 63% at Southern Cross. That is because people board there to go home after work.</p>
+      <p class="lead">Suburban stations are more even. Craigieburn, on the city's northern edge, is the opposite: <strong>48%</strong> of its entries come in the <strong>morning peak</strong> and only 11% in the evening.</p></div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-3-4"><div class="chart"><h3 class="chart-title">Only Regional Trains Have Returned Above Their 2019 Level</h3>
     <div class="pure-g chart-desc">
-      <p class="pure-u-1 pure-u-md-1-2">Each row shows how far each month was from that mode's 2019 monthly average: <strong>orange</strong> is below it and <strong>blue</strong> above it, and each darker shade adds another 30 percentage points. The bars above the top row mark the lockdowns and the free weekend travel offer (30 November 2025 – 1 February 2026).</p>
-      <div class="pure-u-1 pure-u-md-1-2"><p>Hover over the chart to see each mode's trips for that month, or pick a mode above to highlight it. † Trams were counted differently from January 2026. Source: Department of Transport and Planning, Victoria.</p><div class="shape-key horizon-key"><span class="hz" style="background:#B3471A"></span><span class="hz hz-tight" style="background:#E39058"></span><span class="hz hz-tight" style="background:#F6D3B8"></span>Below 2019 average<span class="hz" style="background:#C6DBEF"></span><span class="hz hz-tight" style="background:#6BAED6"></span><span class="hz hz-tight" style="background:#2166AC"></span>Above</div></div>
-    </div><div id="chart_3_3"></div></div>
+      <p class="pure-u-1 pure-u-md-1-2">Each row is one mode, month by month from January 2018 to June 2026. The colour compares each month with that mode's average month in 2019: <strong>orange</strong> means fewer trips and <strong>blue</strong> means more, and each darker shade adds another 30 percentage points.</p>
+      <p class="pure-u-1 pure-u-md-1-2">Grey bands mark the lockdowns and the free weekend travel offer. Pick a mode below to highlight it, hover for each month's trips, or drag across the strip under the chart to zoom into a period.</p>
+    </div>
+    <div class="filter-key-row">
+      <div id="legend_3_3" class="html-legend html-legend--gap"></div>
+      <div class="seq-key horizon-key">
+        <div class="seq-key-title">Change from the mode's 2019 monthly average</div>
+        <div class="seq-key-scale">
+          <div class="seq-key-bar"><span style="background:#B3471A"></span><span style="background:#E39058"></span><span style="background:#F6D3B8"></span><span style="background:#C6DBEF"></span><span style="background:#6BAED6"></span><span style="background:#2166AC"></span></div>
+          <div class="seq-key-labels"><span style="left:0">−90%</span><span style="left:16.667%">−60%</span><span style="left:33.333%">−30%</span><span style="left:50%">0</span><span style="left:66.667%">+30%</span><span style="left:83.333%">+60%</span><span style="left:100%">+90%</span></div>
+        </div>
+      </div>
+    </div><div id="chart_3_3"></div></div></div>
+    <div class="pure-u-1 pure-u-lg-1-4 bump-note"><p class="lead"><strong>Regional trains came back first.</strong> They have been above their 2019 level in <strong>32 of the 42 months</strong> since January 2023, averaging <strong>+19%</strong> in 2025 and <strong>+30%</strong> in the first half of 2026.</p>
+      <p class="lead"><strong>The lockdowns hit every mode equally.</strong> In 2020 trips fell <strong>83–93%</strong> below 2019, and in 2022 every mode was still 29–43% down.</p>
+      <p class="lead">Every metropolitan mode is still below 2019. Trams are furthest behind (<strong>−23%</strong> in 2025), metro trains are closing the gap (from −24% in 2025 to <strong>−10%</strong> so far in 2026), and buses are closest (<strong>−5%</strong>).</p></div>
+  </div>
 </section>
--->
 
 
 <!-- ============ SECTION 4 ============ -->
 <section id="s4">
   <header class="section-head">
-    <h2><span class="num">3</span> What Brings Riders Back: The Price of a Ticket</h2>
+    <h2><span class="num">4</span> What Brings Riders Back: The Price of a Ticket</h2>
   </header>
   <div class="pure-g lead-row">
     <div class="pure-u-1 pure-u-lg-1-2"><p class="lead">On 5 August 2024, <strong>Queensland</strong> cut every public transport fare in the south-east to just <strong>50 Australian cents</strong>. In the same December-to-July months a year later, South East Queensland carried <strong>16% more trips</strong> and the gain held into a second year. </p></div>
@@ -250,7 +287,7 @@
 <footer id="sources">
   <p><strong>Author:</strong> Pee Yee Peen</p>
   <p><strong> Student ID:</strong> 33591032</p>
-  <p><strong>Last updated:</strong> 12 October 2026</p>
+  <p><strong>Last updated:</strong> 26 October 2026</p>
   <p><strong>Data sources</strong> (all accessed October 2026):</p>
   <ul>
     <li>Bureau of Infrastructure and Transport Research Economics, <em>Australian Infrastructure and Transport Statistics Yearbook 2025</em>, Tables 2.5a–h. <a href="https://www.bitre.gov.au/publications/2025/australian-infrastructure-and-transport-statistics-yearbook-2025/passengers">bitre.gov.au</a></li>
@@ -258,10 +295,13 @@
     <li>Transport for New South Wales, <em>Train, Metro and Light Rail Station Entries and Exits</em> (monthly usage). <a href="https://data.nsw.gov.au/data/dataset/6a4428e7-f642-4a42-8c6b-bdf8599e9bda">data.nsw.gov.au</a></li>
     <li>Transport for New South Wales, <em>Train Station Entrance Locations</em> (2020) and <em>Sydney Train Routes</em>. <a href="https://opendata.transport.nsw.gov.au/dataset/train-station-entrance-locations">opendata.transport.nsw.gov.au</a></li>
     <li>Victorian Department of Transport and Planning, <em>Annual Metropolitan Train Station Patronage</em> (financial year 2024–2025) and <em>Monthly Public Transport Patronage by Mode</em>. <a href="https://discover.data.vic.gov.au/dataset/monthly-public-transport-patronage-by-mode">discover.data.vic.gov.au</a></li>
+    <li>Victorian Department of Transport and Planning, <em>Public Transport Lines and Stops</em> (metropolitan train lines, simplified). <a href="https://discover.data.vic.gov.au/dataset/public-transport-lines-and-stops">discover.data.vic.gov.au</a></li>
     <li>Queensland Department of Transport and Main Roads, <em>Translink monthly performance data – Patronage, South East Queensland</em>. <a href="https://www.data.qld.gov.au/dataset/translink-monthly-performance-data">data.qld.gov.au</a></li>
+    <li>Australian Bureau of Statistics, <em>National, State and Territory Population, June 2025</em>, Table 4 (estimated resident population at 30 June 2025). <a href="https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/jun-2025">abs.gov.au</a></li>
+    <li>Australian Bureau of Statistics, <em>Regional Population, 2024–25</em>, estimated resident population by Greater Capital City Statistical Area at 30 June 2025 (ABS Data Explorer, ABS_ANNUAL_ERP_ASGS2021). <a href="https://www.abs.gov.au/statistics/people/population/regional-population">abs.gov.au</a></li>
     <li>Australian Bureau of Statistics, <em>Australian Statistical Geography Standard Edition 3 (2021) State and Territory boundaries</em>, © Australian Bureau of Statistics, Creative Commons Attribution 4.0. <a href="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files">abs.gov.au</a></li>
   </ul>
-  <p><strong>Use of artificial intelligence:</strong> Claude was used to clean and reshape the datasets and check grammar. All charts, numbers and text were reviewed and edited by the author.</p>
+  <p><strong>Use of artificial intelligence:</strong> Claude was used to clean and reshape the datasets, check grammar and chart debuggings. All charts, numbers and text were reviewed and edited by the author.</p>
 </footer>
 
 </div>

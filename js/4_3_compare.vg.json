@@ -338,7 +338,10 @@
                 "strokeDash": [
                   4,
                   3
-                ]
+                ],
+                "xOffset": {
+                  "expr": "-bandwidth('concat_0_x') / (2 * (1 - (monthPick == 'All months' ? 0.25 : 0.75)))"
+                }
               },
               "encoding": {
                 "x": {
@@ -357,10 +360,17 @@
                 "baseline": "bottom",
                 "dx": 4,
                 "y": "height",
-                "dy": -6,
+                "dy": -16,
                 "fontSize": 11,
                 "color": "#333",
-                "text": "From Aug 2025"
+                "text": [
+                  "From Aug 2025: both",
+                  "years on 50-cent fares"
+                ],
+                "xOffset": {
+                  "expr": "-bandwidth('concat_0_x') / (2 * (1 - (monthPick == 'All months' ? 0.25 : 0.75)))"
+                },
+                "lineHeight": 13
               },
               "encoding": {
                 "x": {
@@ -620,12 +630,34 @@
               "transform": [
                 {
                   "filter": "(year(datum.month) == 2025 && month(datum.month) == 11) || (year(datum.month) == 2026 && month(datum.month) == 0)"
+                },
+                {
+                  "joinaggregate": [
+                    {
+                      "op": "count",
+                      "as": "n"
+                    },
+                    {
+                      "op": "min",
+                      "field": "month",
+                      "as": "first"
+                    }
+                  ]
+                },
+                {
+                  "filter": "time(datum.month) == time(datum.first)"
                 }
               ],
               "mark": {
                 "type": "rect",
                 "color": "#666666",
-                "opacity": 0.15
+                "opacity": 0.15,
+                "width": {
+                  "expr": "datum.n * (bandwidth('concat_1_x') / (1 - (monthPick == 'All months' ? 0.25 : 0.75)))"
+                },
+                "xOffset": {
+                  "expr": "(datum.n - 1) * (bandwidth('concat_1_x') / (1 - (monthPick == 'All months' ? 0.25 : 0.75))) / 2"
+                }
               },
               "encoding": {
                 "y": {
@@ -633,13 +665,34 @@
                 },
                 "y2": {
                   "value": 220
+                },
+                "x": {
+                  "field": "month",
+                  "timeUnit": "yearmonth",
+                  "type": "ordinal"
                 }
               }
             },
             {
               "transform": [
                 {
-                  "filter": "year(datum.month) == 2025 && month(datum.month) == 11"
+                  "filter": "(year(datum.month) == 2025 && month(datum.month) == 11) || (year(datum.month) == 2026 && month(datum.month) == 0)"
+                },
+                {
+                  "joinaggregate": [
+                    {
+                      "op": "count",
+                      "as": "n"
+                    },
+                    {
+                      "op": "min",
+                      "field": "month",
+                      "as": "first"
+                    }
+                  ]
+                },
+                {
+                  "filter": "time(datum.month) == time(datum.first)"
                 }
               ],
               "mark": {
@@ -655,7 +708,9 @@
                   "weekends:",
                   "about 0%"
                 ],
-                "xOffset": 11.5
+                "xOffset": {
+                  "expr": "(datum.n - 1) * (bandwidth('concat_1_x') / (1 - (monthPick == 'All months' ? 0.25 : 0.75))) / 2"
+                }
               },
               "encoding": {
                 "x": {

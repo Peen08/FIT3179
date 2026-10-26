@@ -7,7 +7,10 @@ var sharedConfig = {
            subtitleColor: "#666", subtitleLineHeight: 17, subtitlePadding: 6 },
   header: { labelFont: "'Source Sans 3', Arial, sans-serif", labelFontSize: 13, labelFontWeight: 600, title: null },
   axis: { labelFontSize: 12, titleFontSize: 13, titleFontWeight: "normal", grid: false },
-  legend: { labelFontSize: 12, titleFontSize: 12, titleLimit: 300, labelLimit: 220 },
+  // One legend format for every chart: plain 12px title, 11px labels, same symbol and gradient sizes
+  legend: { titleFontSize: 12, titleFontWeight: "normal", titleColor: "#333", titlePadding: 6, titleLimit: 300,
+            labelFontSize: 11, labelColor: "#444", labelLimit: 220, symbolSize: 110, symbolStrokeWidth: 0,
+            gradientLength: 200, gradientThickness: 12, rowPadding: 4, columnPadding: 14 },
   view: { stroke: null } // remove the border of the chart outline
 };
 
@@ -18,12 +21,14 @@ var charts = [
   ["#chart_1_3", "js/1_3_slope.vg.json"],
   ["#chart_1_4", "js/1_4_modes.vg.json"],
   ["#chart_1_5", "js/1_5_waterfall.vg.json"],
+  ["#chart_1_6", "js/1_6_choropleth.vg.json"],
   ["#chart_2_1", "js/2_1_heatmap.vg.json"],
   ["#chart_2_2", "js/2_2_stream.vg.json"],
   ["#chart_2_3", "js/2_3_symbolmap.vg.json"],
   ["#chart_2_4", "js/2_4_changemap.vg.json"],
   ["#chart_2_5", "js/2_5_bump.vg.json"],
   ["#chart_3_1", "js/3_1_ampmmap.vg.json"],
+  ["#chart_3_1b", "js/3_1b_distance.vg.json"],
   ["#chart_3_2", "js/3_2_timebands.vg.json"],
   ["#chart_3_3", "js/3_3_vicmodes.vg.json"],
   ["#chart_4_1", "js/4_1_seq.vg.json"],
@@ -44,8 +49,11 @@ fontsReady.then(function () { charts.forEach(function (c) {
   vegaEmbed(c[0], c[1], { actions: { export: true, source: true, editor: true, compiled: true }, renderer: "svg", config: sharedConfig }).then(function (res) {
     cardMenu(c[0]); // Run custom functions after rendering
     if (c[0] === "#chart_2_2") modeCheckboxes(res.view);
-    if (c[0] === "#chart_2_3") zoomNote(res.view);
-    if (c[0] === "#chart_1_2") placeYearSlider(res.view);
+    if (c[0] === "#chart_2_3") { panZoom(res.view, c[0], 34000, 1, 6.5); }
+    if (c[0] === "#chart_3_1") { panZoom(res.view, c[0], 17300, 1, 6); }
+    if (c[0] === "#chart_2_4") { panZoom(res.view, c[0], 32600, 1, 6.5); }
+    if (c[0] === "#chart_1_2") centreYearSlider(res.view);
+    if (c[0] === "#chart_3_1" || c[0] === "#chart_3_1b") linkMelbourne(c[0], res.view);
     if (["#chart_1_2", "#chart_2_5", "#chart_3_3"].indexOf(c[0]) < 0) balanceInCard(res.view, c[0]);   // 1.2 lines up with the cards below; 2.5 shares its row with a key; 3.3 is centred in CSS
   }).catch(console.error);
 }); });
@@ -100,18 +108,19 @@ function balanceInCard(view, box) {
   if (document.fonts) document.fonts.ready.then(run);
 }
 
-// Chart 1.2 year slider: centred under the line chart's x-axis, just below its axis title.
-// Measured from the drawn chart, so it stays in place when the chart shrinks to fit a narrower card
-function placeYearSlider(view) {
-  var slider = document.querySelector("#slider_1_2"), stack = slider.parentNode;
+// Chart 1.2: centre Vega-Lite's year slider under the line chart's plot area (its row is set in styles.css).
+// Measured from the drawn x-axis, so it stays centred when the chart shrinks to fit a narrower card
+function centreYearSlider(view) {
+  var box = document.querySelector("#chart_1_2");
+  var bind = box && box.querySelector(".vega-bindings");
+  if (!bind) return;
   function run() {
-    if (getComputedStyle(slider).position !== "absolute") return;   // small screens: slider sits under the chart
-    var line = document.querySelector("#chart_1_2 .concat_1_group");
-    var axis = line && line.querySelector(".role-axis[aria-label^='X-axis']");
+    if (getComputedStyle(bind).position !== "absolute") { bind.style.left = ""; return; }   // small screens: slider sits under the chart
+    var axis = box.querySelector(".concat_1_group .role-axis[aria-label^='X-axis'] .role-axis-domain")
+            || box.querySelector(".concat_1_group .role-axis[aria-label^='X-axis']");
     if (!axis) return;
-    var a = axis.getBoundingClientRect(), s = stack.getBoundingClientRect();
-    slider.style.left = Math.round(a.left + a.width / 2 - s.left) + "px";
-    slider.style.top = Math.round(a.bottom - s.top + 22) + "px";
+    var a = axis.getBoundingClientRect(), b = box.getBoundingClientRect();
+    bind.style.left = Math.round(a.left + a.width / 2 - b.left) + "px";
   }
   run();
   view.addResizeListener(run);
@@ -119,19 +128,88 @@ function placeYearSlider(view) {
   if (document.fonts) document.fonts.ready.then(run);
 }
 
-// Chart 2.3 zoom unit: "1.0×" of the whole-Sydney view, plus how many km the map spans.
-// Mercator: 1 km = scale / (6371 × cos latitude) pixels, with scale = zoom × 34000
-function zoomNote(view) {
-  var note = document.querySelector("#zoom_note_2_3");
-  function update() {
-    var zoom = view.signal("zoom"), lat = view.signal("centre")[1];
-    var km = view.width() * 6371 * Math.cos(lat * Math.PI / 180) / (zoom * 34000);
-    note.innerHTML = "<strong>" + zoom.toFixed(1) + "×</strong> · map ≈ " + Math.round(km) + " km across";
+// Charts 3.1 and 3.1b: the highlight buttons under the map also highlight the same stations in the scatter
+var melbViews = {};
+function linkMelbourne(box, view) {
+  melbViews[box] = view;
+  var map = melbViews["#chart_3_1"], scatter = melbViews["#chart_3_1b"];
+  if (!map || !scatter) return;
+  scatter.signal("boardPick", map.signal("boardPick")).runAsync();
+  map.addSignalListener("boardPick", function (name, value) { scatter.signal("boardPick", value).runAsync(); });
+}
+
+// Charts 2.3 and 3.1: scroll on the map to zoom (around the pointer) and drag to move it.
+// Sets the same "zoom" and "centre" signals as the slider and menu. Mercator with scale = zoom × base:
+// x = w/2 + k(λ − λc), y = h/2 − k(m(φ) − m(φc)), where m(φ) = ln tan(π/4 + φ/2) and angles are in radians
+function panZoom(view, box, base, zMin, zMax) {
+  var el = document.querySelector(box), rad = Math.PI / 180;
+  function merc(lat) { return Math.log(Math.tan(Math.PI / 4 + lat * rad / 2)); }
+  function lat(m) { return (2 * Math.atan(Math.exp(m)) - Math.PI / 2) / rad; }
+  function local(e) {   // pointer position inside the plot, in chart pixels (the SVG may be scaled by CSS)
+    var svg = el.querySelector("svg"), r = svg.getBoundingClientRect();
+    var f = (+svg.getAttribute("width") || r.width) / r.width, o = view.origin();
+    return [(e.clientX - r.left) * f - o[0], (e.clientY - r.top) * f - o[1]];
   }
-  view.addSignalListener("zoom", update);
-  view.addSignalListener("centre", update);
-  view.addResizeListener(update);
-  update();
+  function geo(p, c, k) {   // chart pixel -> [lon, lat]
+    return [c[0] + (p[0] - view.width() / 2) / k / rad, lat(merc(c[1]) - (p[1] - view.height() / 2) / k)];
+  }
+  function zoomAt(z2, p, g) {   // set zoom z2 while the place g stays under pixel p
+    var k2 = z2 * base;
+    var c2 = [g[0] - (p[0] - view.width() / 2) / k2 / rad, lat(merc(g[1]) + (p[1] - view.height() / 2) / k2)];
+    view.signal("zoom", z2).signal("centre", c2).runAsync();
+  }
+  // Smooth zoom: each scroll moves a target, and every animation frame eases the map a quarter of the way there
+  var target = null, anchor = null, frame = 0;
+  function step() {
+    var z = view.signal("zoom"), z2 = z + (target - z) * 0.25;
+    if (Math.abs(target - z2) < 0.002) z2 = target;
+    zoomAt(z2, anchor.p, anchor.g);
+    frame = z2 === target ? 0 : requestAnimationFrame(step);
+  }
+  el.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    var z = view.signal("zoom"), p = local(e);
+    var dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;   // lines -> pixels (Firefox)
+    target = Math.min(zMax, Math.max(zMin, (target === null || !frame ? z : target) * Math.exp(-dy * 0.0015)));
+    anchor = { p: p, g: geo(p, view.signal("centre"), z * base) };
+    if (!frame) frame = requestAnimationFrame(step);
+  }, { passive: false });
+  // Double-click: back to the starting view
+  var home = { z: view.signal("zoom"), c: view.signal("centre") };
+  el.addEventListener("dblclick", function (e) {
+    e.preventDefault();
+    if (frame) { cancelAnimationFrame(frame); frame = 0; }
+    target = null;
+    view.signal("zoom", home.z).signal("centre", home.c).runAsync();
+  });
+  var drag = null, dragFrame = 0, lastMove = null;
+  el.addEventListener("pointerdown", function (e) {
+    if (e.button !== 0 || !el.querySelector("svg").contains(e.target)) return;
+    if (e.target.closest(".role-legend")) return;   // legend clicks highlight a group, they don't move the map
+    drag = { p: local(e), c: view.signal("centre"), id: e.pointerId, moving: false };
+  });
+  el.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    lastMove = local(e);
+    if (!drag.moving) {   // a plain click stays a click; dragging starts after a 3px move
+      if (Math.hypot(lastMove[0] - drag.p[0], lastMove[1] - drag.p[1]) < 3) return;
+      drag.moving = true;
+      if (frame) { cancelAnimationFrame(frame); frame = 0; }
+      el.setPointerCapture(drag.id);
+      el.classList.add("is-dragging");
+    }
+    if (dragFrame) return;   // redraw at most once per frame
+    dragFrame = requestAnimationFrame(function () {
+      dragFrame = 0;
+      if (!drag) return;
+      var p = lastMove, k = view.signal("zoom") * base;
+      var c = [drag.c[0] - (p[0] - drag.p[0]) / k / rad, lat(merc(drag.c[1]) + (p[1] - drag.p[1]) / k)];
+      view.signal("centre", c).runAsync();
+    });
+  });
+  function end() { drag = null; el.classList.remove("is-dragging"); }
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
 }
 
 // Chart 2.2 filter: tick several modes at once, or "All modes" on its own.

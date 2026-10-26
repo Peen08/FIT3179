@@ -91,6 +91,11 @@
               "op": "max",
               "field": "t",
               "as": "t_last"
+            },
+            {
+              "op": "min",
+              "field": "t",
+              "as": "t_first"
             }
           ]
         },
@@ -141,6 +146,150 @@
         }
       },
       "layer": [
+        {
+          "transform": [
+            {
+              "filter": "month(datum.month) == 11 || month(datum.month) == 0"
+            },
+            {
+              "calculate": "month(datum.month) == 11 ? year(datum.month) : year(datum.month) - 1",
+              "as": "season"
+            },
+            {
+              "aggregate": [
+                {
+                  "op": "min",
+                  "field": "t",
+                  "as": "a"
+                },
+                {
+                  "op": "max",
+                  "field": "t",
+                  "as": "b"
+                },
+                {
+                  "op": "min",
+                  "field": "t_first",
+                  "as": "t_first"
+                },
+                {
+                  "op": "max",
+                  "field": "t_last",
+                  "as": "t_last"
+                }
+              ],
+              "groupby": [
+                "season"
+              ]
+            },
+            {
+              "calculate": "max(datum.t_first, datum.a - 15 * 864e5)",
+              "as": "s"
+            },
+            {
+              "calculate": "min(datum.t_last, datum.b + 15 * 864e5)",
+              "as": "e"
+            }
+          ],
+          "mark": {
+            "type": "rect",
+            "color": "#EEEEEA"
+          },
+          "encoding": {
+            "x": {
+              "field": "s",
+              "type": "temporal"
+            },
+            "x2": {
+              "field": "e"
+            },
+            "y": {
+              "value": 0
+            },
+            "y2": {
+              "value": 280
+            },
+            "color": {
+              "value": "#EEEEEA"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "month(datum.month) == 11 || month(datum.month) == 0"
+            },
+            {
+              "calculate": "month(datum.month) == 11 ? year(datum.month) : year(datum.month) - 1",
+              "as": "season"
+            },
+            {
+              "aggregate": [
+                {
+                  "op": "min",
+                  "field": "t",
+                  "as": "a"
+                },
+                {
+                  "op": "max",
+                  "field": "t",
+                  "as": "b"
+                },
+                {
+                  "op": "min",
+                  "field": "t_first",
+                  "as": "t_first"
+                },
+                {
+                  "op": "max",
+                  "field": "t_last",
+                  "as": "t_last"
+                }
+              ],
+              "groupby": [
+                "season"
+              ]
+            },
+            {
+              "calculate": "max(datum.t_first, datum.a - 15 * 864e5)",
+              "as": "s"
+            },
+            {
+              "calculate": "min(datum.t_last, datum.b + 15 * 864e5)",
+              "as": "e"
+            },
+            {
+              "calculate": "datum.s <= datum.t_first ? datum.s + 4 * 864e5 : (datum.s + datum.e) / 2",
+              "as": "mid"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": {
+              "expr": "datum.s <= datum.t_first ? 'left' : 'center'"
+            },
+            "baseline": "top",
+            "fontSize": 10,
+            "lineHeight": 12,
+            "color": "#666",
+            "text": [
+              "Summer",
+              "holidays"
+            ]
+          },
+          "encoding": {
+            "x": {
+              "field": "mid",
+              "type": "temporal"
+            },
+            "y": {
+              "value": 18
+            },
+            "color": {
+              "value": "#666"
+            }
+          }
+        },
         {
           "mark": {
             "type": "line",
@@ -231,13 +380,64 @@
           "transform": [
             {
               "filter": "datum.mode == 'Bus' && month(datum.month) == 2 && year(datum.month) == 2026"
+            },
+            {
+              "calculate": "'Busiest month for buses so far'",
+              "as": "note"
             }
           ],
           "mark": {
             "type": "point",
             "filled": false,
             "size": 90,
-            "strokeWidth": 1.5
+            "strokeWidth": 1.5,
+            "fill": "transparent",
+            "cursor": "pointer"
+          },
+          "encoding": {
+            "tooltip": [
+              {
+                "field": "mode",
+                "title": "Mode"
+              },
+              {
+                "field": "month",
+                "timeUnit": "yearmonth",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "trips_m",
+                "format": ".2f",
+                "title": "Trips (millions)"
+              },
+              {
+                "field": "note",
+                "title": "Note"
+              }
+            ]
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.mode == 'Bus' && month(datum.month) == 2 && year(datum.month) == 2026"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "shape": "M -18 -12 L -10.7 -7.1 M -5.8 -3.9 L -8.8 -9.9 L -12.5 -4.3 Z",
+            "size": 4,
+            "filled": true,
+            "color": "#555",
+            "stroke": "#555",
+            "strokeWidth": 1.3,
+            "opacity": 1
+          },
+          "encoding": {
+            "color": {
+              "value": "#555"
+            }
           }
         },
         {
@@ -249,8 +449,8 @@
           "mark": {
             "type": "text",
             "align": "right",
-            "dx": -6,
-            "dy": -8,
+            "dx": -20,
+            "dy": -12,
             "fontSize": 11,
             "color": "#444",
             "fontWeight": "normal",
@@ -278,8 +478,8 @@
             "color": "#444",
             "fontWeight": "normal",
             "text": [
-              "Summer school holidays:",
-              "fewer trips every December–January"
+              "Fewer trips every",
+              "December–January"
             ],
             "baseline": "top"
           },
@@ -329,8 +529,8 @@
         {
           "mark": {
             "type": "text",
-            "align": "left",
-            "dx": 5,
+            "align": "right",
+            "dx": -5,
             "y": 6,
             "fontSize": 11,
             "fontWeight": "normal"

@@ -24,36 +24,7 @@
       "value": [
         150.975,
         -33.85
-      ],
-      "bind": {
-        "input": "select",
-        "options": [
-          [
-            150.975,
-            -33.85
-          ],
-          [
-            151.205,
-            -33.872
-          ],
-          [
-            151.0,
-            -33.815
-          ],
-          [
-            151.18,
-            -33.8
-          ]
-        ],
-        "labels": [
-          "Whole of Sydney",
-          "City centre",
-          "Parramatta",
-          "North Shore"
-        ],
-        "name": "Centre",
-        "element": "#filter_2_3"
-      }
+      ]
     },
     {
       "name": "zoom",
@@ -62,8 +33,8 @@
         "input": "range",
         "min": 1,
         "max": 6.5,
-        "step": 0.1,
-        "name": "Zoom",
+        "step": 0.01,
+        "name": "Zoom ",
         "element": "#zoom_2_3"
       }
     }
@@ -204,12 +175,12 @@
               50
             ],
             "range": [
-              "#C9DCEE",
-              "#A3C4E3",
-              "#76A8D5",
-              "#4A88C2",
-              "#1F5F9E",
-              "#0B3A6B"
+              "#F2F0C9",
+              "#DCE49A",
+              "#B5CF66",
+              "#82B03D",
+              "#4F8A22",
+              "#2C5E12"
             ]
           },
           "legend": null
@@ -274,28 +245,37 @@
           {
             "label": "City centre",
             "lon": 151.255,
-            "lat": -33.852,
+            "lat": -33.861,
             "x1": 151.225,
             "y1": -33.8652,
             "x2": 151.253,
-            "y2": -33.852,
+            "y2": -33.861,
             "align": "left"
-          },
-          {
-            "label": "Parramatta",
-            "lon": 151.0125,
-            "lat": -33.772,
-            "x1": 151.0125,
-            "y1": -33.8031,
-            "x2": 151.0125,
-            "y2": -33.777,
-            "align": "center"
           },
           {
             "label": "Chatswood",
-            "lon": 151.204,
-            "lat": -33.7928,
-            "align": "left"
+            "lon": 151.214,
+            "lat": -33.776,
+            "align": "left",
+            "x1": 151.1925,
+            "y1": -33.7824,
+            "x2": 151.212,
+            "y2": -33.777
+          },
+          {
+            "label": [
+              "North Sydney–",
+              "Crows Nest"
+            ],
+            "lon": 151.2305,
+            "lat": -33.8175,
+            "x1": 151.2205,
+            "y1": -33.8285,
+            "x2": 151.229,
+            "y2": -33.8195,
+            "align": "left",
+            "base": "bottom",
+            "small": true
           }
         ]
       },
@@ -331,12 +311,17 @@
         {
           "mark": {
             "type": "text",
-            "baseline": "middle",
-            "fontSize": 11,
+            "baseline": {
+              "expr": "datum.base ? datum.base : 'middle'"
+            },
+            "fontSize": {
+              "expr": "datum.small ? 10 : 11"
+            },
             "fontWeight": "bold",
             "align": {
               "expr": "datum.align"
-            }
+            },
+            "lineHeight": 12
           },
           "encoding": {
             "longitude": {

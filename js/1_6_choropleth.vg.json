@@ -1,0 +1,507 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 640,
+  "height": 380,
+  "projection": {
+    "type": "conicEqualArea",
+    "parallels": [
+      -18,
+      -36
+    ],
+    "rotate": [
+      -132,
+      0
+    ],
+    "center": [
+      0,
+      -27
+    ]
+  },
+  "data": {
+    "url": "data/aus_states.topojson",
+    "format": {
+      "type": "topojson",
+      "feature": "aus_states"
+    }
+  },
+  "transform": [
+    {
+      "lookup": "properties.state",
+      "from": {
+        "data": {
+          "url": "data/state_trips_per_resident.csv",
+          "format": {
+            "type": "csv",
+            "parse": {
+              "trips_m": "number",
+              "population": "number",
+              "label_lon": "number",
+              "label_lat": "number",
+              "capital_population": "number"
+            }
+          }
+        },
+        "key": "state",
+        "fields": [
+          "abbr",
+          "capital",
+          "trips_m",
+          "population",
+          "label_lon",
+          "label_lat",
+          "capital_population"
+        ]
+      }
+    },
+    {
+      "calculate": "datum.trips_m * 1000000 / datum.capital_population",
+      "as": "per_person"
+    },
+    {
+      "calculate": "datum.properties.state == 'Australian Capital Territory' ? ['Australian Capital', 'Territory ' + format(datum.per_person, '.0f')] : datum.properties.state == 'Victoria' ? 'Victoria ' + format(datum.per_person, '.0f') : datum.properties.state == 'Northern Territory' ? ['Northern', 'Territory', format(datum.per_person, '.0f')] : [datum.properties.state, format(datum.per_person, '.0f')]",
+      "as": "label"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 1.2
+      },
+      "encoding": {
+        "color": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "field": "per_person",
+            "type": "quantitative",
+            "title": [
+              "Trips per capital-city",
+              "resident, 2024–2025"
+            ],
+            "scale": {
+              "type": "linear",
+              "domain": [
+                0,
+                130
+              ],
+              "range": [
+                "#E8F4F0",
+                "#0F5A4A"
+              ]
+            },
+            "legend": {
+              "orient": "right",
+              "direction": "vertical",
+              "values": [
+                0,
+                25,
+                50,
+                75,
+                100,
+                125
+              ],
+              "gradientLength": 180,
+              "offset": 56
+            }
+          },
+          "value": "#E2E2DC"
+        },
+        "tooltip": [
+          {
+            "field": "properties.state",
+            "title": "State or territory"
+          },
+          {
+            "field": "capital",
+            "title": "Capital city"
+          },
+          {
+            "field": "per_person",
+            "format": ".0f",
+            "title": "Trips per capital-city resident"
+          },
+          {
+            "field": "trips_m",
+            "format": ",.1f",
+            "title": "Capital city trips (millions)"
+          },
+          {
+            "field": "capital_population",
+            "format": ",",
+            "title": "Capital city population (June 2025)"
+          }
+        ]
+      },
+      "params": [
+        {
+          "name": "stateHover",
+          "select": {
+            "type": "point",
+            "fields": [
+              "properties.state"
+            ],
+            "on": "mouseover",
+            "clear": "mouseout"
+          }
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.abbr != 'ACT'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "lineHeight": 13
+      },
+      "encoding": {
+        "longitude": {
+          "field": "label_lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "label_lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.per_person >= 80",
+            "value": "white"
+          },
+          "value": "#222"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Australian Capital Territory'"
+        },
+        {
+          "calculate": "149.0",
+          "as": "lon"
+        },
+        {
+          "calculate": "-35.45",
+          "as": "lat"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "M 54 14 L 7.6 2.0 M 1.9 0.5 L 6.7 5.2 L 8.4 -1.3 Z",
+        "size": 4,
+        "filled": true,
+        "color": "white",
+        "stroke": "white",
+        "strokeWidth": 4,
+        "strokeJoin": "round"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Australian Capital Territory'"
+        },
+        {
+          "calculate": "149.0",
+          "as": "lon"
+        },
+        {
+          "calculate": "-35.45",
+          "as": "lat"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "M 54 14 L 7.6 2.0 M 1.9 0.5 L 6.7 5.2 L 8.4 -1.3 Z",
+        "size": 4,
+        "filled": true,
+        "color": "#4A6B8A",
+        "stroke": "#4A6B8A",
+        "strokeWidth": 1.6
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Australian Capital Territory'"
+        },
+        {
+          "calculate": "149.0",
+          "as": "lon"
+        },
+        {
+          "calculate": "-35.45",
+          "as": "lat"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "dx": 56,
+        "dy": 8,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#222",
+        "lineHeight": 13
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "description": "note: Queensland box",
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Queensland'"
+        },
+        {
+          "calculate": "148.6",
+          "as": "nlon"
+        },
+        {
+          "calculate": "-24.3",
+          "as": "nlat"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "M 50.0 -65.1 L 174.0 -65.1 L 174.0 7.9 L 50.0 7.9 Z",
+        "size": 4,
+        "filled": true,
+        "color": "#EEF3F9",
+        "stroke": "#C6D5E6",
+        "strokeWidth": 1,
+        "opacity": 1
+      },
+      "encoding": {
+        "longitude": {
+          "field": "nlon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "nlat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "description": "note: Queensland arrow halo",
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Queensland'"
+        },
+        {
+          "calculate": "148.6",
+          "as": "nlon"
+        },
+        {
+          "calculate": "-24.3",
+          "as": "nlat"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "M 49.0 -28.6 L 5.0 -2.9 M 0 0 L 6.7 -0.0 L 3.3 -5.8 Z",
+        "size": 4,
+        "filled": true,
+        "color": "white",
+        "stroke": "white",
+        "strokeWidth": 4,
+        "strokeJoin": "round"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "nlon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "nlat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "description": "note: Queensland arrow",
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Queensland'"
+        },
+        {
+          "calculate": "148.6",
+          "as": "nlon"
+        },
+        {
+          "calculate": "-24.3",
+          "as": "nlat"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "shape": "M 49.0 -28.6 L 5.0 -2.9 M 0 0 L 6.7 -0.0 L 3.3 -5.8 Z",
+        "size": 4,
+        "filled": true,
+        "color": "#4A6B8A",
+        "stroke": "#4A6B8A",
+        "strokeWidth": 1.6
+      },
+      "encoding": {
+        "longitude": {
+          "field": "nlon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "nlat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    },
+    {
+      "description": "note: Queensland text",
+      "transform": [
+        {
+          "filter": "datum.properties.state == 'Queensland'"
+        },
+        {
+          "calculate": "148.6",
+          "as": "nlon"
+        },
+        {
+          "calculate": "-24.3",
+          "as": "nlat"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "top",
+        "dx": 56.0,
+        "dy": -61.1,
+        "fontSize": 11,
+        "lineHeight": 13,
+        "color": "#1F3B5C",
+        "text": [
+          "Brisbane is back to",
+          "its 2019 level, yet",
+          "each resident made",
+          "57 trips, under half",
+          "of Sydney's 126"
+        ]
+      },
+      "encoding": {
+        "longitude": {
+          "field": "nlon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "nlat",
+          "type": "quantitative"
+        },
+        "opacity": {
+          "condition": {
+            "param": "stateHover",
+            "empty": true,
+            "value": 1
+          },
+          "value": 0.35
+        }
+      }
+    }
+  ]
+}

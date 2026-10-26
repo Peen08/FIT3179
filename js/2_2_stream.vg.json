@@ -20,6 +20,70 @@
       "height": 260,
       "layer": [
         {
+          "data": {
+            "values": [
+              {
+                "date": "2020-03-30",
+                "label": "First lockdown",
+                "end": "2020-05-15"
+              },
+              {
+                "date": "2021-06-26",
+                "label": "Delta lockdown",
+                "end": "2021-10-11"
+              },
+              {
+                "date": "2024-01-01",
+                "label": "Opal counting changes",
+                "side": "left"
+              },
+              {
+                "date": "2024-08-19",
+                "label": "Metro City opens"
+              }
+            ]
+          },
+          "transform": [
+            {
+              "calculate": "toDate(datum.date)",
+              "as": "d"
+            },
+            {
+              "calculate": "isValid(datum.end) ? toDate(datum.end) : null",
+              "as": "e"
+            },
+            {
+              "filter": "isValid(datum.end)"
+            }
+          ],
+          "mark": {
+            "type": "rect",
+            "color": "#888",
+            "opacity": 0.18,
+            "clip": true
+          },
+          "encoding": {
+            "x": {
+              "field": "d",
+              "type": "temporal",
+              "scale": {
+                "domain": {
+                  "param": "period"
+                }
+              }
+            },
+            "x2": {
+              "field": "e"
+            },
+            "y": {
+              "value": 0
+            },
+            "y2": {
+              "value": 260
+            }
+          }
+        },
+        {
           "transform": [
             {
               "fold": [
@@ -122,11 +186,13 @@
             "values": [
               {
                 "date": "2020-03-30",
-                "label": "First lockdown"
+                "label": "First lockdown",
+                "end": "2020-05-15"
               },
               {
                 "date": "2021-06-26",
-                "label": "Delta lockdown"
+                "label": "Delta lockdown",
+                "end": "2021-10-11"
               },
               {
                 "date": "2024-01-01",
@@ -143,6 +209,10 @@
             {
               "calculate": "toDate(datum.date)",
               "as": "d"
+            },
+            {
+              "calculate": "isValid(datum.end) ? toDate(datum.end) : null",
+              "as": "e"
             }
           ],
           "layer": [
@@ -166,7 +236,12 @@
                     }
                   }
                 }
-              }
+              },
+              "transform": [
+                {
+                  "filter": "!isValid(datum.end)"
+                }
+              ]
             },
             {
               "transform": [

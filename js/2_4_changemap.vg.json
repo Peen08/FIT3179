@@ -7,7 +7,13 @@
     "contains": "padding"
   },
   "projection": {
-    "type": "mercator"
+    "type": "mercator",
+    "center": {
+      "expr": "centre"
+    },
+    "scale": {
+      "expr": "zoom * 32600"
+    }
   },
   "layer": [
     {
@@ -21,7 +27,8 @@
       "mark": {
         "type": "geoshape",
         "fill": "#F1F1EC",
-        "stroke": "#DDDDDD"
+        "stroke": "#DDDDDD",
+        "clip": true
       }
     },
     {
@@ -36,7 +43,8 @@
         "type": "geoshape",
         "filled": false,
         "stroke": "#C8C8C8",
-        "strokeWidth": 1
+        "strokeWidth": 1,
+        "clip": true
       }
     },
     {
@@ -61,12 +69,19 @@
           "as": "pct"
         },
         {
+          "calculate": "isFinite(datum.pct) ? format(datum.pct, '.0f') + '%' : 'New station (no 2019 trips)'",
+          "as": "pct_tip"
+        },
+        {
           "calculate": "datum.y2019 == 0 ? 'New station' : (datum.y2025 < datum.y2019 * 0.02 ? 'Closed for upgrade' : (datum.pct < 60 ? 'Under 60%' : (datum.pct < 90 ? '60–90%' : (datum.pct < 110 ? '90–110%' : 'Over 110%'))))",
           "as": "status"
         },
         {
           "calculate": "max(datum.y2025, datum.y2019)",
           "as": "size_val"
+        },
+        {
+          "filter": "statusShow == 'All stations' || datum.status == statusShow"
         }
       ],
       "encoding": {
@@ -85,7 +100,8 @@
             "type": "circle",
             "opacity": 0.85,
             "stroke": "white",
-            "strokeWidth": 0.5
+            "strokeWidth": 0.5,
+            "clip": true
           },
           "encoding": {
             "size": {
@@ -106,27 +122,29 @@
               "title": "2025 compared with 2019",
               "scale": {
                 "domain": [
-                  "New station",
-                  "Closed for upgrade",
                   "Under 60%",
                   "60–90%",
                   "90–110%",
-                  "Over 110%"
+                  "Over 110%",
+                  "New station",
+                  "Closed for upgrade"
                 ],
                 "range": [
-                  "#7B3FA0",
-                  "#000000",
                   "#B3471A",
                   "#F0B58A",
                   "#D5D5D0",
-                  "#2166AC"
+                  "#2166AC",
+                  "#7E3FB0",
+                  "#000000"
                 ]
               },
               "legend": {
+                "title": "Station trips in 2025 as a percentage of 2019",
                 "orient": "bottom",
                 "direction": "horizontal",
-                "columns": 3,
-                "title": "2025 compared with 2019"
+                "columns": 4,
+                "symbolType": "circle",
+                "labelExpr": "datum.label == 'New station' ? 'New Metro station' : datum.label == 'Closed for upgrade' ? 'Closed for Metro upgrade' : datum.label"
               }
             },
             "tooltip": [
@@ -145,79 +163,356 @@
                 "title": "Trips 2025"
               },
               {
-                "field": "pct",
-                "format": ".0f",
+                "field": "pct_tip",
                 "title": "Percentage of 2019"
               }
             ],
             "opacity": {
-              "condition": {
-                "param": "statusPick",
-                "value": 0.85
-              },
-              "value": 0.08
+              "value": 0.85
             }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Lakemba'"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "shape": "M 46.6 39.1 L 10.1 8.5 M 5.7 4.7 L 7.9 11.0 L 12.3 5.9 Z",
+            "size": 4,
+            "filled": true,
+            "color": "#555",
+            "stroke": "#555",
+            "strokeWidth": 1.3,
+            "opacity": 1
           },
-          "params": [
-            {
-              "name": "statusPick",
-              "select": {
-                "type": "point",
-                "fields": [
-                  "status"
-                ]
-              },
-              "bind": "legend"
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
             }
-          ]
-        },
-        {
-          "transform": [
-            {
-              "filter": "datum.station == 'Town Hall'"
-            }
-          ],
-          "mark": {
-            "type": "text",
-            "align": "right",
-            "dx": -14,
-            "dy": 4,
-            "fontSize": 11,
-            "fontWeight": "bold",
-            "text": "Town Hall −42%"
           }
         },
         {
           "transform": [
             {
-              "filter": "datum.station == 'Bankstown'"
-            }
-          ],
-          "mark": {
-            "type": "text",
-            "align": "center",
-            "dy": 16,
-            "fontSize": 11,
-            "fontStyle": "italic",
-            "text": "Bankstown line closed"
-          }
-        },
-        {
-          "transform": [
-            {
-              "filter": "datum.station == 'Crows Nest'"
+              "filter": "datum.station == 'Lakemba'"
             }
           ],
           "mark": {
             "type": "text",
             "align": "left",
-            "dx": 12,
+            "baseline": "middle",
+            "dx": 48.9,
+            "dy": 41.1,
             "fontSize": 11,
-            "fontStyle": "italic",
-            "text": "New Metro stations"
+            "fontWeight": "bold",
+            "color": "white",
+            "lineHeight": 13,
+            "text": [
+              "Bankstown line",
+              "closed for",
+              "Metro upgrade"
+            ],
+            "opacity": 1,
+            "stroke": "white",
+            "strokeWidth": 3,
+            "strokeJoin": "round"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Lakemba'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "middle",
+            "dx": 48.9,
+            "dy": 41.1,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "#222",
+            "lineHeight": 13,
+            "text": [
+              "Bankstown line",
+              "closed for",
+              "Metro upgrade"
+            ],
+            "opacity": 1
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'North Sydney'"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "shape": "M 45.1 0.2 L 16.7 0.1 M 10.9 0.0 L 16.7 3.4 L 16.7 -3.3 Z",
+            "size": 4,
+            "filled": true,
+            "color": "#555",
+            "stroke": "#555",
+            "strokeWidth": 1.3,
+            "opacity": 1
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'North Sydney'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "middle",
+            "dx": 49.1,
+            "dy": -12.8,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "white",
+            "lineHeight": 13,
+            "text": [
+              "North Sydney:",
+              "riders moved to",
+              "Victoria Cross"
+            ],
+            "opacity": 1,
+            "stroke": "white",
+            "strokeWidth": 3,
+            "strokeJoin": "round"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'North Sydney'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "middle",
+            "dx": 49.1,
+            "dy": -12.8,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "#222",
+            "lineHeight": 13,
+            "text": [
+              "North Sydney:",
+              "riders moved to",
+              "Victoria Cross"
+            ],
+            "opacity": 1
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Castle Hill'"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "shape": "M 12.0 -46.0 L 3.6 -13.6 M 2.1 -8.0 L 6.8 -12.8 L 0.3 -14.5 Z",
+            "size": 4,
+            "filled": true,
+            "color": "#555",
+            "stroke": "#555",
+            "strokeWidth": 1.3,
+            "opacity": 1
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Castle Hill'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "middle",
+            "dx": 12,
+            "dy": -68.5,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "white",
+            "lineHeight": 13,
+            "text": [
+              "Metro North West line",
+              "(opened May 2019)"
+            ],
+            "opacity": 1,
+            "stroke": "white",
+            "strokeWidth": 3,
+            "strokeJoin": "round"
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
+          }
+        },
+        {
+          "transform": [
+            {
+              "filter": "datum.station == 'Castle Hill'"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "middle",
+            "dx": 12,
+            "dy": -68.5,
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "#222",
+            "lineHeight": 13,
+            "text": [
+              "Metro North West line",
+              "(opened May 2019)"
+            ],
+            "opacity": 1
+          },
+          "encoding": {
+            "longitude": {
+              "field": "lon",
+              "type": "quantitative"
+            },
+            "latitude": {
+              "field": "lat",
+              "type": "quantitative"
+            }
           }
         }
       ]
+    }
+  ],
+  "params": [
+    {
+      "name": "statusShow",
+      "value": "All stations",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All stations",
+          "Under 60%",
+          "60–90%",
+          "90–110%",
+          "Over 110%",
+          "New station",
+          "Closed for upgrade"
+        ],
+        "labels": [
+          "All stations",
+          "Under 60%",
+          "60–90%",
+          "90–110%",
+          "Over 110%",
+          "New Metro",
+          "Closed"
+        ],
+        "name": "Show ",
+        "element": "#filter_2_4"
+      }
+    },
+    {
+      "name": "centre",
+      "value": [
+        151.03,
+        -33.85
+      ]
+    },
+    {
+      "name": "zoom",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 1,
+        "max": 6.5,
+        "step": 0.01,
+        "name": "Zoom ",
+        "element": "#zoom_2_4"
+      }
     }
   ]
 }

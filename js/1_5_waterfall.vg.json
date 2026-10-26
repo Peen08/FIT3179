@@ -442,8 +442,8 @@
         {
           "mark": {
             "type": "rule",
-            "color": "#888",
-            "strokeWidth": 1
+            "color": "#555",
+            "strokeWidth": 1.3
           },
           "encoding": {
             "y": {
@@ -452,6 +452,23 @@
             },
             "y2": {
               "field": "line_bottom"
+            }
+          }
+        },
+        {
+          "mark": {
+            "type": "point",
+            "shape": "triangle-up",
+            "filled": true,
+            "size": 45,
+            "color": "#555",
+            "angle": 0.0,
+            "yOffset": 2.9
+          },
+          "encoding": {
+            "y": {
+              "field": "line_top",
+              "type": "quantitative"
             }
           }
         },
@@ -604,7 +621,7 @@
             "type": "text",
             "align": "left",
             "baseline": "top",
-            "dx": 74,
+            "dx": 94,
             "dy": -168,
             "fontSize": 12,
             "fontWeight": "normal",
@@ -716,7 +733,7 @@
             "type": "text",
             "align": "left",
             "baseline": "top",
-            "dx": 80,
+            "dx": 94,
             "dy": -132,
             "fontSize": 12,
             "fontWeight": "normal",

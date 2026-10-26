@@ -1,0 +1,9 @@
+state,abbr,capital,trips_m,population,capital_population,label_lon,label_lat
+New South Wales,NSW,Sydney,708.551,8593871,5638830,146.6,-32.6
+Victoria,Vic,Melbourne,480.203,7074468,5435590,145.0,-37.25
+Queensland,Qld,Brisbane,161.643,5669834,2833524,144.5,-22.6
+South Australia,SA,Adelaide,69.59,1902331,1491015,135.4,-30.0
+Western Australia,WA,Perth,148.718,3043731,2452765,122.0,-25.8
+Tasmania,Tas,Hobart,6.717,575960,255250,146.3,-42.45
+Northern Territory,NT,Darwin,4.646,264411,159284,133.4,-19.5
+Australian Capital Territory,ACT,Canberra,20.582,484792,484630,,

@@ -9,8 +9,7 @@
         "min": 2016,
         "max": 2025,
         "step": 1,
-        "name": "Financial year ending June: ",
-        "element": "#slider_1_2"
+        "name": "Financial year ending June: "
       }
     }
   ],
@@ -31,6 +30,11 @@
         "center": [
           0,
           -27
+        ],
+        "scale": 602.61,
+        "translate": [
+          218.95,
+          178.69
         ]
       },
       "layer": [
@@ -104,65 +108,89 @@
                       "city": "Sydney",
                       "lat": -33.87,
                       "lon": 151.21,
-                      "llat": -30.9,
-                      "llon": 152.9,
-                      "side": "E"
+                      "side": "E",
+                      "kx1": 0.11385,
+                      "kx2": 0.01725,
+                      "ky1": 0.01434,
+                      "ky2": -0.09341,
+                      "sy": 0
                     },
                     {
                       "city": "Melbourne",
                       "lat": -37.81,
                       "lon": 144.96,
-                      "llat": -37.4,
-                      "llon": 142.0,
-                      "side": "W"
+                      "side": "W",
+                      "kx1": 0.119,
+                      "kx2": 0.01211,
+                      "ky1": 0.00986,
+                      "ky2": -0.09506,
+                      "sy": -34.4
                     },
                     {
                       "city": "Brisbane",
                       "lat": -27.47,
                       "lon": 153.03,
-                      "llat": -26.5,
-                      "llon": 151.5,
-                      "side": "W"
+                      "side": "W",
+                      "kx1": 0.10703,
+                      "kx2": 0.01778,
+                      "ky1": 0.01557,
+                      "ky2": -0.09261,
+                      "sy": 64.6
                     },
                     {
                       "city": "Perth",
                       "lat": -31.95,
                       "lon": 115.86,
-                      "llat": -31.9,
-                      "llon": 117.5,
-                      "side": "E"
+                      "side": "E",
+                      "kx1": 0.11217,
+                      "kx2": -0.01424,
+                      "ky1": -0.01168,
+                      "ky2": -0.09346,
+                      "sy": 23.9
                     },
                     {
                       "city": "Adelaide",
                       "lat": -34.93,
                       "lon": 138.6,
-                      "llat": -34.6,
-                      "llon": 137.6,
-                      "side": "W"
+                      "side": "W",
+                      "kx1": 0.11616,
+                      "kx2": 0.00601,
+                      "ky1": 0.00508,
+                      "ky2": -0.0946,
+                      "sy": -0.1
                     },
                     {
                       "city": "Canberra",
                       "lat": -35.28,
                       "lon": 149.13,
-                      "llat": -37.8,
-                      "llon": 150.0,
-                      "side": "E"
+                      "side": "S",
+                      "kx1": 0.11566,
+                      "kx2": 0.0156,
+                      "ky1": 0.01286,
+                      "ky2": -0.09394,
+                      "sy": -12.2
                     },
                     {
                       "city": "Hobart",
                       "lat": -42.88,
                       "lon": 147.33,
-                      "llat": -42.9,
-                      "llon": 148.6,
-                      "side": "E"
+                      "side": "EU",
+                      "kx1": 0.12488,
+                      "kx2": 0.01505,
+                      "ky1": 0.01191,
+                      "ky2": -0.0972,
+                      "sy": -88.6
                     },
                     {
                       "city": "Darwin",
                       "lat": -12.46,
                       "lon": 130.84,
-                      "llat": -12.6,
-                      "llon": 132.2,
-                      "side": "E"
+                      "side": "E",
+                      "kx1": 0.09564,
+                      "kx2": -0.00087,
+                      "ky1": -0.00069,
+                      "ky2": -0.09689,
+                      "sy": 238.7
                     }
                   ]
                 },
@@ -170,11 +198,47 @@
                 "fields": [
                   "lat",
                   "lon",
-                  "llat",
-                  "llon",
-                  "side"
+                  "side",
+                  "kx1",
+                  "kx2",
+                  "ky1",
+                  "ky2",
+                  "sy"
                 ]
               }
+            },
+            {
+              "calculate": "sqrt(datum.total / 800 * 2000) / 2 + 1.5",
+              "as": "r"
+            },
+            {
+              "calculate": "datum.city == 'Sydney' ? datum.r : null",
+              "as": "syd_r0"
+            },
+            {
+              "joinaggregate": [
+                {
+                  "op": "max",
+                  "field": "syd_r0",
+                  "as": "syd_r"
+                }
+              ]
+            },
+            {
+              "calculate": "datum.side == 'E' || datum.side == 'EU' ? datum.r + 3 : datum.side == 'W' ? -datum.r - 3 : 16",
+              "as": "px"
+            },
+            {
+              "calculate": "datum.side == 'S' ? 28 : datum.side == 'EU' ? -16 : -6.5",
+              "as": "py"
+            },
+            {
+              "calculate": "datum.lon + datum.kx1 * datum.px + datum.kx2 * datum.py",
+              "as": "llon"
+            },
+            {
+              "calculate": "datum.lat + datum.ky1 * datum.px + datum.ky2 * datum.py",
+              "as": "llat"
             },
             {
               "calculate": "[datum.city, format(datum.index, '.0f') + '%']",
@@ -225,12 +289,17 @@
                     "type": "linear",
                     "domain": [
                       30,
+                      90,
+                      100,
                       110
                     ],
                     "range": [
-                      "#EFEAF6",
-                      "#7A5BB3"
+                      "#E07B39",
+                      "#EFB78F",
+                      "#DDDAD0",
+                      "#4A90D9"
                     ],
+                    "interpolate": "lab",
                     "clamp": true
                   },
                   "legend": {
@@ -243,11 +312,10 @@
                     "direction": "horizontal",
                     "gradientLength": 185,
                     "values": [
-                      30,
-                      50,
-                      70,
-                      90,
-                      110
+                      40,
+                      60,
+                      80,
+                      100
                     ],
                     "labelExpr": "datum.value + '%'",
                     "type": "gradient",
@@ -358,7 +426,7 @@
             {
               "transform": [
                 {
-                  "filter": "datum.side == 'E'"
+                  "filter": "datum.side == 'E' || datum.side == 'EU'"
                 }
               ],
               "mark": {
@@ -382,6 +450,51 @@
                 "text": {
                   "field": "label"
                 }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.side == 'S'"
+                }
+              ],
+              "mark": {
+                "type": "text",
+                "align": "left",
+                "baseline": "top",
+                "fontSize": 11,
+                "lineHeight": 13,
+                "fontWeight": "bold",
+                "color": "#222"
+              },
+              "encoding": {
+                "longitude": {
+                  "field": "llon",
+                  "type": "quantitative"
+                },
+                "latitude": {
+                  "field": "llat",
+                  "type": "quantitative"
+                },
+                "text": {
+                  "field": "label"
+                }
+              }
+            },
+            {
+              "transform": [
+                {
+                  "filter": "datum.city == 'Canberra'"
+                }
+              ],
+              "mark": {
+                "type": "point",
+                "shape": "M 14 26 L 5.6 10.4 M 2.8 5.3 L 2.6 12.0 L 8.6 8.8 Z",
+                "size": 4,
+                "filled": true,
+                "color": "#555",
+                "stroke": "#555",
+                "strokeWidth": 1.2
               }
             }
           ]
@@ -463,6 +576,43 @@
         }
       ],
       "layer": [
+        {
+          "transform": [
+            {
+              "filter": "datum.year == 2022 && datum.city == 'Sydney'"
+            },
+            {
+              "calculate": "2021.5",
+              "as": "s"
+            },
+            {
+              "calculate": "2022.5",
+              "as": "e"
+            }
+          ],
+          "mark": {
+            "type": "rect",
+            "color": "#EEEEEA"
+          },
+          "encoding": {
+            "x": {
+              "field": "s",
+              "type": "quantitative",
+              "scale": {
+                "zero": false
+              }
+            },
+            "x2": {
+              "field": "e"
+            },
+            "y": {
+              "value": 0
+            },
+            "y2": {
+              "value": 360
+            }
+          }
+        },
         {
           "mark": {
             "type": "rule",
@@ -547,7 +697,7 @@
             "point": {
               "filled": true,
               "size": 30,
-              "color": "#5B3FA0"
+              "color": "#555"
             }
           },
           "encoding": {
@@ -573,22 +723,11 @@
               "type": "quantitative"
             },
             "stroke": {
-              "field": "cur",
-              "type": "quantitative",
-              "scale": {
-                "type": "linear",
-                "domain": [
-                  30,
-                  110
-                ],
-                "range": [
-                  "#A08CCF",
-                  "#4B2C8F"
-                ],
-                "clamp": true
+              "condition": {
+                "test": "round(datum.cur) >= 100",
+                "value": "#4A90D9"
               },
-              "legend": null,
-              "title": "Line colour"
+              "value": "#E07B39"
             }
           }
         },

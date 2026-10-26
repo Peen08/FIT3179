@@ -153,7 +153,7 @@ section { margin: var(--s4) 0; }
 /* Card header written in HTML (used where the description is split into two columns) */
 .chart-title { font-family: var(--sans); font-size: 22px; font-weight: 700; line-height: 1.25; margin: 0 0 var(--s1); }
 /* Chart description under an HTML title: one paragraph that wraps to the card width */
-.chart-sub { font-size: 14px; line-height: 1.45; color: var(--muted); margin: 0 0 var(--s2); }
+.chart-sub { font-size: 15px; line-height: 1.45; color: var(--muted); margin: 0 0 var(--s2); }
 /* One short note under each panel of a two-panel chart */
 .panel-notes { margin-top: var(--s2); }
 .panel-notes p { font-size: 14px; line-height: 1.5; color: var(--ink); margin: 0 0 var(--s1); }
@@ -175,26 +175,27 @@ section { margin: var(--s4) 0; }
 /* Chart control (e.g. year slider) under the second panel: right half of the card */
 .chart-foot { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); margin-top: var(--s1); }
 .chart-control { font-size: 13px; color: var(--muted); }
-/* Slider centred under the line chart, just below its axis title (positions match the chart's fixed layout) */
-.chart-stack { position: relative; }
 .chart-control-center { display: flex; justify-content: center; margin-top: var(--s2); }   /* slider centred under a chart */
 /* Small key for cells with no data (e.g. no service), shown under a chart legend */
 #chart_1_4 { display: flex; justify-content: center; }   /* equal space left and right of the lollipop chart */
 .chart-key { display: flex; align-items: center; justify-content: flex-start; gap: 6px; margin: 2px 0 0 58px; font-size: 12px; color: var(--ink); }
 .swatch-none { width: 14px; height: 14px; background: #E2E2DC; border: 1px solid #CFCFC8; }
-.chart-control-overlay { position: absolute; transform: translateX(-50%); white-space: nowrap; }   /* left/top set in vega_lite_vis.js, under the line chart */
-#chart_1_2 .vega-embed { display: block; }
+/* Chart 1.2: Vega-Lite's own year slider, on the same row as the map legends (y ≈ 92% of the drawn chart).
+   Its left is set in vega_lite_vis.js to the centre of the line chart */
+#chart_1_2 { position: relative; width: fit-content; max-width: 100%; }   /* the slider is placed against the drawn chart */
+#chart_1_2 .vega-bindings { position: absolute; left: 66%; top: 92%; transform: translate(-50%, -50%);
+  font-size: 13px; color: var(--muted); white-space: nowrap; }
 #chart_1_2 svg { display: block; max-width: 100%; height: auto; }   /* map + line chart shrink to fit the card: no sideways scrolling */
-.chart-control .vega-bind { display: flex; align-items: center; gap: var(--s1); }
-.chart-control .vega-bind-name { font-weight: 600; color: var(--ink); }
+.chart-control .vega-bind, #chart_1_2 .vega-bind { display: flex; align-items: center; gap: var(--s1); }
+.chart-control .vega-bind-name, #chart_1_2 .vega-bind-name { font-weight: 600; color: var(--ink); }
 /* Slim slider sized to the 13px text */
-.chart-control input[type="range"] { -webkit-appearance: none; appearance: none; width: 160px; height: 4px; margin: 0;
+.chart-control input[type="range"], #chart_1_2 input[type="range"] { -webkit-appearance: none; appearance: none; width: 160px; height: 4px; margin: 0;
   background: var(--line); border-radius: 2px; }
-.chart-control input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%;
+.chart-control input[type="range"]::-webkit-slider-thumb, #chart_1_2 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%;
   background: var(--accent); cursor: pointer; }
-.chart-control input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
-.chart-control .vega-bind label > span:last-child, .chart-control output { font-weight: 600; color: var(--ink); }
-.chart-desc p { font-size: 14px; line-height: 1.45; color: var(--muted); margin: 0; }
+.chart-control input[type="range"]::-moz-range-thumb, #chart_1_2 input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
+.chart-control .vega-bind label > span:last-child, .chart-control output, #chart_1_2 .vega-bind label > span:last-child { font-weight: 600; color: var(--ink); }
+.chart-desc p { font-size: 15px; line-height: 1.45; color: var(--muted); margin: 0; }
 /* Legend written into the page (Vega-Lite radio input), styled as colour keys */
 .html-legend { margin-top: var(--s1); font-size: 13px; }
 .html-legend .vega-bind { display: block; width: 100%; }
@@ -232,8 +233,8 @@ section { margin: var(--s4) 0; }
 .chart-filters .vega-bind-name { font-weight: 600; color: var(--ink); }
 .chart-filters select { font: inherit; font-size: 12px; color: var(--ink); padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: var(--card); }
 /* Chart 2.3: sequential key with equal-width steps, then filters under the map */
-.seq-key { margin-top: var(--s1); font-size: 12px; color: var(--ink); }
-.seq-key-title { font-weight: 600; margin-bottom: 4px; }
+.seq-key { margin-top: var(--s1); font-size: 11px; color: #444; }   /* same format as the Vega-Lite legends */
+.seq-key-title { font-size: 12px; font-weight: 400; color: #333; margin-bottom: 6px; }
 .seq-key-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--s1) var(--s3); }
 .seq-key-scale { flex: 0 1 300px; min-width: 200px; }
 .seq-key-bar { display: flex; height: 12px; }
@@ -244,13 +245,22 @@ section { margin: var(--s4) 0; }
 .seq-key-metro { display: inline-flex; align-items: center; gap: 6px; }
 .map-filters { display: flex; flex-direction: column; gap: var(--s1); margin-top: var(--s2); }
 .map-filters .chart-filters { flex-wrap: wrap; align-items: center; }
-.map-zoom .vega-bind label { gap: 8px; }
-.map-zoom input[type="range"] { -webkit-appearance: none; appearance: none; width: 180px; height: 4px; margin: 0; background: var(--line); border-radius: 2px; }
-.map-zoom input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: var(--accent); cursor: pointer; }
-.map-zoom input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); cursor: pointer; }
-.map-zoom .vega-bind label > span:last-child { display: none; }   /* raw value replaced by the zoom note */
-.zoom-note { color: var(--ink); }
-.zoom-note strong { font-weight: 600; }
+.map-filters--top { margin: 0 0 var(--s2); align-items: flex-end; }   /* filters under the description, right-aligned */
+.map-filters--top .chart-filters { justify-content: flex-end; }
+.map-filters--row { flex-direction: row; flex-wrap: nowrap; justify-content: flex-end; align-items: center; gap: var(--s1) var(--s3); }   /* filter, then zoom, always on one row */
+.map-filters--row .chart-filters { flex-wrap: nowrap; }
+.map-filters--row input[type="range"] { width: 110px; }   /* slim slider so the filter and zoom fit side by side */
+@media (max-width: 767px) { .map-filters--row { flex-wrap: wrap; } }
+.horizon-key { width: 270px; max-width: 100%; }
+.seq-key-labels span:last-child { transform: translateX(-100%); }   /* last label ends at the bar's right edge */
+/* Overlays that only label the map must not catch the pointer, so every square / state keeps its tooltip */
+#chart_2_3 .layer_2_marks, #chart_2_3 .layer_3_layer_0_marks, #chart_2_3 .layer_3_layer_1_marks,
+#chart_1_6 .layer_1_marks, #chart_1_6 .layer_2_marks, #chart_1_6 .layer_3_marks,
+#chart_2_4 .layer_1_marks, #chart_3_1 .layer_1_marks, #chart_3_1 .layer_3_marks { pointer-events: none; }
+.chart-sub--after { margin-top: var(--s1); }   /* how-to line under the filter, before the chart */
+.zoom-hint { margin: 0; font-size: 13px; color: var(--muted); }
+#chart_2_3, #chart_2_4, #chart_3_1 { cursor: grab; touch-action: none; }   /* drag to move, scroll to zoom (vega_lite_vis.js) */
+#chart_2_3.is-dragging, #chart_2_4.is-dragging, #chart_3_1.is-dragging { cursor: grabbing; }
 .map-finding { font-size: 14px; line-height: 1.5; color: var(--ink); margin: var(--s2) 0 0; }
 #legend_2_2 label:nth-of-type(n+2)::after { content: ""; order: -1; width: 12px; height: 12px; border-radius: 2px; }   /* square keys for the areas */
 #legend_2_2 label:nth-of-type(2)::after { background: #6A3D9A; }
@@ -280,7 +290,7 @@ footer a { color: var(--accent); }
   .hero { padding: var(--s5) 0 var(--s4); }
   .kpis { grid-template-columns: 1fr 1fr; gap: var(--s2); }
   .chart-foot { grid-template-columns: 1fr; gap: 0; }
-  .chart-control-overlay { position: static; transform: none; margin-top: var(--s2); }
+  #chart_1_2 .vega-bindings { position: static; transform: none; display: flex; justify-content: center; margin-top: var(--s2); }   /* small screens: slider centred under the whole chart */
   .hero-intro [class*="pure-u"] + [class*="pure-u"] p { margin-top: var(--s2); }
 }
 
@@ -297,17 +307,26 @@ body #vg-tooltip-element table tr:first-child td.value { font-size: 14px; font-w
 
 /* Bump chart: station names in the text use the same colours as their lines */
 .st-central, .st-townhall, .st-martin, .st-quay { font-weight: 700; }
-.st-central { color: #8C5A2B; } .st-townhall { color: #E377C2; } .st-martin { color: #7D8F1A; } .st-quay { color: #17BECF; }
+.st-central { color: #8C5A2B; } .st-townhall { color: #E377C2; } .st-martin { color: #B08D00; } .st-quay { color: #17BECF; }
 .bump-note .lead { margin: 0; padding-left: var(--s1); }
 .bump-wrap { display: flex; align-items: flex-start; gap: var(--s2); }
 .bump-wrap #chart_2_5 { flex: 1 1 auto; min-width: 0; }
 .bump-key { flex-direction: column; gap: 6px; flex: 0 0 auto; margin: 8px 0 0; }   /* dot key in a column beside the chart */
 @media (max-width: 767px) { .bump-wrap { flex-direction: column; } .bump-key { flex-direction: row; flex-wrap: wrap; } }
+.side-note .lead { margin: 0; padding-right: var(--s1); }   /* paragraph to the left of a chart */
+.side-note .lead + .lead { margin-top: var(--s2); }
+.filter-key-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--s2) var(--s4); margin: var(--s2) 0; }   /* filter left, colour key right */
+.filter-key-row .html-legend, .filter-key-row .seq-key { margin: 0; }
+.filter-key-row { flex-wrap: nowrap; }   /* filter and colour key side by side */
+.filter-key-row .html-legend { flex: 0 1 auto; width: auto; }
+.filter-key-row .html-legend .vega-bind, .filter-key-row .html-legend .vega-bind-radio { width: auto; }
+.filter-key-row .html-legend .vega-bind-radio { justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 767px) { .filter-key-row { flex-wrap: wrap; } }
 .bump-note .lead + .lead { margin-top: var(--s2); }   /* space between the two bump-chart paragraphs */
 /* Horizon chart key: one, two and three overlaid layers of the same colour */
-.horizon-key { align-items: center; gap: 6px; margin-top: var(--s1); }
-.horizon-key .hz { width: 22px; height: 12px; border-radius: 2px; margin-left: 10px; }
-.horizon-key .hz:first-child { margin-left: 0; }
-.horizon-key .hz-tight { margin-left: -6px; width: 16px; }   /* three shades read as one scale */
 #chart_3_3 .vega-embed { display: block; }
 #chart_3_3 svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }   /* horizon chart shrinks to fit: no sideways scrolling */
+
+/* Narrow screens: wide charts without drag interactions shrink to fit their card instead of scrolling sideways.
+   Chart 2.2 keeps its in-card scroll because its drag-to-zoom strip needs unscaled coordinates */
+#chart_1_1 svg, #chart_1_4 svg, #chart_1_6 svg, #chart_4_1 svg, #chart_4_3 svg { display: block; max-width: 100%; height: auto; }
