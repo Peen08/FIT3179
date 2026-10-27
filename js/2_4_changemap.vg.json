@@ -144,7 +144,7 @@
                 "direction": "horizontal",
                 "columns": 4,
                 "symbolType": "circle",
-                "labelExpr": "datum.label == 'New station' ? 'New Metro station' : datum.label == 'Closed for upgrade' ? 'Closed for Metro upgrade' : datum.label"
+                "labelExpr": "datum.label == 'New station' ? 'New Metro station' : datum.label == 'Closed for upgrade' ? 'Closed for conversion' : datum.label"
               }
             },
             "tooltip": [

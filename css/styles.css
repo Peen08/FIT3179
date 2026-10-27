@@ -330,3 +330,7 @@ body #vg-tooltip-element table tr:first-child td.value { font-size: 14px; font-w
 /* Narrow screens: wide charts without drag interactions shrink to fit their card instead of scrolling sideways.
    Chart 2.2 keeps its in-card scroll because its drag-to-zoom strip needs unscaled coordinates */
 #chart_1_1 svg, #chart_1_4 svg, #chart_1_6 svg, #chart_4_1 svg, #chart_4_3 svg { display: block; max-width: 100%; height: auto; }
+
+/* Conclusion: the four takeaways reuse the headline card style (not links) */
+.conclusion-cards { margin: 0 0 var(--s4); }
+.conclusion-cards .kpi-value { font-size: 26px; }

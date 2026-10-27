@@ -422,7 +422,7 @@
           "as": "nshare"
         },
         {
-          "calculate": "datum.nshare > 0 && datum.nshare <= 1 ? [datum.step + ' alone:', format(datum.nshare, '.0%') + ' of the ' + (datum.net < 0 ? 'drop' : 'rise')] : ['Biggest change:', datum.step + ' ' + datum.delta_label]",
+          "calculate": "datum.nshare > 0 && datum.nshare <= 1 ? [datum.step + ' alone:', format(datum.nshare, '.0%') + ' of the net ' + (datum.net < 0 ? 'fall' : 'rise')] : ['Biggest change:', datum.step + ' ' + datum.delta_label]",
           "as": "note"
         },
         {
